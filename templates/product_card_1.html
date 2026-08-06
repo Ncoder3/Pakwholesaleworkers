@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>{{ product_name }}</title>
+
+    <link
+        rel="stylesheet"
+        href="product_card_1.css">
+     <!-- Dynamic Theme Variables -->
+      
+    <style>
+
+        :root{
+
+            --primary-color: {{ primary_color }};
+
+            --secondary-color: {{ secondary_color }};
+
+            --accent-color: {{ accent_color }};
+
+            --text-color: {{ text_color }};
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+    {% include "components/header.html" %}
+
+    {% include "components/image_section.html" %}
+
+    {% include "components/title_section.html" %}
+
+    {% include "components/price_section.html" %}
+
+    {% include "components/qr_section.html" %}
+
+    {% include "components/footer.html" %}
+
+</div>
+
+</body>
+
+</html>

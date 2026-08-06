@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product_name }}</title>
+    <link rel="stylesheet" href="gproduct_card.css">
+    <style>
+        :root {
+            --primary-color: {{ primary_color | default('#d8004e') }};
+            --secondary-color: {{ secondary_color | default('#183A30') }};
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+
+        <!-- Header Component -->
+        {% include "gcomponents/header.html" %}
+
+        <!-- Main Grid Layout (From Image 2) -->
+        <main class="main-grid">
+
+            <!-- Left Column: Image (1:1 Ratio) & Product Info -->
+            <div class="left-column">
+                {% include "gcomponents/image_panel.html" %}
+                {% include "gcomponents/info_panel.html" %}
+            </div>
+
+            <!-- Right Column: Price & QR Code -->
+            <div class="right-column">
+                {% include "gcomponents/price_panel.html" %}
+                {% include "gcomponents/qr_panel.html" %}
+            </div>
+
+        </main>
+
+        <!-- Trust Badges Bar (From Image 1) -->
+        {% include "gcomponents/features_panel.html" %}
+
+        <!-- Footer (From Image 1) -->
+        {% include "gcomponents/footer.html" %}
+
+    </div>
+
+</body>
+</html>

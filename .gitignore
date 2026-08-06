@@ -1,0 +1,48 @@
+# =====================================
+# Python
+# =====================================
+
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual Environment
+
+.venv/
+venv/
+env/
+
+# VS Code
+
+.vscode/
+
+# Windows
+
+Thumbs.db
+Desktop.ini
+
+# Python cache
+
+.pytest_cache/
+.mypy_cache/
+
+# Logs
+
+*.log
+
+# Temporary files
+
+*.tmp
+
+# =====================================
+# Generated files
+# =====================================
+
+output/
+
+# =====================================
+# OS Files
+# =====================================
+
+.DS_Store

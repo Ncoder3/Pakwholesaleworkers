@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>
+
+        {{ brand_name }} Catalog
+
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="index.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- ================================= -->
+    <!-- HEADER -->
+    <!-- ================================= -->
+
+    <header class="header">
+
+        <div class="logo-area">
+
+            <img
+                src="../assets/logo.png"
+                class="logo"
+                alt="Logo">
+
+            <div>
+
+                <h1>
+
+                    {{ brand_name }}
+
+                </h1>
+
+                <p>
+
+                    {{ tagline }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <a
+            href="https://wa.me/{{ whatsapp }}"
+            class="whatsapp-btn">
+
+            WhatsApp
+
+        </a>
+
+    </header>
+
+
+
+    <!-- ================================= -->
+    <!-- HERO -->
+    <!-- ================================= -->
+
+    <section class="hero">
+
+        <h2>
+
+            Wholesale Product Catalog
+
+        </h2>
+
+        <p>
+
+            Browse our complete range of wholesale products.
+
+        </p>
+
+    </section>
+
+
+
+    <!-- ================================= -->
+    <!-- STATISTICS -->
+    <!-- ================================= -->
+
+    <section class="stats">
+
+        <div class="stat-card">
+
+            <h3>
+
+                {{ total_products }}
+
+            </h3>
+
+            <span>
+
+                Products
+
+            </span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h3>
+
+                {{ total_categories }}
+
+            </h3>
+
+            <span>
+
+                Categories
+
+            </span>
+
+        </div>
+
+        <div class="stat-card">
+
+            <h3>
+
+                {{ generated_date }}
+
+            </h3>
+
+            <span>
+
+                Generated
+
+            </span>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================================= -->
+    <!-- SEARCH -->
+    <!-- ================================= -->
+
+    <section class="search-section">
+
+        <input
+
+            id="searchBox"
+
+            type="text"
+
+            placeholder="Search products...">
+
+    </section>
+
+
+
+    <!-- ================================= -->
+    <!-- CATEGORY FILTER -->
+    <!-- ================================= -->
+
+    <section class="filters">
+
+        <button
+            class="filter active"
+            data-category="All">
+
+            All
+
+        </button>
+
+        {% for category in categories %}
+
+        <button
+
+            class="filter"
+
+            data-category="{{ category }}">
+
+            {{ category }}
+
+        </button>
+
+        {% endfor %}
+
+    </section>
+
+
+
+    <!-- ================================= -->
+    <!-- PRODUCT GRID -->
+    <!-- ================================= -->
+
+    <section
+        class="product-grid"
+
+        id="productGrid">
+
+        {% for product in products %}
+
+        <a
+
+            href="{{ product.file_name }}"
+
+            class="product-card"
+
+            data-category="{{ product.category }}"
+
+            data-name="{{ product.product_name|lower }}">
+
+            <img
+
+                src="{{ product.image }}"
+
+                alt="{{ product.product_name }}">
+
+            <span class="category">
+
+                {{ product.icon }}
+
+                {{ product.category }}
+
+            </span>
+
+            <h3>
+
+                {{ product.product_name }}
+
+            </h3>
+
+            <p class="price">
+
+                Rs {{ product.price_per_piece }}
+
+            </p>
+
+            <span class="view-btn">
+
+                View Product →
+
+            </span>
+
+        </a>
+
+        {% endfor %}
+
+    </section>
+
+
+
+    <!-- ================================= -->
+    <!-- FOOTER -->
+    <!-- ================================= -->
+
+    <footer class="footer">
+
+        <div class="company">
+
+            {{ brand_name }}
+
+        </div>
+
+        <p>
+
+            {{ tagline }}
+
+        </p>
+
+        <p>
+
+            📱 {{ whatsapp }}
+
+        </p>
+
+        <p>
+
+            🌐 {{ website }}
+
+        </p>
+
+        <p>
+
+            ✉ {{ email }}
+
+        </p>
+
+        <p>
+
+            © {{ generated_date }}
+
+        </p>
+
+    </footer>
+
+</div>
+
+<script src="index.js"></script>
+
+</body>
+
+</html>
