@@ -400,3 +400,71 @@ body {
     color: var(--accent-gold);
     font-weight: 600;
 }
+
+/* ==========================================================
+   MOBILE RESPONSIVE
+========================================================== */
+
+@media (max-width: 768px){
+
+    body{
+        padding:10px;
+    }
+
+    .card{
+        width:100%;
+        max-width:100%;
+        border-radius:20px;
+    }
+
+    .header{
+        flex-direction:column;
+        gap:15px;
+        text-align:center;
+        padding:20px;
+    }
+
+    .brand{
+        flex-direction:column;
+        gap:10px;
+    }
+
+    .brand h1{
+        font-size:26px;
+    }
+
+    .brand p{
+        font-size:13px;
+    }
+
+    .product-code{
+        font-size:15px;
+    }
+
+    .main-grid{
+        grid-template-columns:1fr;
+    }
+
+    .info-panel h2{
+        font-size:28px;
+        text-align:center;
+    }
+
+    .price{
+        font-size:42px;
+    }
+
+    .features-panel{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .qr-image{
+        width:110px;
+        height:110px;
+    }
+
+    .footer{
+        margin:16px;
+    }
+
+}
