@@ -102,6 +102,59 @@ df = pd.read_excel(EXCEL_FILE, header=0)
 
 print(f"Total Products : {len(df)}")
 
+
+# ==========================================================
+# GENERATE MISSING PRODUCT CODES
+# ==========================================================
+
+print("\nGenerating Product Codes...")
+
+highest_code = 0
+
+for code in df["Product Code"]:
+
+    if pd.notna(code):
+
+        code = str(code).strip()
+
+        if code.startswith("ABT-"):
+
+            try:
+
+                number = int(
+                    code.replace("ABT-", "")
+                )
+
+                highest_code = max(
+                    highest_code,
+                    number
+                )
+
+            except ValueError:
+
+                pass
+
+
+next_code = highest_code + 1
+
+for index, code in df["Product Code"].items():
+
+    if pd.isna(code) or str(code).strip() == "":
+
+        new_code = f"{PRODUCT_PREFIX}-{next_code:03d}"
+
+        df.at[index, "Product Code"] = new_code
+
+        print(
+            f"✓ Generated Product Code : {new_code} "
+            f"→ {df.at[index, 'Product Name']}"
+        )
+
+        next_code += 1
+
+print("✓ Product Codes generated.")
+
+# validation
 errors = validate_catalog(
     df,
     IMAGE_FOLDER,
@@ -159,27 +212,27 @@ missing_images = 0
 # Find the highest existing Product Code
 # =====================================
 
-highest_code = 0
+# highest_code = 0
 
-for code in df["Product Code"]:
+# for code in df["Product Code"]:
 
-    if pd.notna(code):
+#     if pd.notna(code):
 
-        code = str(code).strip()
+#         code = str(code).strip()
 
-        if code.startswith("ABT-"):
+#         if code.startswith("ABT-"):
 
-            try:
+#             try:
 
-                number = int(code.replace("ABT-", ""))
+#                 number = int(code.replace("ABT-", ""))
 
-                highest_code = max(highest_code, number)
+#                 highest_code = max(highest_code, number)
 
-            except:
+#             except:
 
-                pass
+#                 pass
 
-next_code = highest_code + 1
+# next_code = highest_code + 1
 
 # ==========================================
 # PRODUCTS LIST FOR INDEX.HTML
@@ -419,3 +472,18 @@ df.to_excel(
 )
 
 print("✓ Excel updated successfully.")
+
+# Suggestions for improvement:
+# remove this from inside the product loop:
+
+# if product["product_code"] == "":
+
+#     product["product_code"] = f"{PRODUCT_PREFIX}-{next_code:03d}"
+
+#     df.at[index, "Product Code"] = product["product_code"]
+
+#     next_code += 1
+
+# Because now every row already has a Product Code before you call:
+
+# product = create_product(row)

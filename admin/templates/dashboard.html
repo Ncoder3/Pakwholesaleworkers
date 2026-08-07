@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard Overview{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid">
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <h4>Total Products</h4>
+                <h2>{{ stats.total_products }}</h2>
+            </div>
+            <div class="stat-icon">
+                <i class="fa-solid fa-box"></i>
+            </div>
+        </div>
+        <p class="stat-footer">Catalogue Products in Excel</p>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <h4>Categories</h4>
+                <h2>{{ stats.total_categories }}</h2>
+            </div>
+            <div class="stat-icon">
+                <i class="fa-solid fa-layer-group"></i>
+            </div>
+        </div>
+        <p class="stat-footer">Active Product Categories</p>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <h4>Total Stock</h4>
+                <h2>{{ stats.total_stock }}</h2>
+            </div>
+            <div class="stat-icon">
+                <i class="fa-solid fa-warehouse"></i>
+            </div>
+        </div>
+        <p class="stat-footer">Available Packs in Inventory</p>
+    </div>
+</div>
+
+<div class="welcome-panel" style="background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; padding: 28px; border-radius: 16px; margin-bottom: 24px;">
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Welcome Back, Muhammad 👋</h2>
+    <p style="opacity: 0.9; font-size: 14px;">Manage your stock inventory, track catalogue metrics, and control product listings in real-time.</p>
+</div>
+
+<div class="table-container" style="padding: 24px;">
+    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">System Activity Log</h3>
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-muted);">
+        <li style="display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i> Excel database connected seamlessly.
+        </li>
+        <li style="display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i> Image directory synchronized from root storage.
+        </li>
+        <li style="display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i> Inventory CRUD operations active and online.
+        </li>
+    </ul>
+</div>
+{% endblock %}

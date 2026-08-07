@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+
+{% block title %}
+Products
+{% endblock %}
+
+{% block page_title %}
+Products
+{% endblock %}
+
+{% block content %}
+
+<div class="toolbar">
+
+    <div class="left-tools">
+        <h2>Products</h2>
+
+        <input
+            type="text"
+            id="searchBox"
+            placeholder="🔍 Search products...">
+    </div>
+
+    <div class="right-tools">
+        <button class="add-btn">
+            + Add Product
+        </button>
+    </div>
+
+</div>
+
+
+<div class="table-container">
+
+<table id="productTable">
+
+    <thead>
+
+        <tr>
+
+            <th>Image</th>
+            <th>Code</th>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Wholesale</th>
+            <th>Stock</th>
+            <th>Actions</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    {% for product in products %}
+
+        <tr>
+
+            <td>
+
+                <img
+                    class="product-image"
+                    src="/images/{{ product['Image File'] }}"
+                    onerror="this.src='https://placehold.co/60x60?text=No+Image'">
+
+            </td>
+
+            <td>
+                {{ product["Product Code"] }}
+            </td>
+
+            <td>
+                {{ product["Product Name"] }}
+            </td>
+
+            <td>
+                {{ product["Category"] }}
+            </td>
+
+            <td>
+                Rs {{ product["Wholesale Price per Pack (Rs)"] }}
+            </td>
+
+            <td>
+                {{ product["Stock Available (Packs)"] }}
+            </td>
+
+            <td>
+
+                <button
+                    class="view-btn"
+                    onclick="viewProduct(this)"
+
+                    data-code="{{ product['Product Code'] }}"
+                    data-name="{{ product['Product Name'] }}"
+                    data-category="{{ product['Category'] }}"
+                    data-pack="{{ product['Pack / Unit Type'] }}"
+                    data-pieces="{{ product['Pieces per Pack'] }}"
+                    data-wholesale="{{ product['Wholesale Price per Pack (Rs)'] }}"
+                    data-retail="{{ product['Suggested Retail Price per Piece (Rs)'] }}"
+                    data-stock="{{ product['Stock Available (Packs)'] }}"
+                    data-notes="{{ product['Notes'] }}"
+                    data-image="{{ product['Image File'] }}">
+
+                    👁
+
+                </button>
+
+                <button
+                    class="edit-btn"
+                    onclick="editProduct(this)"
+
+                    data-code="{{ product['Product Code'] }}"
+                    data-name="{{ product['Product Name'] }}"
+                    data-category="{{ product['Category'] }}"
+                    data-pack="{{ product['Pack / Unit Type'] }}"
+                    data-pieces="{{ product['Pieces per Pack'] }}"
+                    data-wholesale="{{ product['Wholesale Price per Pack (Rs)'] }}"
+                    data-retail="{{ product['Suggested Retail Price per Piece (Rs)'] }}"
+                    data-stock="{{ product['Stock Available (Packs)'] }}"
+                    data-notes="{{ product['Notes'] }}"
+                    data-image="{{ product['Image File'] }}">
+
+                    ✏
+
+                </button>
+
+                <button class="delete-btn">
+                    🗑
+                </button>
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+
+
+<!-- ====================================================== -->
+<!-- PRODUCT DETAILS MODAL -->
+<!-- ====================================================== -->
+
+<div id="productModal" class="modal">
+
+    <div class="modal-content">
+
+        <span class="close" onclick="closeModal()">
+            &times;
+        </span>
+
+        <div class="modal-header">
+
+            <h2>Product Details</h2>
+
+        </div>
+
+        <div class="modal-body">
+
+            <div class="modal-left">
+
+                <img
+                    id="modalImage"
+                    src=""
+                    alt="Product Image">
+
+            </div>
+
+            <div class="modal-right">
+
+                <h2 id="modalName"></h2>
+
+                <p>
+                    <strong>Product Code:</strong>
+                    <span id="modalCode"></span>
+                </p>
+
+                <p>
+                    <strong>Category:</strong>
+                    <span id="modalCategory"></span>
+                </p>
+
+                <p>
+                    <strong>Pack Type:</strong>
+                    <span id="modalPack"></span>
+                </p>
+
+                <p>
+                    <strong>Pieces per Pack:</strong>
+                    <span id="modalPieces"></span>
+                </p>
+
+                <p>
+                    <strong>Wholesale:</strong>
+                    Rs <span id="modalWholesale"></span>
+                </p>
+
+                <p>
+                    <strong>Retail:</strong>
+                    Rs <span id="modalRetail"></span>
+                </p>
+
+                <p>
+                    <strong>Stock:</strong>
+                    <span id="modalStock"></span>
+                </p>
+
+                <p>
+                    <strong>Notes:</strong>
+                </p>
+
+                <div id="modalNotes"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- ========================= -->
+<!-- EDIT PRODUCT MODAL -->
+<!-- ========================= -->
+
+<div id="editModal" class="modal">
+
+    <div class="modal-content edit-modal">
+
+        <span class="close" onclick="closeEditModal()">
+            &times;
+        </span>
+
+        <h2>Edit Product</h2>
+
+        <form id="editForm">
+
+            <input type="hidden" id="editCode">
+
+            <label>Product Name</label>
+            <input type="text" id="editName">
+
+            <label>Category</label>
+            <input type="text" id="editCategory">
+
+            <label>Pack Type</label>
+            <input type="text" id="editPack">
+
+            <label>Pieces Per Pack</label>
+            <input type="number" id="editPieces">
+
+            <label>Wholesale Price</label>
+            <input type="number" id="editWholesale">
+
+            <label>Retail Price</label>
+            <input type="number" id="editRetail">
+
+            <label>Stock</label>
+            <input type="number" id="editStock">
+
+            <label>Notes</label>
+
+            <textarea
+                id="editNotes"
+                rows="4">
+            </textarea>
+
+            <div class="modal-buttons">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeEditModal()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="save-btn">
+
+                    Save Changes
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+{% endblock %}

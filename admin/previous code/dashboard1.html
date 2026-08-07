@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block page_title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-grid">
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div>
+
+                <h4>Total Products</h4>
+
+                <h2>{{ stats.total_products }}</h2>
+
+            </div>
+
+            <div class="stat-icon">
+
+                <i class="fa-solid fa-box"></i>
+
+            </div>
+
+        </div>
+
+        <p class="stat-footer">
+
+            Catalogue Products
+
+        </p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div>
+
+                <h4>Categories</h4>
+
+                <h2>{{ stats.total_categories }}</h2>
+
+            </div>
+
+            <div class="stat-icon">
+
+                <i class="fa-solid fa-layer-group"></i>
+
+            </div>
+
+        </div>
+
+        <p class="stat-footer">
+
+            Product Categories
+
+        </p>
+
+    </div>
+
+    <div class="stat-card">
+
+        <div class="stat-top">
+
+            <div>
+
+                <h4>Total Stock</h4>
+
+                <h2>{{ stats.total_stock }}</h2>
+
+            </div>
+
+            <div class="stat-icon">
+
+                <i class="fa-solid fa-warehouse"></i>
+
+            </div>
+
+        </div>
+
+        <p class="stat-footer">
+
+            Available Packs
+
+        </p>
+
+    </div>
+
+</div>
+
+<div class="welcome-panel">
+
+    <h2>
+
+        Welcome Back, Muhammad 👋
+
+    </h2>
+
+    <p>
+
+        Manage your products, inventory, QR codes, and generate premium catalogues from one place.
+
+    </p>
+
+</div>
+
+<div class="activity-card">
+
+    <h3>Recent Activity</h3>
+
+    <ul>
+
+        <li>✅ Budget Razor updated</li>
+
+        <li>📦 Product catalogue generated</li>
+
+        <li>🖼 Images synchronized</li>
+
+        <li>🔗 QR Codes generated</li>
+
+    </ul>
+
+</div>
+
+{% endblock %}
