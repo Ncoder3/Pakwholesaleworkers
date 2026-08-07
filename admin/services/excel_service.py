@@ -122,19 +122,23 @@ def add_product(product_data, image_file=None):
 def update_product(product_data, image_file=None):
     df = load_products()
     
-    # Match product by code (converting both to string)
-    mask = df["Product Code"].astype(str) == str(product_data.get("Product Code"))
+    # Target code lookup
+    search_code = str(product_data.get("original_code") or product_data.get("Product Code")).strip()
+    
+    # Match product row in DataFrame
+    mask = df["Product Code"].astype(str).str.strip() == search_code
     if not mask.any():
-        return False, "Product not found."
+        return False, f"Product with code '{search_code}' not found."
 
     index = df[mask].index[0]
 
-    # Save new image if uploaded
-    if image_file:
+    # Handle image upload if a new file was chosen
+    if image_file and image_file.filename:
         saved_filename = save_product_image(image_file, product_data.get("Product Name", "product"))
         if saved_filename:
             df.at[index, "Image File"] = saved_filename
 
+    # Update columns
     df.at[index, "Product Name"] = product_data.get("Product Name")
     df.at[index, "Category"] = product_data.get("Category")
     df.at[index, "Pack / Unit Type"] = product_data.get("Pack / Unit Type")

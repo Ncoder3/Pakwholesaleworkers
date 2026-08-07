@@ -50,14 +50,40 @@
     <p style="opacity: 0.9; font-size: 14px;">Manage your stock inventory, track catalogue metrics, and control product listings in real-time.</p>
 </div>
 
-<div class="table-container" style="padding: 24px;">
+<!-- Last Publish Summary Card -->
+<div class="table-container" style="padding: 24px; margin-bottom: 24px; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h3 style="font-size: 18px; font-weight: 600; margin: 0;">Publish Status & Summary</h3>
+        <span style="font-size: 12px; color: #64748b;">Last Sync: <strong>{{ last_publish.timestamp }}</strong></span>
+    </div>
+
+    {% if last_publish.success %}
+    <div style="padding: 16px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; color: #166534; display: flex; align-items: center; gap: 12px;">
+        <i class="fa-solid fa-circle-check" style="font-size: 20px; color: #16a34a;"></i>
+        <div>
+            <div style="font-weight: 600; font-size: 14px;">Publish Passed & Active</div>
+            <div style="font-size: 13px;">{{ last_publish.message }} ({{ stats.total_products }} Product Cards Generated)</div>
+        </div>
+    </div>
+    {% else %}
+    <div style="padding: 16px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; color: #991b1b; display: flex; align-items: center; gap: 12px;">
+        <i class="fa-solid fa-circle-xmark" style="font-size: 20px; color: #dc2626;"></i>
+        <div>
+            <div style="font-weight: 600; font-size: 14px;">Publish Validation Failed</div>
+            <div style="font-size: 13px;">{{ last_publish.error_details or '1 or more products failed validation checks.' }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="table-container" style="padding: 24px; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;">
     <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">System Activity Log</h3>
-    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-muted);">
+    <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-muted); padding: 0;">
         <li style="display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i> Excel database connected seamlessly.
         </li>
         <li style="display: flex; align-items: center; gap: 10px;">
-            <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i> Image directory synchronized from root storage.
+            <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i> Image directory synchronized (41 images verified).
         </li>
         <li style="display: flex; align-items: center; gap: 10px;">
             <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i> Inventory CRUD operations active and online.

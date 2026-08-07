@@ -15,14 +15,133 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 </head>
 <body>
-    <div class="wrapper">
+    <div class="wrapper" style="display: flex; min-height: 100vh;">
+        <!-- Sidebar Navigation -->
         {% include "partials/sidebar.html" %}
         
-        <main class="main">
-            {% include "partials/topbar.html" %}
+        <!-- Main Content Panel -->
+        <main class="main" style="flex: 1; display: flex; flex-direction: column; background: #f8fafc;">
             
-            {% block content %}
-            {% endblock %}
+            <!-- TOP HEADER BAR -->
+            <header class="main-header" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; background: #ffffff; border-bottom: 1px solid #e2e8f0; position: relative;">
+                
+                <!-- Title Section -->
+                <div>
+                    <h1 style="font-size: 20px; font-weight: 700; color: #0f172a; margin: 0;">{% block page_title %}Dashboard{% endblock %}</h1>
+                </div>
+
+                <!-- Actions & Profile Group -->
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    
+                    <!-- Publish Live Button -->
+                    <button type="button" onclick="publishLiveSite()" class="btn-publish-header" style="
+                        display: inline-flex; 
+                        align-items: center; 
+                        gap: 8px; 
+                        background: linear-gradient(135deg, #059669 0%, #10b981 100%); 
+                        color: #ffffff; 
+                        border: none; 
+                        padding: 9px 18px; 
+                        border-radius: 8px; 
+                        font-weight: 600; 
+                        font-size: 13px; 
+                        cursor: pointer; 
+                        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+                        transition: all 0.2s ease;">
+                        <i class="fa-solid fa-cloud-arrow-up" style="font-size: 14px;"></i>
+                        Publish to Live Site
+                    </button>
+
+                    <!-- Notification Bell & Dropdown Wrapper -->
+                    <div style="position: relative;">
+                        <button id="notificationBtn" onclick="toggleNotifications(event)" style="
+                            background: #f8fafc; 
+                            border: 1px solid #e2e8f0; 
+                            border-radius: 50%; 
+                            width: 40px; 
+                            height: 40px; 
+                            display: flex; 
+                            align-items: center; 
+                            justify-content: center; 
+                            cursor: pointer;
+                            position: relative;
+                            transition: background 0.2s ease;">
+                            <i class="fa-regular fa-bell" style="color: #64748b; font-size: 16px;"></i>
+                            <!-- Red Badge Indicator -->
+                            <span id="notifBadge" style="
+                                position: absolute; 
+                                top: 2px; 
+                                right: 2px; 
+                                background: #ef4444; 
+                                color: white; 
+                                font-size: 10px; 
+                                font-weight: 700; 
+                                width: 16px; 
+                                height: 16px; 
+                                border-radius: 50%; 
+                                display: flex; 
+                                align-items: center; 
+                                justify-content: center;
+                                border: 2px solid #ffffff;">2</span>
+                        </button>
+
+                        <!-- Notifications Dropdown Menu -->
+                        <div id="notificationDropdown" style="
+                            display: none; 
+                            position: absolute; 
+                            right: 0; 
+                            top: 50px; 
+                            width: 320px; 
+                            background: #ffffff; 
+                            border-radius: 12px; 
+                            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); 
+                            border: 1px solid #e2e8f0; 
+                            z-index: 1000;
+                            overflow: hidden;">
+                            
+                            <div style="padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 600; font-size: 13px; color: #1e293b;">Notifications</span>
+                                <button onclick="clearNotifications()" style="background: none; border: none; color: #2563eb; font-size: 11px; font-weight: 600; cursor: pointer;">Mark all as read</button>
+                            </div>
+
+                            <div style="max-height: 280px; overflow-y: auto;">
+                                <div class="notif-item" style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: flex-start;">
+                                    <i class="fa-solid fa-circle-check" style="color: #10b981; margin-top: 3px;"></i>
+                                    <div>
+                                        <div style="font-size: 12px; font-weight: 600; color: #0f172a;">Excel Connected</div>
+                                        <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Data loaded successfully from products.xlsx</div>
+                                    </div>
+                                </div>
+
+                                <div class="notif-item" style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: flex-start; background: #fefce8;">
+                                    <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b; margin-top: 3px;"></i>
+                                    <div>
+                                        <div style="font-size: 12px; font-weight: 600; color: #0f172a;">Catalog Ready</div>
+                                        <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Click 'Publish to Live Site' to push changes.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Profile Badge -->
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 4px 12px 4px 6px; border-radius: 20px; background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <div style="width: 32px; height: 32px; background: #a7f3d0; color: #065f46; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;">MN</div>
+                        <div style="text-align: left;">
+                            <div style="font-size: 13px; font-weight: 600; color: #0f172a; line-height: 1.2;">Muhammad Nouman</div>
+                            <div style="font-size: 11px; color: #64748b;">Administrator</div>
+                        </div>
+                    </div>
+
+                </div>
+            </header>
+
+            <!-- Page Content Body -->
+            <div class="content-body" style="padding: 32px; flex: 1;">
+                {% block content %}
+                {% endblock %}
+            </div>
+
         </main>
     </div>
 
