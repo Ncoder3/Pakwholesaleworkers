@@ -1,9 +1,151 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Customers</title>
-</head>
-<body>
-    <h1>Customers Page</h1>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block title %}Customers{% endblock %}
+{% block page_title %}Customer Management{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+        <h2 style="font-size: 20px; font-weight: 700; margin: 0;">Wholesale Customers</h2>
+        <p style="font-size: 13px; color: #64748b; margin-top: 4px;">Manage buyer accounts, price tiers, and customer contact info.</p>
+    </div>
+    <button onclick="openCustomerModal()" style="background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+        <i class="fa-solid fa-user-plus"></i> Add Customer
+    </button>
+</div>
+
+<!-- Customer Table Container -->
+<div class="table-container" style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px;">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+        <thead>
+            <tr style="border-bottom: 2px solid #f1f5f9; color: #64748b; font-size: 12px; text-transform: uppercase;">
+                <th style="padding: 12px;">CUSTOMER / STORE</th>
+                <th style="padding: 12px;">PHONE</th>
+                <th style="padding: 12px;">TIER</th>
+                <th style="padding: 12px;">ORDERS</th>
+                <th style="padding: 12px;">LIFETIME SPEND</th>
+                <th style="padding: 12px;">LAST ORDER</th>
+                <th style="padding: 12px; text-align: right;">ACTION</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cust in customers %}
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 12px;">
+                    <div style="font-weight: 700; color: #1e293b;">{{ cust.name }}</div>
+                    <div style="font-size: 12px; color: #64748b;">{{ cust.store_name or 'Individual Buyer' }}</div>
+                </td>
+                <td style="padding: 12px; color: #475569;">{{ cust.phone }}</td>
+                <td style="padding: 12px;">
+                    {% if cust.tier == 'VIP' %}
+                        <span style="background: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;">VIP</span>
+                    {% elif cust.tier == 'Distributor' %}
+                        <span style="background: #e0f2fe; color: #0284c7; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700;">Distributor</span>
+                    {% else %}
+                        <span style="background: #f1f5f9; color: #475569; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;">Standard</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 12px; font-weight: 600;">{{ cust.total_orders }}</td>
+                <td style="padding: 12px; font-weight: 700; color: #16a34a;">Rs {{ "{:,.2f}".format(cust.lifetime_spend) }}</td>
+                <td style="padding: 12px; font-size: 13px; color: #64748b;">{{ cust.last_order_date }}</td>
+                <td style="padding: 12px; text-align: right;">
+                    {% set clean_phone = cust.phone | replace(' ', '') | replace('-', '') | replace('+', '') %}
+                    <a href="https://wa.me/{{ clean_phone }}" target="_blank" style="background: #25D366; color: white; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fa-brands fa-whatsapp"></i> Chat
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 32px; color: #94a3b8;">No customer profiles created yet. Click "Add Customer" to start.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Customer Modal -->
+<div id="customerModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000;">
+    <div style="background: white; width: 450px; padding: 24px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+        <h3 style="margin-top: 0; font-size: 18px;">Add New Wholesale Customer</h3>
+        
+        <div style="margin-bottom: 12px;">
+            <label style="font-size: 12px; font-weight: 600; color: #475569;">Customer Full Name *</label>
+            <input type="text" id="custName" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px; box-sizing: border-radius;">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <label style="font-size: 12px; font-weight: 600; color: #475569;">Store / Business Name</label>
+            <input type="text" id="custStore" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px; box-sizing: border-radius;">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <label style="font-size: 12px; font-weight: 600; color: #475569;">Phone Number (WhatsApp) *</label>
+            <input type="text" id="custPhone" placeholder="03001234567" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px; box-sizing: border-radius;">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <label style="font-size: 12px; font-weight: 600; color: #475569;">Customer Tier</label>
+            <select id="custTier" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px;">
+                <option value="Standard Wholesale">Standard Wholesale</option>
+                <option value="VIP">VIP</option>
+                <option value="Distributor">Distributor</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label style="font-size: 12px; font-weight: 600; color: #475569;">Shipping / City Address</label>
+            <textarea id="custAddress" style="width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; margin-top: 4px; box-sizing: border-radius;" rows="2"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <button onclick="closeCustomerModal()" style="padding: 8px 16px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 6px; cursor: pointer;">Cancel</button>
+            <button onclick="saveCustomer()" style="padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Save Customer</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function openCustomerModal() {
+    document.getElementById('customerModal').style.display = 'flex';
+}
+
+function closeCustomerModal() {
+    document.getElementById('customerModal').style.display = 'none';
+}
+
+async function saveCustomer() {
+    const payload = {
+        name: document.getElementById('custName').value,
+        store_name: document.getElementById('custStore').value,
+        phone: document.getElementById('custPhone').value,
+        tier: document.getElementById('custTier').value,
+        address: document.getElementById('custAddress').value
+    };
+
+    if (!payload.name || !payload.phone) {
+        alert("Please enter customer name and phone number.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/customers/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            location.reload();
+        } else {
+            alert(data.message || "Error creating customer.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Server error. Could not save customer.");
+    }
+}
+</script>
+{% endblock %}

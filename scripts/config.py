@@ -6,7 +6,7 @@ BRAND_NAME = "Al Baraka Traders"
 
 TAGLINE = "Your Trusted Wholesale Partner"
 
-CITY = "Shah Alam Market, Lahore"
+CITY = "Shah Alam Market, Lahore code"
 
 COUNTRY = "Pakistan"
 
@@ -19,7 +19,7 @@ WHATSAPP = "923231551535"
 
 EMAIL = "info@albarakatraders.pk"
 
-WEBSITE = "www.albarakatraders.pk"
+WEBSITE = "www.albarakatradersabbottabad.pk"
 
 
 # ==========================================================
@@ -62,4 +62,4 @@ PRIMARY_COLOR = "#0b7d5a"
 
 SECONDARY_COLOR = "#ffffff"
 
-FOOTER = "Wholesale Supplier | Quality Products | Fast Delivery"
+FOOTER = "Wholesale Supplier | Quality Products | Fast Delivery| Quality Products • Trusted Service • Lasting Relationships"

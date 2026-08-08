@@ -27,6 +27,11 @@ PNG_OUTPUT_FOLDER = PROJECT_ROOT / "output" / "png"
 LOG_FILE = PROJECT_ROOT / "admin" / "publish_log.json"
 
 from publish import run_publish_workflow
+from services.orders_service import load_orders, create_order, update_order_status
+from services.excel_service import get_products
+from services.customers_service import load_customers, create_customer
+from services.analytics_service import get_analytics_metrics
+from services.settings_service import read_config, update_config
 
 app = Flask(
     __name__,
@@ -67,6 +72,7 @@ def process_stock_status(products):
         "low_stock": low_stock_count,
         "out_of_stock": out_of_stock_count
     }
+
 
 # ==========================================
 # DASHBOARD & INVENTORY ROUTES
@@ -261,26 +267,102 @@ def export_selected_pngs():
 def product_image(filename):
     return send_from_directory(IMAGES_FOLDER, filename)
 
-@app.route("/orders")
+from services.orders_service import load_orders, create_order, update_order_status
+from services.excel_service import get_products
+
+@app.route('/orders')
 def orders():
-    return render_template("orders.html")
+    all_orders = load_orders()
+    products = get_products()  # Needed for create order dropdown/selection
+    return render_template('orders.html', orders=all_orders, products=products)
 
-@app.route("/customers")
+@app.route('/api/orders/create', methods=['POST'])
+def api_create_order():
+    try:
+        data = request.get_json()
+        customer_data = data.get("customer", {})
+        items = data.get("items", [])
+
+        if not customer_data.get("name") or not items:
+            return jsonify({"success": False, "message": "Customer name and at least one item are required."}), 400
+
+        success, message, order_id = create_order(customer_data, items)
+        return jsonify({"success": success, "message": message, "order_id": order_id})
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
+
+@app.route('/api/orders/update-status', methods=['POST'])
+def api_update_order_status():
+    try:
+        data = request.get_json()
+        order_id = data.get("order_id")
+        status = data.get("status")
+
+        if not order_id or not status:
+            return jsonify({"success": False, "message": "Missing order ID or status."}), 400
+
+        success, message = update_order_status(order_id, status)
+        return jsonify({"success": success, "message": message})
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
+
+
+@app.route('/customers')
 def customers():
-    return render_template("customers.html")
+    all_customers = load_customers()
+    return render_template('customers.html', customers=all_customers)
 
-@app.route("/analytics")
+@app.route('/api/customers/create', methods=['POST'])
+def api_create_customer():
+    try:
+        data = request.get_json()
+        if not data.get("name") or not data.get("phone"):
+            return jsonify({"success": False, "message": "Name and Phone number are required."}), 400
+
+        success, message = create_customer(data)
+        return jsonify({"success": success, "message": message})
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
+
+
+@app.route('/analytics')
 def analytics():
-    return render_template("analytics.html")
+    metrics = get_analytics_metrics()
+    return render_template('analytics.html', metrics=metrics)
 
-@app.route("/settings")
+
+@app.route('/settings')
 def settings():
-    return render_template("settings.html")
+    current_config = read_config()
+    return render_template('settings.html', config=current_config)
+
+@app.route('/api/settings/update', methods=['POST'])
+def api_update_settings():
+    try:
+        data = request.get_json()
+        success, message = update_config(data)
+        return jsonify({"success": success, "message": message})
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
 @app.route("/publish_site", methods=["POST"])
 def publish_site_route():
     success, message = run_publish_workflow()
     return jsonify({"success": success, "message": message})
+
+
+@app.route('/orders/<order_id>/invoice')
+def order_invoice(order_id):
+    orders = load_orders()
+    order = next((o for o in orders if o.get("order_id") == order_id), None)
+    
+    if not order:
+        os.abort(404, description="Order not found")
+        
+    return render_template('invoice.html', order=order)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)

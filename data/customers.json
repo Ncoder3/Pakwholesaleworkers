@@ -1,0 +1,12 @@
+[
+    {
+        "id": "CUST-1001",
+        "name": "Solution Co.",
+        "store_name": "General Store",
+        "phone": "0300000000",
+        "address": "abbottabad",
+        "tier": "VIP",
+        "created_at": "2026-08-09",
+        "notes": ""
+    }
+]
