@@ -1,9 +1,8 @@
 import os
 from pathlib import Path
 import pandas as pd
-from werkzeug.utils import secure_filename
+import re
 
-# PROJECT_ROOT points to AlBarakaCatalogGenerator (parent of admin)
 SERVICE_DIR = Path(__file__).resolve().parent
 ADMIN_DIR = SERVICE_DIR.parent
 PROJECT_ROOT = ADMIN_DIR.parent
@@ -11,104 +10,134 @@ PROJECT_ROOT = ADMIN_DIR.parent
 EXCEL_FILE = PROJECT_ROOT / "data" / "products.xlsx"
 IMAGE_FOLDER = PROJECT_ROOT / "images"
 
+# Exact column sequence from your Excel file
+ALL_COLUMNS = [
+    "Product Code",
+    "Category",
+    "Product Name",
+    "Pack / Unit Type",
+    "Pieces per Pack",
+    "Wholesale Price per Pack (Rs)",
+    "Price per Piece (Rs)",
+    "Suggested Retail Price per Piece (Rs)",
+    "Stock Available (Packs)",
+    "Notes",
+    "Image File",
+]
+
+
+def calculate_price_per_piece(wholesale_price, pieces_per_pack):
+    """Calculates Price per Piece rounded strictly to 2 decimal places."""
+    try:
+        wholesale = float(wholesale_price or 0)
+        pieces = float(pieces_per_pack or 0)
+
+        if pieces <= 0:
+            return 0.0
+
+        return round(wholesale / pieces, 2)
+    except (ValueError, TypeError, ZeroDivisionError):
+        return 0.0
+
+
 def ensure_data_file():
-    """Ensure the Excel file directory exists and file contains basic columns if new."""
+    """Ensure data directory and products.xlsx exist."""
     EXCEL_FILE.parent.mkdir(parents=True, exist_ok=True)
     if not EXCEL_FILE.exists():
-        columns = [
-            "Product Code", "Product Name", "Category", "Pack / Unit Type",
-            "Pieces per Pack", "Wholesale Price per Pack (Rs)",
-            "Suggested Retail Price per Piece (Rs)", "Stock Available (Packs)", 
-            "Notes", "Image File"
-        ]
-        df = pd.DataFrame(columns=columns)
+        df = pd.DataFrame(columns=ALL_COLUMNS)
         df.to_excel(EXCEL_FILE, index=False, engine="openpyxl")
+
 
 def load_products():
     ensure_data_file()
-    
+
     try:
-        # Read Excel using explicit openpyxl engine
         df = pd.read_excel(EXCEL_FILE, engine="openpyxl")
     except Exception as e:
         print(f"Error loading Excel file: {e}")
-        # Return fallback empty dataframe on read failure
-        return pd.DataFrame(columns=[
-            "Product Code", "Product Name", "Category", "Pack / Unit Type",
-            "Pieces per Pack", "Wholesale Price per Pack (Rs)",
-            "Suggested Retail Price per Piece (Rs)", "Stock Available (Packs)", 
-            "Notes", "Image File"
-        ])
+        return pd.DataFrame(columns=ALL_COLUMNS)
 
-    # Sanitize NaN values for clean rendering
     df = df.fillna("")
-    
-    # Ensure numeric columns are formatted properly
+
     numeric_cols = [
-        "Pieces per Pack", 
-        "Wholesale Price per Pack (Rs)", 
-        "Suggested Retail Price per Piece (Rs)", 
-        "Stock Available (Packs)"
+        "Pieces per Pack",
+        "Wholesale Price per Pack (Rs)",
+        "Price per Piece (Rs)",
+        "Suggested Retail Price per Piece (Rs)",
+        "Stock Available (Packs)",
     ]
     for col in numeric_cols:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0)
-            
-    return df
+
+    # Ensure all required schema columns exist
+    for col in ALL_COLUMNS:
+        if col not in df.columns:
+            df[col] = ""
+
+    return df[ALL_COLUMNS]
+
 
 def save_product_image(image_file, product_name):
-    """Saves uploaded image as {product_name}.jpg/png into /images directory."""
     if not image_file or not image_file.filename:
         return None
-    
+
     IMAGE_FOLDER.mkdir(parents=True, exist_ok=True)
-    
-    # Extract file extension (.jpg, .png, etc.)
-    ext = Path(image_file.filename).suffix.lower()
-    if not ext:
-        ext = ".jpg"
-        
-    # Format filename: replace spaces with underscores to match catalog structure
+
+    ext = Path(image_file.filename).suffix.lower() or ".jpg"
+
     clean_name = product_name.strip().replace(" ", "_")
+    for char in ['/', '\\', ':', '*', '?', '"', '<', '>', '|']:
+        clean_name = clean_name.replace(char, "")
+
     filename = f"{clean_name}{ext}"
-    
     target_path = IMAGE_FOLDER / filename
     image_file.save(target_path)
     return filename
 
+
 def get_products():
     df = load_products()
-    
-    # Generate image filename dynamically from Product Name if not explicitly stored
+
     def set_image_filename(row):
         if "Image File" in row and row["Image File"]:
-            return row["Image File"]
+            return str(row["Image File"]).strip()
         name = str(row["Product Name"]).strip()
         return f"{name.replace(' ', '_')}.jpg" if name else "default.jpg"
 
     df["Image File"] = df.apply(set_image_filename, axis=1)
-    return df
+    
+    # Return as a list of dictionaries so Jinja can iterate row by row
+    return df.to_dict(orient="records")
+
 
 def dashboard_stats():
     df = load_products()
     total_products = len(df)
     total_categories = df["Category"].nunique() if "Category" in df.columns else 0
     total_stock = int(df["Stock Available (Packs)"].sum()) if "Stock Available (Packs)" in df.columns else 0
-    
+
     return {
         "total_products": total_products,
         "total_categories": total_categories,
-        "total_stock": total_stock
+        "total_stock": total_stock,
     }
+
 
 def add_product(product_data, image_file=None):
     df = load_products()
-    
-    # Check for duplicate product code
+
     if "Product Code" in df.columns and str(product_data.get("Product Code")) in df["Product Code"].astype(str).values:
         return False, "Product Code already exists."
 
-    # Process and save uploaded image
+    # Automatically calculate Price per Piece
+    product_data["Price per Piece (Rs)"] = calculate_price_per_piece(
+        product_data.get("Wholesale Price per Pack (Rs)"),
+        product_data.get("Pieces per Pack"),
+    )
+
+    product_data["Category"] = normalize_category_name(product_data.get("Category"))
+
     if image_file:
         saved_filename = save_product_image(image_file, product_data.get("Product Name", "product"))
         if saved_filename:
@@ -116,48 +145,121 @@ def add_product(product_data, image_file=None):
 
     new_row = pd.DataFrame([product_data])
     df = pd.concat([df, new_row], ignore_index=True)
+    df = df.reindex(columns=ALL_COLUMNS)
     df.to_excel(EXCEL_FILE, index=False, engine="openpyxl")
     return True, "Product added successfully."
 
+
 def update_product(product_data, image_file=None):
     df = load_products()
-    
-    # Target code lookup
+
     search_code = str(product_data.get("original_code") or product_data.get("Product Code")).strip()
-    
-    # Match product row in DataFrame
     mask = df["Product Code"].astype(str).str.strip() == search_code
+
     if not mask.any():
         return False, f"Product with code '{search_code}' not found."
 
     index = df[mask].index[0]
 
-    # Handle image upload if a new file was chosen
+    # Recalculate unit price
+    price_per_piece = calculate_price_per_piece(
+        product_data.get("Wholesale Price per Pack (Rs)"),
+        product_data.get("Pieces per Pack"),
+    )
+
+    df.at[index, "Category"] = normalize_category_name(product_data.get("Category"))
+
     if image_file and image_file.filename:
         saved_filename = save_product_image(image_file, product_data.get("Product Name", "product"))
         if saved_filename:
             df.at[index, "Image File"] = saved_filename
 
     # Update columns
-    df.at[index, "Product Name"] = product_data.get("Product Name")
+    df.at[index, "Product Code"] = product_data.get("Product Code")
     df.at[index, "Category"] = product_data.get("Category")
+    df.at[index, "Product Name"] = product_data.get("Product Name")
     df.at[index, "Pack / Unit Type"] = product_data.get("Pack / Unit Type")
     df.at[index, "Pieces per Pack"] = product_data.get("Pieces per Pack")
     df.at[index, "Wholesale Price per Pack (Rs)"] = product_data.get("Wholesale Price per Pack (Rs)")
+    df.at[index, "Price per Piece (Rs)"] = price_per_piece
     df.at[index, "Suggested Retail Price per Piece (Rs)"] = product_data.get("Suggested Retail Price per Piece (Rs)")
     df.at[index, "Stock Available (Packs)"] = product_data.get("Stock Available (Packs)")
     df.at[index, "Notes"] = product_data.get("Notes")
 
+    df = df.reindex(columns=ALL_COLUMNS)
     df.to_excel(EXCEL_FILE, index=False, engine="openpyxl")
     return True, "Product updated successfully."
 
+
 def delete_product(product_code):
     df = load_products()
-    mask = df["Product Code"].astype(str) == str(product_code)
-    
+    mask = df["Product Code"].astype(str).str.strip() == str(product_code).strip()
+
     if not mask.any():
         return False, "Product not found."
 
     df = df[~mask]
     df.to_excel(EXCEL_FILE, index=False, engine="openpyxl")
     return True, "Product deleted successfully."
+
+def get_existing_categories():
+    """Returns a clean list of existing unique categories sorted alphabetically."""
+    df = load_products()
+    if "Category" not in df.columns:
+        return []
+    
+    categories = [
+        str(cat).strip() 
+        for cat in df["Category"].dropna().unique() 
+        if str(cat).strip() and str(cat).strip().lower() != "nan"
+    ]
+    return sorted(list(set(categories)))
+
+
+def normalize_category_name(input_category):
+    """
+    Matches user input against existing categories (case-insensitive & plural tolerance).
+    Example: 'toothbrush' or 'Toothbrushs' -> 'Toothbrushes'
+    If no close match exists, returns the clean title-cased user input.
+    """
+    if not input_category or not str(input_category).strip():
+        return "Miscellaneous"
+
+    user_cat = str(input_category).strip()
+    existing_cats = get_existing_categories()
+
+    # 1. Exact match (case-insensitive)
+    for cat in existing_cats:
+        if cat.lower() == user_cat.lower():
+            return cat
+
+    # 2. Singular/Plural tolerance (e.g. Toothbrush vs Toothbrushes)
+    user_stem = user_cat.lower().rstrip("s")
+    for cat in existing_cats:
+        cat_stem = cat.lower().rstrip("s")
+        if user_stem == cat_stem or user_stem.rstrip("e") == cat_stem.rstrip("e"):
+            return cat
+
+    # 3. New Category: Return neat Title Case
+    return user_cat.title()
+
+def get_next_product_code(prefix="ABT-"):
+    """
+    Finds the highest existing numeric code in products.xlsx and returns the next code.
+    Example: ABT-041 -> ABT-042
+    """
+    df = load_products()
+    if df.empty or "Product Code" not in df.columns:
+        return f"{prefix}001"
+
+    numbers = []
+    for code in df["Product Code"].dropna().astype(str):
+        match = re.search(r"(\d+)", code)
+        if match:
+            numbers.append(int(match.group(1)))
+
+    if not numbers:
+        return f"{prefix}001"
+
+    next_number = max(numbers) + 1
+    return f"{prefix}{next_number:03d}"

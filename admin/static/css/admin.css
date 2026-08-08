@@ -431,6 +431,18 @@ tbody tr:hover {
     transform: translateY(0);
 }
 
+/* Force action buttons to stay aligned side-by-side */
+.data-table td:last-child {
+    white-space: nowrap;
+}
+
+.data-table td:last-child .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 4px;
+}
+
 /* Toast Notification Container - Fully invisible when empty */
 .toast-container {
     position: fixed;

@@ -90,46 +90,26 @@ def safe_filename(name):
 # FIND PRODUCT IMAGE
 # ===========================================================
 
-def find_product_image(product_name, image_folder="images"):
+def find_product_image(product_name, explicit_image="", image_folder="images"):
     """
-    Search for a product image.
-
-    Supports:
-
-    jpg
-    jpeg
-    png
-    webp
-
-    Returns:
-
-    ../images/filename.jpg
-
-    otherwise
-
-    ../images/default.png
+    Search for a product image. Checks explicit filename from Excel first,
+    then checks derived filenames (.jpg, .jpeg, .png, .webp).
     """
+    # 1. Check explicit filename saved in Excel
+    if explicit_image and str(explicit_image).strip() and str(explicit_image) != "nan":
+        clean_file = str(explicit_image).strip()
+        full_path = os.path.join(image_folder, clean_file)
+        if os.path.exists(full_path):
+            return "../images/" + clean_file
 
+    # 2. Check derived product name with standard extensions
     base = safe_filename(product_name)
-
-    extensions = [
-        ".jpg",
-        ".jpeg",
-        ".png",
-        ".webp"
-    ]
+    extensions = [".jpg", ".jpeg", ".png", ".webp"]
 
     for ext in extensions:
-
         filename = base + ext
-
-        full_path = os.path.join(
-            image_folder,
-            filename
-        )
-
+        full_path = os.path.join(image_folder, filename)
         if os.path.exists(full_path):
-
             return "../images/" + filename
 
     return "../images/default.png"
@@ -318,97 +298,56 @@ def print_error(message):
 
 def create_product(row):
     """
-    Convert one Excel row into a dictionary
-    that is directly passed to the HTML template.
+    Convert one Excel row into a dictionary for HTML template rendering.
     """
+    wholesale_val = row.get("Wholesale Price per Pack (Rs)", 0)
+    pieces_val = row.get("Pieces per Pack", 0)
+    raw_piece_price = row.get("Price per Piece (Rs)", 0)
+
+    # Calculate price_per_piece fallback if value is missing/zero in Excel
+    try:
+        ppp = float(raw_piece_price or 0)
+        if ppp <= 0 and float(pieces_val or 0) > 0:
+            ppp = round(float(wholesale_val or 0) / float(pieces_val), 2)
+    except (ValueError, TypeError, ZeroDivisionError):
+        ppp = 0.0
 
     product = {
-
-        "product_code":
-            str(row.get("Product Code", "")).strip(),
-
-        "category":
-            str(row.get("Category", "")).strip(),
-
-        "product_name":
-            str(row.get("Product Name", "")).strip(),
-
-        "packing":
-            str(row.get("Pack / Unit Type", "")).strip(),
-
-        "pieces":
-            row.get("Pieces per Pack", ""),
-
-        "wholesale_price":
-            format_price(
-                row.get("Wholesale Price per Pack (Rs)", 0)
-            ),
-
-        "price_per_piece":
-            format_price(
-                row.get("Price per Piece (Rs)", 0)
-            ),
-
-        "retail_price":
-            format_price(
-                row.get(
-                    "Suggested Retail Price per Piece (Rs)",
-                    0
-                )
-            ),
-
-        "stock":
-            row.get("Stock Available (Packs)", 0),
-
-        "description":
-            str(row.get("Notes", "")).strip(),
-
-        "image":
-            find_product_image(
-                row.get("Product Name", "")
-            ),
-
+        "product_code": str(row.get("Product Code", "")).strip(),
+        "category": str(row.get("Category", "")).strip(),
+        "product_name": str(row.get("Product Name", "")).strip(),
+        "packing": str(row.get("Pack / Unit Type", "")).strip(),
+        "pieces": pieces_val,
+        "wholesale_price": format_price(wholesale_val),
+        "price_per_piece": format_price(ppp),
+        "retail_price": format_price(row.get("Suggested Retail Price per Piece (Rs)", 0)),
+        "stock": row.get("Stock Available (Packs)", 0),
+        "description": str(row.get("Notes", "")).strip(),
+        "image": find_product_image(
+            row.get("Product Name", ""),
+            explicit_image=row.get("Image File", "")
+        ),
         "brand": BRAND_NAME,
-
         "tagline": TAGLINE,
-
         "whatsapp": WHATSAPP,
-
         "email": EMAIL,
-
         "website": WEBSITE,
-
         "footer": FOOTER,
-
         "carton": "",
-
         "pack_type": "Pack"
-
     }
 
-    stock_text, stock_class = stock_status(
-        product["stock"]
-    )
-
+    stock_text, stock_class = stock_status(product["stock"])
     product["stock_text"] = stock_text
-
     product["stock_class"] = stock_class
 
     theme = get_theme(product["category"])
-
     product["primary_color"] = theme["primary"]
-
     product["secondary_color"] = theme["secondary"]
-
     product["accent_color"] = theme["accent"]
-
     product["text_color"] = theme["text"]
 
     product["qr"] = generate_qr(product)
-
-    product["icon"] = CATEGORY_ICONS.get(
-        product["category"],
-        "📦"
-    )
+    product["icon"] = CATEGORY_ICONS.get(product["category"], "📦")
 
     return product

@@ -16,64 +16,94 @@
 </div>
 
 <div class="table-container">
-    <table id="productTable">
+    <table id="productTable" style="width: 100%; border-collapse: collapse;">
         <thead>
             <tr>
-                <th>Image</th>
-                <th>Code</th>
-                <th>Product</th>
-                <th>Category</th>
-                <th>Wholesale Price</th>
-                <th>Stock</th>
-                <th>Actions</th>
+                <th style="padding: 12px 16px; text-align: left;">IMAGE</th>
+                <th style="padding: 12px 16px; text-align: left; white-space: nowrap;">CODE</th>
+                <th style="padding: 12px 16px; text-align: left;">PRODUCT</th>
+                <th style="padding: 12px 16px; text-align: left;">CATEGORY</th>
+                <th style="padding: 12px 16px; text-align: left; white-space: nowrap;">PRICE PER PACK</th>
+                <th style="padding: 12px 16px; text-align: left; white-space: nowrap;">PRICE PER PIECE</th>
+                <th style="padding: 12px 16px; text-align: center; white-space: nowrap;">ACTIONS</th>
             </tr>
         </thead>
         <tbody>
             {% for product in products %}
-            <tr>
-                <td>
+            <tr style="border-bottom: 1px solid #e2e8f0;">
+                <!-- Image -->
+                <td style="padding: 12px 16px; vertical-align: middle;">
                     <img class="product-image" 
                         src="/images/{{ product['Image File'] }}" 
                         alt="{{ product['Product Name'] }}"
-                        style="cursor: pointer; width: 48px; height: 48px; object-fit: cover; border-radius: 6px; position: relative; z-index: 2;"
+                        style="cursor: pointer; width: 44px; height: 44px; object-fit: cover; border-radius: 8px; display: block;"
                         onclick="event.stopPropagation(); openImagePreview('/images/{{ product['Image File'] }}', '{{ product['Product Name'] }}')"
-                        onerror="this.src='https://placehold.co/60x60?text=No+Image'">
+                        onerror="this.src='https://placehold.co/44x44?text=No+Image'">
                 </td>
-                <td><strong>{{ product["Product Code"] }}</strong></td>
-                <td>{{ product["Product Name"] }}</td>
-                <td>{{ product["Category"] }}</td>
-                <td>Rs {{ product["Wholesale Price per Pack (Rs)"] }}</td>
-                <td>{{ product["Stock Available (Packs)"] }}</td>
-                <td>
-                    <button class="action-btn view-btn" onclick="viewProduct(this)"
-                        data-code="{{ product['Product Code'] }}"
-                        data-name="{{ product['Product Name'] }}"
-                        data-category="{{ product['Category'] }}"
-                        data-pack="{{ product['Pack / Unit Type'] }}"
-                        data-pieces="{{ product['Pieces per Pack'] }}"
-                        data-wholesale="{{ product['Wholesale Price per Pack (Rs)'] }}"
-                        data-retail="{{ product['Suggested Retail Price per Piece (Rs)'] }}"
-                        data-stock="{{ product['Stock Available (Packs)'] }}"
-                        data-notes="{{ product['Notes'] }}"
-                        data-image="{{ product['Image File'] }}">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
-                    <button class="action-btn edit-btn" onclick="editProduct(this)"
-                        data-code="{{ product['Product Code'] }}"
-                        data-name="{{ product['Product Name'] }}"
-                        data-category="{{ product['Category'] }}"
-                        data-pack="{{ product['Pack / Unit Type'] }}"
-                        data-pieces="{{ product['Pieces per Pack'] }}"
-                        data-wholesale="{{ product['Wholesale Price per Pack (Rs)'] }}"
-                        data-retail="{{ product['Suggested Retail Price per Piece (Rs)'] }}"
-                        data-stock="{{ product['Stock Available (Packs)'] }}"
-                        data-notes="{{ product['Notes'] }}"
-                        data-image="{{ product['Image File'] }}">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
-                    <button class="action-btn delete-btn" onclick="deleteProduct('{{ product['Product Code'] }}')">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+
+                <!-- Code (FIXED: white-space: nowrap prevents line breaks) -->
+                <td style="padding: 12px 16px; vertical-align: middle; white-space: nowrap; font-weight: 600; font-size: 13px;">
+                    {{ product["Product Code"] }}
+                </td>
+
+                <!-- Product Name -->
+                <td style="padding: 12px 16px; vertical-align: middle; font-size: 13px;">
+                    {{ product["Product Name"] }}
+                </td>
+
+                <!-- Category -->
+                <td style="padding: 12px 16px; vertical-align: middle; font-size: 13px; color: #475569;">
+                    {{ product["Category"] }}
+                </td>
+
+                <!-- Price Per Pack -->
+                <td style="padding: 12px 16px; vertical-align: middle; white-space: nowrap; font-size: 13px;">
+                    Rs {{ "%.2f"|format(product["Wholesale Price per Pack (Rs)"]|float) }}
+                </td>
+
+                <!-- Price Per Piece -->
+                <td style="padding: 12px 16px; vertical-align: middle; white-space: nowrap; font-size: 13px;">
+                    Rs {{ "%.2f"|format(product["Price per Piece (Rs)"]|float) }}
+                </td>
+
+                <!-- Action Buttons (FIXED: inline-flex container keeps buttons aligned horizontally) -->
+                <td style="padding: 4px 8px; vertical-align: middle; text-align: center; white-space: nowrap;">
+                    <div style="display: inline-flex; gap: 4px; align-items: center; justify-content: center;">
+                        <button class="action-btn view-btn" onclick="viewProduct(this)"
+                            style="width: 28px; height: 28px; padding: 0; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;"
+                            data-code="{{ product['Product Code'] }}"
+                            data-name="{{ product['Product Name'] }}"
+                            data-category="{{ product['Category'] }}"
+                            data-pack="{{ product['Pack / Unit Type'] }}"
+                            data-pieces="{{ product['Pieces per Pack'] }}"
+                            data-wholesale="{{ product['Wholesale Price per Pack (Rs)'] }}"
+                            data-retail="{{ product['Suggested Retail Price per Piece (Rs)'] }}"
+                            data-stock="{{ product['Stock Available (Packs)'] }}"
+                            data-notes="{{ product['Notes'] }}"
+                            data-image="{{ product['Image File'] }}">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+
+                        <button class="action-btn edit-btn" onclick="editProduct(this)"
+                            style="width: 28px; height: 28px; padding: 0; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;"
+                            data-code="{{ product['Product Code'] }}"
+                            data-name="{{ product['Product Name'] }}"
+                            data-category="{{ product['Category'] }}"
+                            data-pack="{{ product['Pack / Unit Type'] }}"
+                            data-pieces="{{ product['Pieces per Pack'] }}"
+                            data-wholesale="{{ product['Wholesale Price per Pack (Rs)'] }}"
+                            data-retail="{{ product['Suggested Retail Price per Piece (Rs)'] }}"
+                            data-stock="{{ product['Stock Available (Packs)'] }}"
+                            data-notes="{{ product['Notes'] }}"
+                            data-image="{{ product['Image File'] }}">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+
+                        <button class="action-btn delete-btn" onclick="deleteProduct('{{ product['Product Code'] }}')"
+                            style="width: 28px; height: 28px; padding: 0; font-size: 12px; display: inline-flex; align-items: center; justify-content: center;">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
@@ -168,9 +198,8 @@
         </form>
     </div>
 </div>  -->
-
 <!-- ============================================ -->
-<!-- ADD PRODUCT MODAL                             -->
+<!-- ADD PRODUCT MODAL                            -->
 <!-- ============================================ -->
 <div id="addModal" class="modal">
     <div class="modal-content add-modal" style="max-width: 650px; max-height: 90vh; overflow-y: auto;">
@@ -197,9 +226,17 @@
                 </h3>
 
                 <div class="form-grid">
+                    <!-- Dynamic Product Code Pre-filled -->
                     <div class="form-group">
                         <label for="addCode">Product Code</label>
-                        <input type="text" id="addCode" name="Product Code" placeholder="e.g. ABT-040" required>
+                        <input 
+                            type="text" 
+                            id="addCode" 
+                            name="Product Code" 
+                            class="form-control" 
+                            value="{{ next_code }}" 
+                            required 
+                        />
                     </div>
 
                     <div class="form-group">
@@ -207,9 +244,26 @@
                         <input type="text" id="addName" name="Product Name" placeholder="Enter product name" required>
                     </div>
 
+                    <!-- Smart Category Input with Dropdown List -->
                     <div class="form-group">
                         <label for="addCategory">Category</label>
-                        <input type="text" id="addCategory" name="Category" placeholder="e.g. Toothbrushes">
+                        <input 
+                            type="text" 
+                            id="addCategory" 
+                            name="Category" 
+                            list="categoryList" 
+                            placeholder="Select or type new category..." 
+                            autocomplete="off" 
+                            required
+                        />
+                        <datalist id="categoryList">
+                            {% for cat in existing_categories %}
+                            <option value="{{ cat }}"></option>
+                            {% endfor %}
+                        </datalist>
+                        <small style="display: block; color: #64748b; margin-top: 4px; font-size: 11px;">
+                            💡 Pick an existing category or type a new one.
+                        </small>
                     </div>
 
                     <div class="form-group">
@@ -288,7 +342,6 @@
         </form>
     </div>
 </div>
-
 
 <!-- ============================================ -->
 <!-- EDIT PRODUCT MODAL                            -->

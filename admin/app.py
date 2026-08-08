@@ -10,6 +10,8 @@ from services.excel_service import (
     update_product,
     delete_product
 )
+from services.excel_service import get_next_product_code
+from services.excel_service import get_next_product_code, get_existing_categories
 
 ADMIN_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = ADMIN_DIR.parent
@@ -30,6 +32,24 @@ app = Flask(
 
 LOG_FILE = PROJECT_ROOT / "admin" / "publish_log.json"
 
+
+@app.route("/products")
+def products_page():
+    products = get_products()
+    next_code = get_next_product_code()
+    existing_categories = get_existing_categories()
+
+    return render_template(
+        "products.html",
+        products=products,
+        next_code=next_code,
+        existing_categories=existing_categories
+    )
+
+@app.route("/add-product", methods=["GET"])
+def add_product_page():
+    next_code = get_next_product_code()
+    return render_template("add_product.html", next_code=next_code)
 
 @app.route("/")
 def dashboard():

@@ -568,3 +568,20 @@ function saveNewProduct(event) {
         showToast("System Error", "An unexpected error occurred while saving.", "error");
     });
 }
+
+function updateCalculatedPrice() {
+    const wholesale = parseFloat(document.getElementById('wholesale_price').value) || 0;
+    const pieces = parseFloat(document.getElementById('pieces_per_pack').value) || 0;
+    const outputField = document.getElementById('price_per_piece');
+
+    if (!outputField) return;
+
+    if (pieces <= 0 || wholesale <= 0) {
+        outputField.value = "0.00";
+        return;
+    }
+
+    const pricePerPiece = wholesale / pieces;
+    // Keep raw numeric format for form safety (e.g., 52.08)
+    outputField.value = pricePerPiece.toFixed(2);
+}
