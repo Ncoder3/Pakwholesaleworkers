@@ -7,6 +7,9 @@ IGNORE = {
     ".venv",
     "venv",
     "node_modules",
+    "qr"
+    "previous code"
+    
 }
 
 def print_tree(directory, prefix=""):

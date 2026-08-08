@@ -202,62 +202,22 @@
     <!-- ================================= -->
     <!-- PRODUCT GRID -->
     <!-- ================================= -->
-
-    <section
-        class="product-grid"
-
-        id="productGrid">
-
+    <section class="product-grid" id="productGrid">
         {% for product in products %}
-
-        <a
-
-            href="{{ product.file_name }}"
-
-            class="product-card"
-
-            data-category="{{ product.category }}"
-
-            data-name="{{ product.product_name|lower }}">
-
-            <img
-
-                src="{{ product.image }}"
-
-                alt="{{ product.product_name }}">
-
+        <a href="{{ product.file_name }}"
+        class="product-card"
+        data-category="{{ product.category }}"
+        data-name="{{ product.product_name|lower }}">
+            <img src="{{ product.image }}" alt="{{ product.product_name }}">
             <span class="category">
-
-                {{ product.icon }}
-
-                {{ product.category }}
-
+                {{ product.icon }} {{ product.category }}
             </span>
-
-            <h3>
-
-                {{ product.product_name }}
-
-            </h3>
-
-            <p class="price">
-
-                Rs {{ product.price_per_piece }}
-
-            </p>
-
-            <span class="view-btn">
-
-                View Product →
-
-            </span>
-
+            <h3>{{ product.product_name }}</h3>
+            <p class="price">Rs {{ product.price_per_piece }}</p>
+            <span class="view-btn">View Product →</span>
         </a>
-
         {% endfor %}
-
     </section>
-
 
 
     <!-- ================================= -->
