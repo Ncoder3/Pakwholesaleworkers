@@ -189,7 +189,6 @@
         </div>
     </div>
 </div>
-
 <!-- INVENTORY TABLE CONTAINER -->
 <div class="table-container">
     <table id="inventoryTable" style="width: 100%; border-collapse: collapse;">
@@ -245,11 +244,23 @@
                     {{ product["Category"] }}
                 </td>
 
-                <td style="padding: 12px 16px; vertical-align: middle;">
-                    {% if stock > 0 %}
-                    <span class="badge badge-success" id="badge-{{ product['Product Code'] }}">{{ stock }} Packs Available</span>
+                <!-- SINGLE STOCK STATUS CELL WITH WORKING ID FOR JS -->
+                <td id="stock-cell-{{ product['Product Code'] }}" style="padding: 12px 16px; vertical-align: middle;">
+                    {% if stock == 0 %}
+                        <span id="stock-badge-{{ product['Product Code'] }}" class="badge badge-danger" style="background: #fee2e2; color: #dc2626; padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-circle" style="font-size: 8px; color: #dc2626;"></i>
+                            Out of Stock (0)
+                        </span>
+                    {% elif stock <= 5 %}
+                        <span id="stock-badge-{{ product['Product Code'] }}" class="badge badge-warning" style="background: #fef3c7; color: #d97706; padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-circle" style="font-size: 8px; color: #c6c41b;"></i>
+                            Low Stock ({{ stock }})
+                        </span>
                     {% else %}
-                    <span class="badge badge-danger" id="badge-{{ product['Product Code'] }}">Out of Stock</span>
+                        <span id="stock-badge-{{ product['Product Code'] }}" class="badge badge-success" style="background: #dcfce7; color: #16a34a; padding: 4px 10px; border-radius: 20px; font-weight: 600; font-size: 12px; display: inline-flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-circle" style="font-size: 8px; color: #16a34a;"></i>
+                            In Stock ({{ stock }})
+                        </span>
                     {% endif %}
                 </td>
 
@@ -273,7 +284,7 @@
 </div>
 
 <!-- STOCK POPUP MODAL -->
-<div class="modal-overlay" id="stockModal">
+<div class="modal-overlay" id="stockModal" style="display: none;">
     <div class="modal-card">
         <div class="modal-title">
             <i class="fa-solid fa-pen-to-square" style="color: var(--primary-color, #047857);"></i> 

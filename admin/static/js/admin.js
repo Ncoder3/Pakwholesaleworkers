@@ -1,10 +1,12 @@
+// ==========================================
+// DOM INITIALIZATION & EVENT LISTENERS
+// ==========================================
 document.addEventListener('DOMContentLoaded', () => {
     // Live Search Functionality
     const searchBox = document.getElementById('searchBox') || document.getElementById('searchInput');
     if (searchBox) {
         searchBox.addEventListener('input', function () {
             const term = this.value.toLowerCase().trim();
-            // Target all table rows except any existing no-results row
             const rows = document.querySelectorAll('table tbody tr:not(#noResultsRow)');
             let visibleCount = 0;
 
@@ -18,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Handle "No Results" cleanly inside the table body (no floating white boxes)
             const tbody = document.querySelector('table tbody');
             let noResultsRow = document.getElementById('noResultsRow');
 
@@ -46,50 +47,170 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Modal Close Triggers
+    // Modal Outer Click Close Triggers
     window.addEventListener('click', (event) => {
-        if (event.target.classList.contains('modal')) {
+        if (event.target.classList.contains('modal') || event.target.classList.contains('modal-overlay')) {
             event.target.style.display = 'none';
+            event.target.classList.remove('active');
+        }
+
+        // Notification Dropdown Close
+        const dropdown = document.getElementById('notificationDropdown');
+        const notifBtn = document.getElementById('notificationBtn');
+        if (dropdown && !dropdown.contains(event.target) && event.target !== notifBtn) {
+            dropdown.style.display = 'none';
         }
     });
 
-    // Sidebar active link highlighting
+    // Sidebar Active Link Highlighting
     const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll('.sidebar nav a');
     navLinks.forEach(link => {
         if (link.getAttribute('href') === currentPath) {
-            link.style.background = 'var(--primary-hover)';
+            link.style.background = 'var(--primary-hover, #046c4e)';
             link.style.color = '#ffffff';
         }
     });
 });
 
+
+// ==========================================
+// GENERIC MODAL CONTROLS
+// ==========================================
 function openModal(id) {
-    document.getElementById(id).style.display = 'flex';
+    const target = document.getElementById(id);
+    if (target) {
+        target.style.display = 'flex';
+        target.classList.add('active');
+    }
 }
 
 function closeModal(id) {
-    document.getElementById(id).style.display = 'none';
+    const target = document.getElementById(id);
+    if (target) {
+        target.style.display = 'none';
+        target.classList.remove('active');
+    }
 }
 
+
+// ==========================================
+// INVENTORY & STOCK MANAGEMENT
+// ==========================================
+
+// Opens Stock Modal and sets active values
+function openStockModal(code, name, currentStock) {
+    const nameEl = document.getElementById('modalProductName') || document.getElementById('stockModalName');
+    const codeEl = document.getElementById('modalProductCode') || document.getElementById('stockModalCode');
+    const inputEl = document.getElementById('modalStockInput') || document.getElementById('stockModalInput');
+
+    if (nameEl) nameEl.innerText = name;
+    if (codeEl) codeEl.innerText = code;
+    if (inputEl) inputEl.value = currentStock;
+
+    openModal('stockModal');
+}
+
+// Closes Stock Modal helper alias
+function closeStockModal() {
+    closeModal('stockModal');
+}
+
+// Handles +/- button increments inside Stock Modal
+function changeModalStock(delta) {
+    const input = document.getElementById('modalStockInput') || document.getElementById('stockModalInput');
+    if (!input) return;
+    let val = parseInt(input.value) || 0;
+    val += delta;
+    if (val < 0) val = 0;
+    input.value = val;
+}
+
+// Saves stock update to Flask API endpoint
+async function saveStockChange(event) {
+    if (event) event.preventDefault();
+
+    const codeEl = document.getElementById('modalProductCode') || document.getElementById('stockModalCode');
+    const inputEl = document.getElementById('modalStockInput') || document.getElementById('stockModalInput');
+    
+    if (!codeEl || !inputEl) return;
+
+    const productCode = codeEl.innerText.trim();
+    const newStock = parseInt(inputEl.value) || 0;
+
+    try {
+        const response = await fetch('/api/update-stock', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                product_code: productCode, 
+                new_stock: newStock 
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            showToast("Success", "Stock updated successfully!", "success");
+            closeStockModal();
+
+            // Dynamic badge update without full page reload
+            const badge = document.getElementById(`stock-badge-${productCode}`);
+            if (badge) {
+                if (newStock === 0) {
+                    badge.className = 'badge badge-danger';
+                    badge.style.background = '#fee2e2';
+                    badge.style.color = '#dc2626';
+                    badge.innerHTML = `<i class="fa-solid fa-circle" style="font-size: 8px; color: #dc2626;"></i> Out of Stock (0)`;
+                } else if (newStock <= 5) {
+                    badge.className = 'badge badge-warning';
+                    badge.style.background = '#fef3c7';
+                    badge.style.color = '#d97706';
+                    badge.innerHTML = `<i class="fa-solid fa-circle" style="font-size: 8px; color: #d97706;"></i> Low Stock (${newStock})`;
+                } else {
+                    badge.className = 'badge badge-success';
+                    badge.style.background = '#dcfce7';
+                    badge.style.color = '#16a34a';
+                    badge.innerHTML = `<i class="fa-solid fa-circle" style="font-size: 8px; color: #16a34a;"></i> In Stock (${newStock})`;
+                }
+            } else {
+                setTimeout(() => location.reload(), 500);
+            }
+        } else {
+            showToast("Error", data.message || "Failed to update stock", "error");
+        }
+    } catch (err) {
+        console.error("Error updating stock:", err);
+        showToast("Error", "Network or server error updating stock.", "error");
+    }
+}
+
+
+// ==========================================
+// PRODUCT CRUD FUNCTIONS
+// ==========================================
+
+// View Product Details
 function viewProduct(button) {
     const data = button.dataset;
-    document.getElementById('modalImage').src = '/images/' + data.image;
-    document.getElementById('modalName').innerText = data.name;
-    document.getElementById('modalCode').innerText = data.code;
-    document.getElementById('modalCategory').innerText = data.category;
-    document.getElementById('modalPack').innerText = data.pack;
-    document.getElementById('modalPieces').innerText = data.pieces;
-    document.getElementById('modalWholesale').innerText = data.wholesale;
-    document.getElementById('modalRetail').innerText = data.retail;
-    document.getElementById('modalStock').innerText = data.stock;
-    document.getElementById('modalNotes').innerText = data.notes || 'None';
+    if (document.getElementById('modalImage')) document.getElementById('modalImage').src = '/images/' + data.image;
+    if (document.getElementById('modalName')) document.getElementById('modalName').innerText = data.name;
+    if (document.getElementById('modalCode')) document.getElementById('modalCode').innerText = data.code;
+    if (document.getElementById('modalCategory')) document.getElementById('modalCategory').innerText = data.category;
+    if (document.getElementById('modalPack')) document.getElementById('modalPack').innerText = data.pack;
+    if (document.getElementById('modalPieces')) document.getElementById('modalPieces').innerText = data.pieces;
+    if (document.getElementById('modalWholesale')) document.getElementById('modalWholesale').innerText = data.wholesale;
+    if (document.getElementById('modalRetail')) document.getElementById('modalRetail').innerText = data.retail;
+    if (document.getElementById('modalStock')) document.getElementById('modalStock').innerText = data.stock;
+    if (document.getElementById('modalNotes')) document.getElementById('modalNotes').innerText = data.notes || 'None';
 
     openModal('productModal');
 }
 
+// Add New Product
 function openAddModal() {
-    document.getElementById('addForm').reset();
+    const form = document.getElementById('addForm');
+    if (form) form.reset();
     openModal('addModal');
 }
 
@@ -97,119 +218,142 @@ function saveNewProduct(event) {
     event.preventDefault();
 
     const form = document.getElementById('addForm');
-    const formData = new FormData(form);
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const codeInput = document.getElementById('addCode');
 
-    // Explicitly append the file input if it wasn't captured automatically
-    const imageInput = document.getElementById('addImageInput');
-    if (imageInput && imageInput.files[0]) {
-        formData.append('product_image', imageInput.files[0]);
-    }
+    if (codeInput) codeInput.style.borderColor = '';
+    if (submitBtn) submitBtn.disabled = true;
+
+    const formData = new FormData(form);
 
     fetch('/add_product', {
         method: 'POST',
-        body: formData // Sends multipart/form-data with text inputs + image file
+        body: formData
     })
     .then(res => res.json())
     .then(data => {
+        if (submitBtn) submitBtn.disabled = false;
+
         if (data.success) {
-            showToast("Success", data.message);
+            showToast("Success", data.message, "success");
             closeModal('addModal');
             setTimeout(() => location.reload(), 800);
         } else {
-            alert(data.message || "Failed to add product");
+            showToast("Action Required", data.message, "error");
+            if (codeInput) {
+                codeInput.removeAttribute('readonly');
+                codeInput.removeAttribute('disabled');
+                codeInput.style.borderColor = '#ef4444';
+                codeInput.focus();
+                codeInput.select();
+            }
         }
     })
     .catch(error => {
         console.error("Error adding product:", error);
-        alert("An error occurred while saving the product.");
+        if (submitBtn) submitBtn.disabled = false;
+        showToast("System Error", "An unexpected error occurred while saving.", "error");
     });
 }
 
-// function saveNewProduct(event) {
-//     event.preventDefault();
+// Opens modal and populates form fields defensively
+function editProduct(buttonOrData) {
+    const data = buttonOrData.dataset ? buttonOrData.dataset : buttonOrData;
+    const codeVal = data.code || data["Product Code"] || '';
 
-//     const product = {
-//         "Product Code": document.getElementById('addCode').value,
-//         "Product Name": document.getElementById('addName').value,
-//         "Category": document.getElementById('addCategory').value,
-//         "Pack / Unit Type": document.getElementById('addPack').value,
-//         "Pieces per Pack": document.getElementById('addPieces').value,
-//         "Wholesale Price per Pack (Rs)": document.getElementById('addWholesale').value,
-//         "Suggested Retail Price per Piece (Rs)": document.getElementById('addRetail').value,
-//         "Stock Available (Packs)": document.getElementById('addStock').value,
-//         "Notes": document.getElementById('addNotes').value
-//     };
+    if (document.getElementById('editOriginalCode')) document.getElementById('editOriginalCode').value = codeVal;
+    if (document.getElementById('editCode')) document.getElementById('editCode').value = codeVal;
+    if (document.getElementById('editName')) document.getElementById('editName').value = data.name || data["Product Name"] || '';
+    if (document.getElementById('editCategory')) document.getElementById('editCategory').value = data.category || data["Category"] || '';
+    if (document.getElementById('editPack')) document.getElementById('editPack').value = data.pack || data["Pack / Unit Type"] || '';
+    if (document.getElementById('editPieces')) document.getElementById('editPieces').value = data.pieces || data["Pieces per Pack"] || 1;
+    if (document.getElementById('editWholesale')) document.getElementById('editWholesale').value = data.wholesale || data["Wholesale Price per Pack (Rs)"] || 0;
+    if (document.getElementById('editRetail')) document.getElementById('editRetail').value = data.retail || data["Suggested Retail Price per Piece (Rs)"] || 0;
+    if (document.getElementById('editStock')) document.getElementById('editStock').value = data.stock || data["Stock Available (Packs)"] || 0;
+    if (document.getElementById('editNotes')) document.getElementById('editNotes').value = data.notes || data["Notes"] || '';
 
-//     fetch('/add_product', {
-//         method: 'POST',
-//         headers: { 'Content-Type': 'application/json' },
-//         body: JSON.stringify(product)
-//     })
-//     .then(res => res.json())
-//     .then(data => {
-//         if (data.success) {
-//             showToast("Success", data.message);
-//             closeModal('addModal');
-//             setTimeout(() => location.reload(), 800);
-//         } else {
-//             alert(data.message);
-//         }
-//     });
-// }
-
-function publishLiveSite() {
-    if (!confirm("Are you sure you want to regenerate the catalog and publish changes live?")) {
-        return;
+    const previewImg = document.getElementById('editImgPreview');
+    const imageFile = data.image || data["Image File"];
+    if (previewImg) {
+        previewImg.src = imageFile ? `/images/${imageFile}?t=${new Date().getTime()}` : 'https://placehold.co/120x120?text=No+Image';
     }
 
-    showToast("Publishing...", "Regenerating catalog and pushing to Cloudflare. Please wait...", "warning");
+    const imgInput = document.getElementById('editImageInput');
+    if (imgInput) imgInput.value = "";
 
-    fetch('/publish_site', {
-        method: 'POST'
+    openModal('editModal');
+}
+
+// Submits updated product form data safely
+async function saveProductUpdate(event) {
+    event.preventDefault();
+
+    const form = document.getElementById('editForm');
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch('/update_product', {
+            method: 'POST',
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+            showToast("Success", data.message || "Product updated successfully!", "success");
+            closeModal('editModal');
+            setTimeout(() => location.reload(), 800);
+        } else {
+            showToast("Error", data.message || "Failed to update product details.", "error");
+        }
+    } catch (err) {
+        console.error("Error updating product:", err);
+        showToast("System Error", "Server error occurred while saving product.", "error");
+    }
+}
+
+// Delete Product Handlers
+let pendingDeleteCode = null;
+
+function deleteProduct(code) {
+    pendingDeleteCode = code;
+    const deleteEl = document.getElementById('deleteProductCode');
+    if (deleteEl) deleteEl.innerText = code;
+
+    const confirmBtn = document.getElementById('confirmDeleteBtn');
+    if (confirmBtn) confirmBtn.onclick = executeDeleteProduct;
+
+    openModal('deleteModal');
+}
+
+function executeDeleteProduct() {
+    if (!pendingDeleteCode) return;
+
+    fetch('/delete_product', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product_code: pendingDeleteCode })
     })
     .then(res => res.json())
     .then(data => {
+        closeModal('deleteModal');
         if (data.success) {
-            showToast("Site Published!", data.message, "success");
+            showToast("Deleted", data.message, "success");
+            setTimeout(() => location.reload(), 800);
         } else {
-            showToast("Publish Failed", data.message, "error");
+            showToast("Error", data.message || "Failed to delete product.", "error");
         }
     })
-    .catch(err => {
-        console.error(err);
-        showToast("Error", "Failed to connect to backend server.", "error");
+    .catch(() => {
+        closeModal('deleteModal');
+        showToast("System Error", "Failed to delete product.", "error");
     });
 }
 
-// Toggle Notifications Dropdown
-function toggleNotifications(event) {
-    event.stopPropagation();
-    const dropdown = document.getElementById('notificationDropdown');
-    if (!dropdown) return;
 
-    if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-        dropdown.style.display = 'block';
-    } else {
-        dropdown.style.display = 'none';
-    }
-}
-
-// Clear Badge and Hide Notifications
-function clearNotifications() {
-    const badge = document.getElementById('notifBadge');
-    if (badge) badge.style.display = 'none';
-    showToast("Notifications Read", "All system notifications marked as read.", "success");
-}
-
-// Close dropdown when clicking outside
-window.addEventListener('click', (event) => {
-    const dropdown = document.getElementById('notificationDropdown');
-    const notifBtn = document.getElementById('notificationBtn');
-    if (dropdown && !dropdown.contains(event.target) && event.target !== notifBtn) {
-        dropdown.style.display = 'none';
-    }
-});
-
+// ==========================================
+// SITE PUBLISHING & NOTIFICATIONS
+// ==========================================
 function publishLiveSite() {
     const btn = document.querySelector('.btn-publish-header');
     if (btn) {
@@ -225,13 +369,12 @@ function publishLiveSite() {
                 btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Publish to Live Site';
             }
 
-            // Update Notification Bell Badge Count & Item
             const notifBadge = document.getElementById('notifBadge');
             const notifDropdown = document.querySelector('#notificationDropdown div[style*="max-height"]');
 
             if (data.success) {
-                showToast("Publish Successful", "All 41 product cards and static assets published successfully!", "success");
-                
+                showToast("Publish Successful", "Product cards and static assets published successfully!", "success");
+
                 if (notifBadge) {
                     notifBadge.textContent = "1";
                     notifBadge.style.display = "flex";
@@ -243,12 +386,12 @@ function publishLiveSite() {
                             <i class="fa-solid fa-circle-check" style="color: #16a34a; margin-top: 3px;"></i>
                             <div>
                                 <div style="font-size: 12px; font-weight: 600; color: #0f172a;">Publish Success</div>
-                                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">41 Product cards built & live.</div>
+                                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Product cards built & live.</div>
                             </div>
                         </div>` + notifDropdown.innerHTML;
                 }
             } else {
-                showToast("Validation Error", data.message || "1 or more products missing price or mandatory fields.", "error");
+                showToast("Validation Error", data.message || "1 or more products missing mandatory fields.", "error");
 
                 if (notifBadge) {
                     notifBadge.textContent = "1";
@@ -276,209 +419,76 @@ function publishLiveSite() {
         });
 }
 
-function editProduct(button) {
-    const data = button.dataset;
-    document.getElementById('editCode').value = data.code;
-    document.getElementById('editName').value = data.name;
-    document.getElementById('editCategory').value = data.category;
-    document.getElementById('editPack').value = data.pack;
-    document.getElementById('editPieces').value = data.pieces;
-    document.getElementById('editWholesale').value = data.wholesale;
-    document.getElementById('editRetail').value = data.retail;
-    document.getElementById('editStock').value = data.stock;
-    document.getElementById('editNotes').value = data.notes;
+function toggleNotifications(event) {
+    event.stopPropagation();
+    const dropdown = document.getElementById('notificationDropdown');
+    if (!dropdown) return;
 
-    openModal('editModal');
+    dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
 }
 
-function saveProductEdit(event) {
-    event.preventDefault();
-
-    const product = {
-        "Product Code": document.getElementById('editCode').value,
-        "Product Name": document.getElementById('editName').value,
-        "Category": document.getElementById('editCategory').value,
-        "Pack / Unit Type": document.getElementById('editPack').value,
-        "Pieces per Pack": document.getElementById('editPieces').value,
-        "Wholesale Price per Pack (Rs)": document.getElementById('editWholesale').value,
-        "Suggested Retail Price per Piece (Rs)": document.getElementById('editRetail').value,
-        "Stock Available (Packs)": document.getElementById('editStock').value,
-        "Notes": document.getElementById('editNotes').value
-    };
-
-    fetch('/update_product', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product)
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            showToast("Updated", data.message);
-            closeModal('editModal');
-            setTimeout(() => location.reload(), 800);
-        } else {
-            alert(data.message);
-        }
-    });
+function clearNotifications() {
+    const badge = document.getElementById('notifBadge');
+    if (badge) badge.style.display = 'none';
+    showToast("Notifications Read", "All system notifications marked as read.", "success");
 }
 
-let pendingDeleteCode = null;
 
-// Opens custom delete confirmation modal
-function deleteProduct(code) {
-    pendingDeleteCode = code;
-    document.getElementById('deleteProductCode').innerText = code;
-    
-    // Bind click event to confirm button dynamically
-    const confirmBtn = document.getElementById('confirmDeleteBtn');
-    confirmBtn.onclick = executeDeleteProduct;
-    
-    openModal('deleteModal');
-}
-
-// Handles actual deletion via API call
-function executeDeleteProduct() {
-    if (!pendingDeleteCode) return;
-
-    fetch('/delete_product', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ product_code: pendingDeleteCode })
-    })
-    .then(res => res.json())
-    .then(data => {
-        closeModal('deleteModal');
-        if (data.success) {
-            showToast("Deleted", data.message);
-            setTimeout(() => location.reload(), 800);
-        } else {
-            alert(data.message);
-        }
-    })
-    .catch(() => {
-        closeModal('deleteModal');
-        alert("Failed to delete product.");
-    });
-}
-
-// Opens the Image Zoom Modal with the target image and caption
+// ==========================================
+// UI HELPER & UTILITY FUNCTIONS
+// ==========================================
 function openImagePreview(imageSrc, captionText) {
     const modal = document.getElementById('imageZoomModal');
     const zoomImg = document.getElementById('zoomImage');
     const caption = document.getElementById('zoomCaption');
 
-    if (!modal || !zoomImg) {
-        console.error("Image zoom modal or image element missing in HTML");
-        return;
-    }
+    if (!modal || !zoomImg) return;
 
     zoomImg.src = imageSrc;
-    if (caption) {
-        caption.innerText = captionText || '';
-    }
+    if (caption) caption.innerText = captionText || '';
 
-    // Force display style for modal opening
-    modal.style.display = 'flex';
+    openModal('imageZoomModal');
 }
 
-// Global modal close helper
-function closeModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-// Close zoom modal when clicking on the dark background
-window.addEventListener('click', function(event) {
-    const zoomModal = document.getElementById('imageZoomModal');
-    if (event.target === zoomModal) {
-        closeModal('imageZoomModal');
-    }
-});
-
-
-// Function to dynamically render image previews when selecting a new file
 function previewFormImage(input, previewElementId) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById(previewElementId).src = e.target.result;
+            const previewEl = document.getElementById(previewElementId);
+            if (previewEl) previewEl.src = e.target.result;
         };
         reader.readAsDataURL(input.files[0]);
     }
 }
 
-// Function triggered when clicking the "Edit" button on a product row
-function openEditModal(productData) {
-    document.getElementById('editOriginalCode').value = productData["Product Code"] || "";
-    document.getElementById('editCode').value = productData["Product Code"] || "";
-    document.getElementById('editName').value = productData["Product Name"] || "";
-    document.getElementById('editCategory').value = productData["Category"] || "";
-    document.getElementById('editPack').value = productData["Pack / Unit Type"] || "";
-    document.getElementById('editPieces').value = productData["Pieces per Pack"] || 1;
-    document.getElementById('editWholesale').value = productData["Wholesale Price per Pack (Rs)"] || 0;
-    document.getElementById('editRetail').value = productData["Suggested Retail Price per Piece (Rs)"] || 0;
-    document.getElementById('editStock').value = productData["Stock Available (Packs)"] || 0;
-    document.getElementById('editNotes').value = productData["Notes"] || "";
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const toggleIcon = document.querySelector('#sidebarToggle i');
+    if (!sidebar) return;
 
-    // Set existing image or default placeholder
-    const previewImg = document.getElementById('editImgPreview');
-    if (productData["Image File"]) {
-        previewImg.src = `/images/${productData["Image File"]}?t=${new Date().getTime()}`;
-    } else {
-        previewImg.src = "https://placehold.co/120x120?text=No+Image";
+    sidebar.classList.toggle('collapsed');
+    if (toggleIcon) {
+        toggleIcon.className = sidebar.classList.contains('collapsed') 
+            ? 'fa-solid fa-chevron-right' 
+            : 'fa-solid fa-chevron-left';
+    }
+}
+
+function updateCalculatedPrice() {
+    const wholesale = parseFloat(document.getElementById('wholesale_price')?.value) || 0;
+    const pieces = parseFloat(document.getElementById('pieces_per_pack')?.value) || 0;
+    const outputField = document.getElementById('price_per_piece');
+
+    if (!outputField) return;
+
+    if (pieces <= 0 || wholesale <= 0) {
+        outputField.value = "0.00";
+        return;
     }
 
-    // Reset file input selection
-    document.getElementById('editImageInput').value = "";
-
-    // Open Modal
-    document.getElementById('editModal').style.display = 'block';
+    outputField.value = (wholesale / pieces).toFixed(2);
 }
 
-// Function handling the form submission for updates
-function saveProductUpdate(event) {
-    event.preventDefault();
-
-    const form = document.getElementById('editForm');
-    const formData = new FormData(form);
-
-    fetch('/update_product', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            showToast("Success", data.message);
-            closeModal('editModal');
-            setTimeout(() => location.reload(), 800);
-        } else {
-            alert(data.message || "Failed to update product.");
-        }
-    })
-    .catch(error => {
-        console.error("Error updating product:", error);
-        alert("An error occurred while updating product.");
-    });
-}
-
-// Highlight active page link in sidebar based on URL
-document.addEventListener('DOMContentLoaded', () => {
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('.sidebar nav a');
-
-    navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPath) {
-            link.style.background = 'var(--primary-hover)';
-            link.style.color = '#ffffff';
-        }
-    });
-});
-
-// Professional Toast Notification Function
 function showToast(title, message, type = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -501,7 +511,6 @@ function showToast(title, message, type = 'success') {
 
     container.appendChild(toast);
 
-    // Auto-remove toast after 3.5 seconds
     setTimeout(() => {
         removeToast(toast);
     }, 3500);
@@ -515,87 +524,4 @@ function removeToast(toast) {
             toast.remove();
         }
     }, 250);
-}
-
-// Fixed saveNewProduct function
-function saveNewProduct(event) {
-    event.preventDefault();
-
-    const form = document.getElementById('addForm');
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const codeInput = document.getElementById('addCode');
-
-    // Reset previous error highlighting
-    if (codeInput) {
-        codeInput.style.borderColor = '';
-    }
-
-    // Disable button to prevent double submits during fetch
-    if (submitBtn) submitBtn.disabled = true;
-
-    const formData = new FormData(form);
-
-    fetch('/add_product', {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        // Re-enable submit button immediately
-        if (submitBtn) submitBtn.disabled = false;
-
-        if (data.success) {
-            showToast("Success", data.message, "success");
-            closeModal('addModal');
-            setTimeout(() => location.reload(), 800);
-        } else {
-            // Display professional UI Toast for errors
-            showToast("Action Required", data.message, "error");
-
-            // If duplicate product code, highlight input & give focus
-            if (codeInput) {
-                codeInput.removeAttribute('readonly');
-                codeInput.removeAttribute('disabled');
-                codeInput.style.borderColor = '#ef4444';
-                codeInput.focus();
-                codeInput.select(); // Select existing value so user can directly overwrite
-            }
-        }
-    })
-    .catch(error => {
-        console.error("Error adding product:", error);
-        if (submitBtn) submitBtn.disabled = false;
-        showToast("System Error", "An unexpected error occurred while saving.", "error");
-    });
-}
-
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    const toggleIcon = document.querySelector('#sidebarToggle i');
-    
-    sidebar.classList.toggle('collapsed');
-
-    // Dynamically change directional icons
-    if (sidebar.classList.contains('collapsed')) {
-        toggleIcon.className = 'fa-solid fa-chevron-right';
-    } else {
-        toggleIcon.className = 'fa-solid fa-chevron-left';
-    }
-}
-
-function updateCalculatedPrice() {
-    const wholesale = parseFloat(document.getElementById('wholesale_price').value) || 0;
-    const pieces = parseFloat(document.getElementById('pieces_per_pack').value) || 0;
-    const outputField = document.getElementById('price_per_piece');
-
-    if (!outputField) return;
-
-    if (pieces <= 0 || wholesale <= 0) {
-        outputField.value = "0.00";
-        return;
-    }
-
-    const pricePerPiece = wholesale / pieces;
-    // Keep raw numeric format for form safety (e.g., 52.08)
-    outputField.value = pricePerPiece.toFixed(2);
 }

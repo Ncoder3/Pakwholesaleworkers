@@ -86,7 +86,7 @@ def save_product_image(image_file, product_name):
 
     ext = Path(image_file.filename).suffix.lower() or ".jpg"
 
-    clean_name = product_name.strip().replace(" ", "_")
+    clean_name = str(product_name or "product").strip().replace(" ", "_")
     for char in ['/', '\\', ':', '*', '?', '"', '<', '>', '|']:
         clean_name = clean_name.replace(char, "")
 
@@ -106,12 +106,11 @@ def get_products():
         return f"{name.replace(' ', '_')}.jpg" if name else "default.jpg"
 
     df["Image File"] = df.apply(set_image_filename, axis=1)
-    
-    # Return as a list of dictionaries so Jinja can iterate row by row
     return df.to_dict(orient="records")
 
 
 def dashboard_stats():
+    """Calculates top-level inventory statistics for dashboard rendering."""
     df = load_products()
     total_products = len(df)
     total_categories = df["Category"].nunique() if "Category" in df.columns else 0
@@ -130,7 +129,6 @@ def add_product(product_data, image_file=None):
     if "Product Code" in df.columns and str(product_data.get("Product Code")) in df["Product Code"].astype(str).values:
         return False, "Product Code already exists."
 
-    # Automatically calculate Price per Piece
     product_data["Price per Piece (Rs)"] = calculate_price_per_piece(
         product_data.get("Wholesale Price per Pack (Rs)"),
         product_data.get("Pieces per Pack"),
@@ -139,7 +137,7 @@ def add_product(product_data, image_file=None):
     product_data["Category"] = normalize_category_name(product_data.get("Category"))
 
     if image_file:
-        saved_filename = save_product_image(image_file, product_data.get("Product Name", "product"))
+        saved_filename = save_product_image(image_file, str(product_data.get("Product Name", "product")))
         if saved_filename:
             product_data["Image File"] = saved_filename
 
@@ -161,30 +159,29 @@ def update_product(product_data, image_file=None):
 
     index = df[mask].index[0]
 
-    # Recalculate unit price
     price_per_piece = calculate_price_per_piece(
         product_data.get("Wholesale Price per Pack (Rs)"),
         product_data.get("Pieces per Pack"),
     )
 
-    df.at[index, "Category"] = normalize_category_name(product_data.get("Category"))
+    cat_name = normalize_category_name(product_data.get("Category"))
 
     if image_file and image_file.filename:
-        saved_filename = save_product_image(image_file, product_data.get("Product Name", "product"))
+        saved_filename = save_product_image(image_file, str(product_data.get("Product Name", "product")))
         if saved_filename:
             df.at[index, "Image File"] = saved_filename
 
-    # Update columns
-    df.at[index, "Product Code"] = product_data.get("Product Code")
-    df.at[index, "Category"] = product_data.get("Category")
-    df.at[index, "Product Name"] = product_data.get("Product Name")
-    df.at[index, "Pack / Unit Type"] = product_data.get("Pack / Unit Type")
-    df.at[index, "Pieces per Pack"] = product_data.get("Pieces per Pack")
-    df.at[index, "Wholesale Price per Pack (Rs)"] = product_data.get("Wholesale Price per Pack (Rs)")
+    # Explicit column updates with strict data type safety
+    df.at[index, "Product Code"] = str(product_data.get("Product Code", "")).strip()
+    df.at[index, "Category"] = cat_name
+    df.at[index, "Product Name"] = str(product_data.get("Product Name", "")).strip()
+    df.at[index, "Pack / Unit Type"] = str(product_data.get("Pack / Unit Type", "")).strip()
+    df.at[index, "Pieces per Pack"] = float(product_data.get("Pieces per Pack") or 0)
+    df.at[index, "Wholesale Price per Pack (Rs)"] = float(product_data.get("Wholesale Price per Pack (Rs)") or 0)
     df.at[index, "Price per Piece (Rs)"] = price_per_piece
-    df.at[index, "Suggested Retail Price per Piece (Rs)"] = product_data.get("Suggested Retail Price per Piece (Rs)")
-    df.at[index, "Stock Available (Packs)"] = product_data.get("Stock Available (Packs)")
-    df.at[index, "Notes"] = product_data.get("Notes")
+    df.at[index, "Suggested Retail Price per Piece (Rs)"] = float(product_data.get("Suggested Retail Price per Piece (Rs)") or 0)
+    df.at[index, "Stock Available (Packs)"] = int(float(product_data.get("Stock Available (Packs)") or 0))
+    df.at[index, "Notes"] = str(product_data.get("Notes", "")).strip()
 
     df = df.reindex(columns=ALL_COLUMNS)
     df.to_excel(EXCEL_FILE, index=False, engine="openpyxl")
@@ -202,52 +199,41 @@ def delete_product(product_code):
     df.to_excel(EXCEL_FILE, index=False, engine="openpyxl")
     return True, "Product deleted successfully."
 
+
 def get_existing_categories():
-    """Returns a clean list of existing unique categories sorted alphabetically."""
     df = load_products()
     if "Category" not in df.columns:
         return []
-    
+
     categories = [
-        str(cat).strip() 
-        for cat in df["Category"].dropna().unique() 
+        str(cat).strip()
+        for cat in df["Category"].dropna().unique()
         if str(cat).strip() and str(cat).strip().lower() != "nan"
     ]
     return sorted(list(set(categories)))
 
 
 def normalize_category_name(input_category):
-    """
-    Matches user input against existing categories (case-insensitive & plural tolerance).
-    Example: 'toothbrush' or 'Toothbrushs' -> 'Toothbrushes'
-    If no close match exists, returns the clean title-cased user input.
-    """
     if not input_category or not str(input_category).strip():
         return "Miscellaneous"
 
     user_cat = str(input_category).strip()
     existing_cats = get_existing_categories()
 
-    # 1. Exact match (case-insensitive)
     for cat in existing_cats:
         if cat.lower() == user_cat.lower():
             return cat
 
-    # 2. Singular/Plural tolerance (e.g. Toothbrush vs Toothbrushes)
     user_stem = user_cat.lower().rstrip("s")
     for cat in existing_cats:
         cat_stem = cat.lower().rstrip("s")
         if user_stem == cat_stem or user_stem.rstrip("e") == cat_stem.rstrip("e"):
             return cat
 
-    # 3. New Category: Return neat Title Case
     return user_cat.title()
 
+
 def get_next_product_code(prefix="ABT-"):
-    """
-    Finds the highest existing numeric code in products.xlsx and returns the next code.
-    Example: ABT-041 -> ABT-042
-    """
     df = load_products()
     if df.empty or "Product Code" not in df.columns:
         return f"{prefix}001"

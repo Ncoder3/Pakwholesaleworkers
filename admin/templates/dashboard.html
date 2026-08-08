@@ -4,7 +4,15 @@
 {% block page_title %}Dashboard Overview{% endblock %}
 
 {% block content %}
-<div class="dashboard-grid">
+<!-- Welcome Panel at Top -->
+<div class="welcome-panel" style="background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; padding: 28px; border-radius: 16px; margin-bottom: 24px;">
+    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Welcome Back, Muhammad 👋</h2>
+    <p style="opacity: 0.9; font-size: 14px;">Manage your stock inventory, track catalogue metrics, and control product listings in real-time.</p>
+</div>
+
+<!-- Row 1: Primary Metrics Grid (3 Tabs) -->
+<div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px;">
+    
     <div class="stat-card">
         <div class="stat-top">
             <div>
@@ -43,11 +51,51 @@
         </div>
         <p class="stat-footer">Available Packs in Inventory</p>
     </div>
+
 </div>
 
-<div class="welcome-panel" style="background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color: white; padding: 28px; border-radius: 16px; margin-bottom: 24px;">
-    <h2 style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">Welcome Back, Muhammad 👋</h2>
-    <p style="opacity: 0.9; font-size: 14px;">Manage your stock inventory, track catalogue metrics, and control product listings in real-time.</p>
+<!-- Row 2: Stock Status Breakdown Grid (3 Tabs) -->
+<div class="dashboard-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 24px;">
+    
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <h4>In Stock Items</h4>
+                <h2 style="color: #16a34a;">{{ stats.in_stock }}</h2>
+            </div>
+            <div class="stat-icon" style="background: #dcfce7; color: #16a34a;">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+        </div>
+        <p class="stat-footer">&gt; 5 Packs Available</p>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <h4>Low Stock Items</h4>
+                <h2 style="color: #d97706;">{{ stats.low_stock }}</h2>
+            </div>
+            <div class="stat-icon" style="background: #fef3c7; color: #d97706;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+        </div>
+        <p class="stat-footer">1 - 5 Packs Remaining</p>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-top">
+            <div>
+                <h4>Out of Stock</h4>
+                <h2 style="color: #dc2626;">{{ stats.out_of_stock }}</h2>
+            </div>
+            <div class="stat-icon" style="background: #fee2e2; color: #dc2626;">
+                <i class="fa-solid fa-circle-xmark"></i>
+            </div>
+        </div>
+        <p class="stat-footer">0 Packs Left</p>
+    </div>
+
 </div>
 
 <!-- Last Publish Summary Card -->
