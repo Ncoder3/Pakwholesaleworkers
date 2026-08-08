@@ -569,6 +569,20 @@ function saveNewProduct(event) {
     });
 }
 
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const toggleIcon = document.querySelector('#sidebarToggle i');
+    
+    sidebar.classList.toggle('collapsed');
+
+    // Dynamically change directional icons
+    if (sidebar.classList.contains('collapsed')) {
+        toggleIcon.className = 'fa-solid fa-chevron-right';
+    } else {
+        toggleIcon.className = 'fa-solid fa-chevron-left';
+    }
+}
+
 function updateCalculatedPrice() {
     const wholesale = parseFloat(document.getElementById('wholesale_price').value) || 0;
     const pieces = parseFloat(document.getElementById('pieces_per_pack').value) || 0;

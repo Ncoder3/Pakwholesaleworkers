@@ -1,35 +1,41 @@
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
     <div class="logo">
-        <i class="fa-solid fa-store"></i>
-        <span>Al Baraka</span>
+        <!-- TOGGLE BUTTON MOVED TO VERY TOP WHEN COLLAPSED -->
+        <button id="sidebarToggle" class="sidebar-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle Sidebar">
+            <i class="fa-solid fa-chevron-left" id="sidebarToggleIcon"></i>
+        </button>
+        <div class="logo-brand">
+            <i class="fa-solid fa-store"></i>
+            <span class="logo-text">Al Baraka</span>
+        </div>
     </div>
 
-    <nav>
-        <a href="/" class="nav-link">
+    <nav class="nav-menu">
+        <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">
             <i class="fa-solid fa-house"></i>
             <span>Dashboard</span>
         </a>
-        <a href="/products" class="nav-link">
+        <a href="/products" class="nav-link {% if request.path == '/products' %}active{% endif %}">
             <i class="fa-solid fa-box"></i>
             <span>Products</span>
         </a>
-        <a href="/inventory" class="nav-link">
+        <a href="/inventory" class="nav-link {% if request.path == '/inventory' %}active{% endif %}">
             <i class="fa-solid fa-warehouse"></i>
             <span>Inventory</span>
         </a>
-        <a href="/orders" class="nav-link">
+        <a href="/orders" class="nav-link {% if request.path == '/orders' %}active{% endif %}">
             <i class="fa-solid fa-cart-shopping"></i>
             <span>Orders</span>
         </a>
-        <a href="/customers" class="nav-link">
+        <a href="/customers" class="nav-link {% if request.path == '/customers' %}active{% endif %}">
             <i class="fa-solid fa-users"></i>
             <span>Customers</span>
         </a>
-        <a href="/analytics" class="nav-link">
+        <a href="/analytics" class="nav-link {% if request.path == '/analytics' %}active{% endif %}">
             <i class="fa-solid fa-chart-line"></i>
             <span>Analytics</span>
         </a>
-        <a href="/settings" class="nav-link">
+        <a href="/settings" class="nav-link {% if request.path == '/settings' %}active{% endif %}">
             <i class="fa-solid fa-gear"></i>
             <span>Settings</span>
         </a>

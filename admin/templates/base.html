@@ -13,6 +13,175 @@
     
     <!-- Admin Styling -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+
+    <!-- 1. CRITICAL SCRIPT IN HEAD: RUNS INSTANTLY BEFORE HTML PARSING -->
+    <script>
+        if (localStorage.getItem('sidebar_collapsed') === 'true') {
+            document.documentElement.classList.add('sidebar-is-collapsed');
+        }
+    </script>
+
+    <!-- 2. CRITICAL CSS IN HEAD: APPLIES COLLAPSED WIDTH IMMEDIATELY -->
+    <style>
+        /* Instant anti-flicker rules */
+        html.sidebar-is-collapsed .sidebar {
+            width: 72px !important;
+        }
+
+        html.sidebar-is-collapsed .sidebar .logo {
+            flex-direction: column-reverse !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 16px 8px !important;
+            gap: 12px !important;
+        }
+
+        html.sidebar-is-collapsed .sidebar .logo-text,
+        html.sidebar-is-collapsed .sidebar .nav-link span {
+            display: none !important;
+        }
+
+        html.sidebar-is-collapsed .sidebar .nav-menu {
+            padding: 12px 8px !important;
+            align-items: center !important;
+        }
+
+        html.sidebar-is-collapsed .sidebar .nav-link {
+            justify-content: center !important;
+            padding: 0 !important;
+            width: 48px !important;
+            height: 48px !important;
+            margin: 0 auto !important;
+        }
+
+        html.sidebar-is-collapsed .sidebar .nav-link i {
+            min-width: auto !important;
+        }
+
+        /* Base Sidebar Layout Styles */
+        .sidebar {
+            width: 240px;
+            background: var(--primary, #047857);
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            min-height: 60px;
+            gap: 12px;
+        }
+
+        .sidebar .logo-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 18px;
+            white-space: nowrap;
+        }
+
+        .sidebar-toggle-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.2s;
+            flex-shrink: 0;
+        }
+
+        .sidebar-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: 12px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.2s ease, color 0.2s ease;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .nav-link i {
+            font-size: 18px;
+            min-width: 22px;
+            text-align: center;
+        }
+
+        /* Active & Hover states */
+        .nav-link.active {
+            background: rgba(0, 0, 0, 0.3) !important;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+
+        .nav-link:hover {
+            background: rgba(0, 0, 0, 0.15);
+            color: #ffffff;
+        }
+
+        /* Dynamic Collapsed Rules */
+        .sidebar.collapsed {
+            width: 72px !important;
+        }
+
+        .sidebar.collapsed .logo {
+            flex-direction: column-reverse !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 16px 8px !important;
+            gap: 12px !important;
+        }
+
+        .sidebar.collapsed .logo-brand .logo-text,
+        .sidebar.collapsed .nav-link span {
+            display: none !important;
+        }
+
+        .sidebar.collapsed .nav-menu {
+            padding: 12px 8px !important;
+            align-items: center !important;
+        }
+
+        .sidebar.collapsed .nav-link {
+            justify-content: center !important;
+            padding: 0 !important;
+            width: 48px !important;
+            height: 48px !important;
+            margin: 0 auto !important;
+        }
+
+        .sidebar.collapsed .nav-link i {
+            min-width: auto !important;
+        }
+    </style>
 </head>
 <body>
     <div class="wrapper" style="display: flex; min-height: 100vh;">
@@ -145,7 +314,52 @@
         </main>
     </div>
 
-    <!-- Main JavaScript -->
+    <!-- Main JavaScript File -->
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+
+    <!-- 3. SIDEBAR TOGGLE FUNCTIONALITY AT BOTTOM OF BODY -->
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const sidebarIcon = document.getElementById('sidebarToggleIcon');
+            const topbarIcon = document.getElementById('topbarToggleIcon');
+
+            if (!sidebar) return;
+
+            sidebar.classList.toggle('collapsed');
+            const isCollapsed = sidebar.classList.contains('collapsed');
+
+            if (isCollapsed) {
+                document.documentElement.classList.add('sidebar-is-collapsed');
+            } else {
+                document.documentElement.classList.remove('sidebar-is-collapsed');
+            }
+
+            if (sidebarIcon) {
+                sidebarIcon.className = isCollapsed ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+            }
+
+            if (topbarIcon) {
+                topbarIcon.className = isCollapsed ? 'fa-solid fa-indent' : 'fa-solid fa-bars';
+            }
+
+            localStorage.setItem('sidebar_collapsed', isCollapsed ? 'true' : 'false');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+            const sidebar = document.getElementById('sidebar');
+
+            if (isCollapsed && sidebar) {
+                sidebar.classList.add('collapsed');
+                
+                const sidebarIcon = document.getElementById('sidebarToggleIcon');
+                if (sidebarIcon) sidebarIcon.className = 'fa-solid fa-chevron-right';
+
+                const topbarIcon = document.getElementById('topbarToggleIcon');
+                if (topbarIcon) topbarIcon.className = 'fa-solid fa-indent';
+            }
+        });
+    </script>
 </body>
 </html>
