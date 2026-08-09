@@ -41,12 +41,27 @@ app = Flask(
     template_folder="templates",
     static_folder="static"
 )
-CORS(app, origins=["https://pakwholesaleworkers.pages.dev", "http://localhost:5000"])
+# Enable CORS for your Cloudflare domain
+CORS(app, origins=["https://pakwholesaleworkers.pages.dev", "http://localhost:5000", "http://127.0.0.1:5000"])
 
-@app.route('/api/order', methods=['POST'])
+@app.route('/api/orders/create', methods=['POST', 'OPTIONS'])
+@app.route('/api/order', methods=['POST', 'OPTIONS'])
 def submit_order():
-    # Your order handling logic here
-    return jsonify({"status": "success", "message": "Order received!"})
+    # Handle CORS preflight check from browser
+    if request.method == 'OPTIONS':
+        return '', 200
+
+    data = request.get_json()
+    print("Received Order Data:", data)
+
+    # Process your order logic...
+
+    return jsonify({
+        "success": True,
+        "status": "success",
+        "message": "Order received successfully!",
+        "order_id": "ORD-1001"
+    }), 200
 
 # ==========================================
 # HELPER FUNCTIONS FOR STOCK BADGES
