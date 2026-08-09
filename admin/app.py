@@ -1,24 +1,16 @@
-from datetime import time
-from pathlib import Path
-import json
-import sys
-import os
-import zipfile
 import io
-from flask import Flask, render_template, request, jsonify, send_from_directory, send_file
+import json
+import os
+from pathlib import Path
+import sys
+import time
+import zipfile
+import requests
+
+from flask import Flask, render_template, request, jsonify, send_from_directory, send_file, abort
 from flask_cors import CORS
 
-
-from services.excel_service import (
-    dashboard_stats,
-    get_products,
-    add_product,
-    update_product,
-    delete_product,
-    get_next_product_code,
-    get_existing_categories
-)
-
+# Path and Environment Setup
 ADMIN_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = ADMIN_DIR.parent
 if str(PROJECT_ROOT) not in sys.path:
@@ -29,43 +21,40 @@ HTML_OUTPUT_FOLDER = PROJECT_ROOT / "output" / "html"
 PNG_OUTPUT_FOLDER = PROJECT_ROOT / "output" / "png"
 LOG_FILE = PROJECT_ROOT / "admin" / "publish_log.json"
 
+# Service Imports
 from publish import run_publish_workflow
-from services.orders_service import load_orders, create_order, update_order_status
-from services.excel_service import get_products
+from services.excel_service import (
+    dashboard_stats,
+    get_products,
+    add_product,
+    update_product,
+    delete_product,
+    get_next_product_code,
+    get_existing_categories
+)
+from services.orders_service import load_orders, create_order as local_create_order, update_order_status
 from services.customers_service import load_customers, create_customer
 from services.analytics_service import get_analytics_metrics
 from services.settings_service import read_config, update_config
+from services.database import get_db_connection, init_db
 
-app = Flask(
-    __name__,
-    template_folder="templates",
-    static_folder="static"
-)
-# Enable CORS for your Cloudflare domain
-CORS(app, origins=["https://pakwholesaleworkers.pages.dev", "http://localhost:5000", "http://127.0.0.1:5000"])
+# App Initialization
+app = Flask(__name__, template_folder="templates", static_folder="static")
 
-@app.route('/api/orders/create', methods=['POST', 'OPTIONS'])
-@app.route('/api/order', methods=['POST', 'OPTIONS'])
-def submit_order():
-    # Handle CORS preflight check from browser
-    if request.method == 'OPTIONS':
-        return '', 200
+# CORS Setup for Cloudflare domain & local testing
+CORS(app, origins=[
+    "https://pakwholesaleworkers.pages.dev",
+    "http://localhost:5000",
+    "http://127.0.0.1:5000"
+])
 
-    data = request.get_json()
-    print("Received Order Data:", data)
-
-    # Process your order logic...
-
-    return jsonify({
-        "success": True,
-        "status": "success",
-        "message": "Order received successfully!",
-        "order_id": "ORD-1001"
-    }), 200
+# Initialize PostgreSQL Schema if DB is configured
+init_db()
 
 # ==========================================
-# HELPER FUNCTIONS FOR STOCK BADGES
+# HELPER FUNCTIONS
 # ==========================================
+
 def process_stock_status(products):
     """Categorizes stock levels into Red, Yellow, and Green badges."""
     in_stock_count = 0
@@ -97,24 +86,156 @@ def process_stock_status(products):
         "out_of_stock": out_of_stock_count
     }
 
+def safe_float(val, default=0.0):
+    try:
+        return float(val) if val not in [None, ""] else default
+    except (ValueError, TypeError):
+        return default
 
-@app.route('/api/orders/create', methods=['POST'])
-def create_order():
-    data = request.get_json()
+def safe_int(val, default=0):
+    try:
+        return int(float(val)) if val not in [None, ""] else default
+    except (ValueError, TypeError):
+        return default
+
+# ==========================================
+# ORDER ENDPOINTS (HYBRID DB / LOCAL)
+# ==========================================
+
+@app.route('/api/orders/create', methods=['POST', 'OPTIONS'])
+@app.route('/api/order', methods=['POST', 'OPTIONS'])
+def submit_order():
+    """Handles order creation from frontend/Cloudflare with PostgreSQL + fallback."""
+    if request.method == 'OPTIONS':
+        return '', 200
+
+    data = request.get_json() or {}
     customer = data.get('customer', {})
     items = data.get('items', [])
-    
+
     if not customer.get('name') or not customer.get('phone') or not items:
         return jsonify({'success': False, 'message': 'Missing required order details'}), 400
+
+    conn = get_db_connection()
+    if conn:
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT COUNT(*) FROM orders;")
+            count_res = cur.fetchone()
+            count = count_res['count'] if count_res else 0
+            order_id = f"ORD-{1001 + count}"
+
+            total_amount = sum(safe_float(item.get('price')) * safe_int(item.get('packs', 1)) for item in items)
+
+            cur.execute("""
+                INSERT INTO orders (order_id, customer_name, customer_phone, customer_city, customer_address, customer_notes, total_amount)
+                VALUES (%s, %s, %s, %s, %s, %s, %s);
+            """, (
+                order_id,
+                customer.get('name'),
+                customer.get('phone'),
+                customer.get('city', ''),
+                customer.get('address', ''),
+                customer.get('notes', ''),
+                total_amount
+            ))
+
+            for item in items:
+                subtotal = safe_float(item.get('price')) * safe_int(item.get('packs', 1))
+                cur.execute("""
+                    INSERT INTO order_items (order_id, product_code, product_name, quantity, unit_price, subtotal)
+                    VALUES (%s, %s, %s, %s, %s, %s);
+                """, (
+                    order_id,
+                    item.get('product_code', 'ABT-GEN'),
+                    item.get('product_name', 'Unknown Product'),
+                    safe_int(item.get('packs', 1)),
+                    safe_float(item.get('price')),
+                    subtotal
+                ))
+
+            conn.commit()
+            return jsonify({'success': True, 'order_id': order_id, 'message': 'Order submitted successfully!'}), 200
+        except Exception as e:
+            conn.rollback()
+            return jsonify({'success': False, 'message': f'Database error: {str(e)}'}), 500
+        finally:
+            conn.close()
+    else:
+        # File fallback
+        success, message, order_id = local_create_order(customer, items)
+        return jsonify({'success': success, 'order_id': order_id, 'message': message})
+
+@app.route('/api/orders/update-status', methods=['POST'])
+def api_update_order_status():
+    try:
+        data = request.get_json() or {}
+        order_id = data.get("order_id")
+        status = data.get("status")
+
+        if not order_id or not status:
+            return jsonify({"success": False, "message": "Missing order ID or status."}), 400
+
+        conn = get_db_connection()
+        if conn:
+            try:
+                cur = conn.cursor()
+                cur.execute("UPDATE orders SET status = %s WHERE order_id = %s;", (status, order_id))
+                conn.commit()
+                return jsonify({"success": True, "message": f"Order {order_id} status updated to {status}."})
+            except Exception as e:
+                conn.rollback()
+                return jsonify({"success": False, "message": f"DB Error: {str(e)}"}), 500
+            finally:
+                conn.close()
+        else:
+            success, message = update_order_status(order_id, status)
+            return jsonify({"success": success, "message": message})
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
+
+@app.route('/orders')
+def orders():
+    conn = get_db_connection()
+    if conn:
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM orders ORDER BY created_at DESC;")
+            all_orders = cur.fetchall()
+            for o in all_orders:
+                cur.execute("SELECT * FROM order_items WHERE order_id = %s;", (o['order_id'],))
+                o['items'] = cur.fetchall()
+        finally:
+            conn.close()
+    else:
+        all_orders = load_orders()
+
+    products = get_products()
+    return render_template('orders.html', orders=all_orders, products=products)
+
+@app.route('/orders/<order_id>/invoice')
+def order_invoice(order_id):
+    conn = get_db_connection()
+    order = None
+    if conn:
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM orders WHERE order_id = %s;", (order_id,))
+            order = cur.fetchone()
+            if order:
+                cur.execute("SELECT * FROM order_items WHERE order_id = %s;", (order_id,))
+                order['items'] = cur.fetchall()
+        finally:
+            conn.close()
+    else:
+        orders_list = load_orders()
+        order = next((o for o in orders_list if o.get("order_id") == order_id), None)
+
+    if not order:
+        abort(404, description="Order not found")
         
-    # TODO: Process order (save to DB, send notification, etc.)
-    order_id = "ORD-" + str(int(time.time()))
-    
-    return jsonify({
-        'success': True,
-        'order_id': order_id,
-        'message': 'Order recorded successfully'
-    })
+    return render_template('invoice.html', order=order)
 
 # ==========================================
 # DASHBOARD & INVENTORY ROUTES
@@ -126,7 +247,6 @@ def dashboard():
     products, stock_summary = process_stock_status(raw_products)
     stats = dashboard_stats()
     
-    # Inject detailed stock status metrics for the Dashboard cards
     stats["in_stock"] = stock_summary["in_stock"]
     stats["low_stock"] = stock_summary["low_stock"]
     stats["out_of_stock"] = stock_summary["out_of_stock"]
@@ -144,9 +264,7 @@ def dashboard():
         except Exception:
             pass
 
-    return render_template(
-        "dashboard.html", stats=stats, last_publish=last_publish
-    )
+    return render_template("dashboard.html", stats=stats, last_publish=last_publish)
 
 @app.route("/inventory")
 def inventory():
@@ -188,27 +306,12 @@ def add_product_route():
         "Notes": request.form.get("Notes", "")
     }
     image_file = request.files.get("product_image")
-    
     success, message = add_product(product_data, image_file)
     return jsonify({"success": success, "message": message})
-
-# import update_product from excel_service
 
 @app.route("/update_product", methods=["POST"])
 def update_product_route():
     try:
-        def safe_float(val, default=0.0):
-            try:
-                return float(val) if val not in [None, ""] else default
-            except (ValueError, TypeError):
-                return default
-
-        def safe_int(val, default=0):
-            try:
-                return int(float(val)) if val not in [None, ""] else default
-            except (ValueError, TypeError):
-                return default
-
         product_data = {
             "original_code": request.form.get("original_code") or request.form.get("Product Code"),
             "Product Code": request.form.get("Product Code"),
@@ -224,14 +327,13 @@ def update_product_route():
         image_file = request.files.get("product_image")
 
         success, message = update_product(product_data, image_file)
-        
         status_code = 200 if success else 400
         return jsonify({"success": success, "message": message}), status_code
 
     except Exception as e:
         app.logger.error(f"Error updating product: {str(e)}")
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
-    
+
 @app.route("/delete_product", methods=["POST"])
 def delete_product_route():
     data = request.get_json() or {}
@@ -251,11 +353,7 @@ def update_stock_route():
         return jsonify({"success": False, "message": "Missing product code or stock count."}), 400
 
     products = get_products()
-    target_product = None
-    for p in products:
-        if str(p.get("Product Code")).strip() == str(code).strip():
-            target_product = p
-            break
+    target_product = next((p for p in products if str(p.get("Product Code")).strip() == str(code).strip()), None)
 
     if not target_product:
         return jsonify({"success": False, "message": "Product not found."}), 404
@@ -265,6 +363,10 @@ def update_stock_route():
 
     success, message = update_product(target_product)
     return jsonify({"success": success, "message": message, "new_stock": int(new_stock)})
+
+# ==========================================
+# ASSET & EXPORT ROUTES
+# ==========================================
 
 @app.route("/api/export-pngs", methods=["POST"])
 def export_selected_pngs():
@@ -309,102 +411,78 @@ def export_selected_pngs():
 def product_image(filename):
     return send_from_directory(IMAGES_FOLDER, filename)
 
-from services.orders_service import load_orders, create_order, update_order_status
-from services.excel_service import get_products
-
-@app.route('/orders')
-def orders():
-    all_orders = load_orders()
-    products = get_products()  # Needed for create order dropdown/selection
-    return render_template('orders.html', orders=all_orders, products=products)
-
-@app.route('/api/orders/create', methods=['POST'])
-def api_create_order():
-    try:
-        data = request.get_json()
-        customer_data = data.get("customer", {})
-        items = data.get("items", [])
-
-        if not customer_data.get("name") or not items:
-            return jsonify({"success": False, "message": "Customer name and at least one item are required."}), 400
-
-        success, message, order_id = create_order(customer_data, items)
-        return jsonify({"success": success, "message": message, "order_id": order_id})
-
-    except Exception as e:
-        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
-
-@app.route('/api/orders/update-status', methods=['POST'])
-def api_update_order_status():
-    try:
-        data = request.get_json()
-        order_id = data.get("order_id")
-        status = data.get("status")
-
-        if not order_id or not status:
-            return jsonify({"success": False, "message": "Missing order ID or status."}), 400
-
-        success, message = update_order_status(order_id, status)
-        return jsonify({"success": success, "message": message})
-
-    except Exception as e:
-        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
-
+# ==========================================
+# CUSTOMERS, ANALYTICS & SETTINGS
+# ==========================================
 
 @app.route('/customers')
 def customers():
-    all_customers = load_customers()
-    return render_template('customers.html', customers=all_customers)
+    return render_template('customers.html', customers=load_customers())
 
 @app.route('/api/customers/create', methods=['POST'])
 def api_create_customer():
     try:
-        data = request.get_json()
+        data = request.get_json() or {}
         if not data.get("name") or not data.get("phone"):
             return jsonify({"success": False, "message": "Name and Phone number are required."}), 400
 
         success, message = create_customer(data)
         return jsonify({"success": success, "message": message})
-
     except Exception as e:
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
-
 @app.route('/analytics')
 def analytics():
-    metrics = get_analytics_metrics()
-    return render_template('analytics.html', metrics=metrics)
-
+    return render_template('analytics.html', metrics=get_analytics_metrics())
 
 @app.route('/settings')
 def settings():
-    current_config = read_config()
-    return render_template('settings.html', config=current_config)
+    return render_template('settings.html', config=read_config())
 
 @app.route('/api/settings/update', methods=['POST'])
 def api_update_settings():
     try:
-        data = request.get_json()
+        data = request.get_json() or {}
         success, message = update_config(data)
         return jsonify({"success": success, "message": message})
     except Exception as e:
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
+
+# ==========================================
+# PUBLISH & DEPLOYMENT ROUTES
+# ==========================================
 
 @app.route("/publish_site", methods=["POST"])
 def publish_site_route():
     success, message = run_publish_workflow()
     return jsonify({"success": success, "message": message})
 
+@app.route('/api/publish-remote', methods=['POST'])
+def trigger_remote_publish():
+    """Triggers GitHub Actions rebuild for Cloudflare Pages."""
+    github_token = os.environ.get("GITHUB_DISPATCH_TOKEN")
+    repo_owner = os.environ.get("GITHUB_REPO_OWNER", "Ncoder3")
+    repo_name = os.environ.get("GITHUB_REPO_NAME", "Pakwholesaleworkers")
 
-@app.route('/orders/<order_id>/invoice')
-def order_invoice(order_id):
-    orders = load_orders()
-    order = next((o for o in orders if o.get("order_id") == order_id), None)
-    
-    if not order:
-        os.abort(404, description="Order not found")
-        
-    return render_template('invoice.html', order=order)
+    if not github_token:
+        success, message = run_publish_workflow()
+        return jsonify({"success": success, "message": message})
+
+    headers = {
+        "Authorization": f"Bearer {github_token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    payload = {"event_type": "remote_publish_trigger"}
+
+    res = requests.post(
+        f"https://api.github.com/repos/{repo_owner}/{repo_name}/dispatches",
+        json=payload,
+        headers=headers
+    )
+
+    if res.status_code == 204:
+        return jsonify({"success": True, "message": "Remote site rebuild triggered on Cloudflare/GitHub!"}), 200
+    return jsonify({"success": False, "message": f"Failed to trigger GitHub Action: {res.text}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
