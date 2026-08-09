@@ -141,10 +141,18 @@ async function submitNewOrder() {
     const items = [];
 
     itemRows.forEach(row => {
-        const code = row.querySelector('.prod-code').value;
+        const selectEl = row.querySelector('.prod-code');
+        const code = selectEl.value;
         const packs = row.querySelector('.prod-packs').value;
+
         if (code) {
-            items.push({ product_code: code, packs: parseInt(packs) });
+            // Extract selected option text to parse price & product name if needed
+            const selectedOptionText = selectEl.options[selectEl.selectedIndex].text; 
+            
+            items.push({ 
+                product_code: code, 
+                packs: parseInt(packs)
+            });
         }
     });
 

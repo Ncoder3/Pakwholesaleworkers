@@ -106,7 +106,7 @@ def safe_int(val, default=0):
 @app.route('/api/orders/create', methods=['POST', 'OPTIONS'])
 @app.route('/api/order', methods=['POST', 'OPTIONS'])
 def submit_order():
-    """Handles order creation from frontend/Cloudflare with PostgreSQL + fallback."""
+    """Handles order creation with dynamic product lookup & PostgreSQL customer upsert."""
     if request.method == 'OPTIONS':
         return '', 200
 
@@ -117,42 +117,94 @@ def submit_order():
     if not customer.get('name') or not customer.get('phone') or not items:
         return jsonify({'success': False, 'message': 'Missing required order details'}), 400
 
+    # Build product lookup map to automatically fetch real name and wholesale price
+    all_products = get_products()
+    product_map = {
+        str(p.get('Product Code')).strip(): p 
+        for p in all_products if p.get('Product Code')
+    }
+
     conn = get_db_connection()
     if conn:
         try:
             cur = conn.cursor()
+            
+            # 1. UPSERT Customer into PostgreSQL 'customers' table
+            cust_name = customer.get('name', '').strip()
+            cust_phone = customer.get('phone', '').strip()
+            cust_city = customer.get('city', '').strip()
+            cust_address = customer.get('address', '').strip()
+            
+            if cust_phone:
+                cur.execute("""
+                    INSERT INTO customers (name, phone, city, address)
+                    VALUES (%s, %s, %s, %s)
+                    ON CONFLICT (phone) DO UPDATE 
+                    SET name = EXCLUDED.name,
+                        city = COALESCE(EXCLUDED.city, customers.city),
+                        address = COALESCE(EXCLUDED.address, customers.address);
+                """, (cust_name, cust_phone, cust_city, cust_address))
+
+            # 2. Generate Order ID
             cur.execute("SELECT COUNT(*) FROM orders;")
             count_res = cur.fetchone()
             count = count_res['count'] if count_res else 0
             order_id = f"ORD-{1001 + count}"
 
-            total_amount = sum(safe_float(item.get('price')) * safe_int(item.get('packs', 1)) for item in items)
+            # 3. Calculate line totals with fallback lookup
+            processed_items = []
+            total_amount = 0.0
 
+            for item in items:
+                code = str(item.get('product_code', '')).strip()
+                packs = safe_int(item.get('packs', 1))
+                
+                # Fetch product details from DB/Excel lookup if missing in request payload
+                matched_prod = product_map.get(code, {})
+                prod_name = item.get('product_name') or matched_prod.get('Product Name', 'Unknown Product')
+                
+                unit_price = item.get('price')
+                if unit_price is None or unit_price == "":
+                    unit_price = matched_prod.get('Wholesale Price per Pack (Rs)', 0.0)
+                unit_price = safe_float(unit_price)
+
+                subtotal = unit_price * packs
+                total_amount += subtotal
+
+                processed_items.append({
+                    'code': code,
+                    'name': prod_name,
+                    'packs': packs,
+                    'price': unit_price,
+                    'subtotal': subtotal
+                })
+
+            # 4. Insert into 'orders'
             cur.execute("""
                 INSERT INTO orders (order_id, customer_name, customer_phone, customer_city, customer_address, customer_notes, total_amount)
                 VALUES (%s, %s, %s, %s, %s, %s, %s);
             """, (
                 order_id,
-                customer.get('name'),
-                customer.get('phone'),
-                customer.get('city', ''),
-                customer.get('address', ''),
+                cust_name,
+                cust_phone,
+                cust_city,
+                cust_address,
                 customer.get('notes', ''),
                 total_amount
             ))
 
-            for item in items:
-                subtotal = safe_float(item.get('price')) * safe_int(item.get('packs', 1))
+            # 5. Insert into 'order_items'
+            for p_item in processed_items:
                 cur.execute("""
                     INSERT INTO order_items (order_id, product_code, product_name, quantity, unit_price, subtotal)
                     VALUES (%s, %s, %s, %s, %s, %s);
                 """, (
                     order_id,
-                    item.get('product_code', 'ABT-GEN'),
-                    item.get('product_name', 'Unknown Product'),
-                    safe_int(item.get('packs', 1)),
-                    safe_float(item.get('price')),
-                    subtotal
+                    p_item['code'],
+                    p_item['name'],
+                    p_item['packs'],
+                    p_item['price'],
+                    p_item['subtotal']
                 ))
 
             conn.commit()
