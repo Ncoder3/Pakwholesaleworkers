@@ -44,6 +44,7 @@ app = Flask(__name__, template_folder="templates", static_folder="static")
 # CORS Setup for Cloudflare domain & local testing
 CORS(app, origins=[
     "https://pakwholesaleworkers.pages.dev",
+    "https://pakwholesaleworkers.up.railway.app",
     "http://localhost:5000",
     "http://127.0.0.1:5000"
 ])
