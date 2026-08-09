@@ -103,9 +103,10 @@
         <div class="details-grid">
             <div>
                 <strong style="color: #64748b; font-size: 12px; text-transform: uppercase;">Billed To:</strong>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px;">{{ order.customer_name }}</div>
-                <div style="font-size: 14px; color: #475569;">Phone: {{ order.phone or 'N/A' }}</div>
-                <div style="font-size: 14px; color: #475569;">Address: {{ order.address or 'N/A' }}</div>
+                <div style="font-size: 16px; font-weight: 700; margin-top: 4px;">{{ order.customer_name or order.name or 'Customer' }}</div>
+                <div style="font-size: 14px; color: #475569;">Phone: {{ order.customer_phone or order.phone or 'N/A' }}</div>
+                <div style="font-size: 14px; color: #475569;">City: {{ order.customer_city or order.city or 'N/A' }}</div>
+                <div style="font-size: 14px; color: #475569;">Address: {{ order.customer_address or order.address or 'N/A' }}</div>
             </div>
             <div style="text-align: right;">
                 <strong style="color: #64748b; font-size: 12px; text-transform: uppercase;">Order Status:</strong>
@@ -124,20 +125,23 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in order['items'] %}
+                {% for item in order.items %}
+                {% set price = item.pack_price if item.pack_price is defined and item.pack_price is not none else (item.unit_price if item.unit_price is defined and item.unit_price is not none else (item.price if item.price is defined and item.price is not none else 0)) %}
+                {% set packs = item.packs if item.packs is defined and item.packs is not none else (item.quantity if item.quantity is defined and item.quantity is not none else 1) %}
+                {% set line_total = item.line_total if item.line_total is defined and item.line_total is not none else (price * packs) %}
                 <tr>
-                    <td style="font-weight: 600;">{{ item.product_code }}</td>
-                    <td>{{ item.product_name }}</td>
-                    <td>Rs {{ "{:,.2f}".format(item.pack_price) }}</td>
-                    <td>{{ item.packs }}</td>
-                    <td style="text-align: right; font-weight: 600;">Rs {{ "{:,.2f}".format(item.line_total) }}</td>
+                    <td style="font-weight: 600;">{{ item.product_code or item.code or '-' }}</td>
+                    <td>{{ item.product_name or item.name or '-' }}</td>
+                    <td>Rs {{ "{:,.2f}".format(price) }}</td>
+                    <td>{{ packs }}</td>
+                    <td style="text-align: right; font-weight: 600;">Rs {{ "{:,.2f}".format(line_total) }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
 
         <div class="total-section">
-            Grand Total: Rs {{ "{:,.2f}".format(order.total_amount) }}
+            Grand Total: Rs {{ "{:,.2f}".format(order.total_amount if order.total_amount is defined and order.total_amount is not none else 0) }}
         </div>
     </div>
 
