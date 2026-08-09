@@ -10,8 +10,10 @@ static assets to the output directory.
 from pathlib import Path
 import os
 import shutil
+import urllib.parse
 from datetime import datetime
 import pandas as pd
+import qrcode
 from jinja2 import Environment, FileSystemLoader
 
 import config
@@ -29,7 +31,9 @@ from helpers import (
     print_error,
     create_product
 )
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
 # ==========================================================
 # PATH & DIRECTORY SETUP
 # ==========================================================
@@ -39,6 +43,7 @@ TEMPLATE_FOLDER = PROJECT_ROOT / "templates"
 IMAGE_FOLDER = PROJECT_ROOT / "images"
 ASSETS_FOLDER = PROJECT_ROOT / "assets"
 OUTPUT_FOLDER = PROJECT_ROOT / "output"
+QR_FOLDER = OUTPUT_FOLDER / "qr"
 
 EXCEL_FILE = DATA_FOLDER / "products.xlsx"
 
@@ -49,9 +54,57 @@ PRODUCT_CSS = TEMPLATE_FOLDER / "product" / "gproduct_card.css"
 INDEX_CSS = TEMPLATE_FOLDER / "index" / "index.css"
 INDEX_JS = TEMPLATE_FOLDER / "index" / "index.js"
 
-# Create Output Directory
+# Create Output and QR Directories
 OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
-print_success("Output folder initialized.")
+QR_FOLDER.mkdir(parents=True, exist_ok=True)
+print_success("Output and QR folders initialized.")
+
+
+# ==========================================================
+# QR GENERATOR HELPER FUNCTIONS
+# ==========================================================
+def generate_whatsapp_link(product):
+    """Create a WhatsApp URL with a pre-filled message."""
+    whatsapp_num = getattr(config, 'WHATSAPP', '923231551535')
+    code = product.get('product_code', '')
+    name = product.get('product_name', '')
+    
+    message = f"""
+Hello Al Baraka Traders,
+
+I am interested in the following product.
+
+Product Code : {code}
+Product Name : {name}
+
+Please share the wholesale price and availability.
+
+Thank you.
+"""
+    encoded = urllib.parse.quote(message.strip())
+    return f"https://wa.me/{whatsapp_num}?text={encoded}"
+
+
+def generate_qr(product):
+    """Generate a QR code PNG for a product inside output/qr/ and return relative path."""
+    url = generate_whatsapp_link(product)
+
+    qr = qrcode.QRCode(
+        version=2,
+        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        box_size=10,
+        border=2,
+    )
+    qr.add_data(url)
+    qr.make(fit=True)
+
+    image = qr.make_image(fill_color="black", back_color="white")
+
+    filename = f"{product.get('product_code', 'default')}.png"
+    filepath = QR_FOLDER / filename
+    image.save(filepath)
+
+    return f"qr/{filename}"
 
 
 # ==========================================================
@@ -68,10 +121,11 @@ print(f"Total Products Read: {len(df)}")
 
 # Calculate highest existing numeric product code
 highest_code = 0
+prefix = f"{config.PRODUCT_PREFIX}-"
+
 for code in df.get("Product Code", []):
     if pd.notna(code):
         code_str = str(code).strip()
-        prefix = f"{config.PRODUCT_PREFIX}-"
         if code_str.startswith(prefix):
             try:
                 num = int(code_str.replace(prefix, ""))
@@ -115,9 +169,9 @@ print_success("Jinja Templates compiled.")
 
 
 # ==========================================================
-# 4. GENERATE INDIVIDUAL PRODUCT HTML CARDS
+# 4. GENERATE QR CODES & INDIVIDUAL PRODUCT HTML CARDS
 # ==========================================================
-print_section("Generating Product Cards")
+print_section("Generating QR Codes & Product Cards")
 
 products = []
 found_images = 0
@@ -131,8 +185,17 @@ for index, row in df.iterrows():
     safe_name = safe_filename(product["product_name"])
     product["file_name"] = f"{safe_name}.html"
     
+    # Generate QR Code image and assign to keys used by both parent & sub-templates
+    qr_rel_path = generate_qr(product)
+    product["qr_code_path"] = qr_rel_path
+    product["qr"] = qr_rel_path
+    
+    # Pre-set year & nested product object directly into dict to avoid render parameter duplication
+    product["current_year"] = datetime.now().year
+    product["product"] = product
+
     # Track missing vs available product images
-    if product["image"].endswith("default.png"):
+    if str(product.get("image", "")).endswith("default.png"):
         missing_images += 1
         print_warning(f"Default Image Assigned: {product['product_name']}")
     else:
@@ -140,18 +203,17 @@ for index, row in df.iterrows():
 
     products.append(product)
 
-    # Render Product HTML Card with config context
+    # Render Product HTML Card safely
     card_html = product_template.render(
-        product=product,
-        config=config,
-        current_year=datetime.now().year
+        **product,
+        config=config
     )
 
     output_file = OUTPUT_FOLDER / f"{safe_name}.html"
     with open(output_file, "w", encoding="utf-8") as file:
         file.write(card_html)
 
-    print_success(f"Generated: {safe_name}.html")
+    print_success(f"Generated QR & Card: {safe_name}.html")
 
 
 # ==========================================================
@@ -163,11 +225,11 @@ categories = sorted(df["Category"].dropna().unique().tolist())
 
 index_data = {
     "config": config,
-    "brand_name": config.BRAND_NAME,
-    "tagline": config.TAGLINE,
-    "website": config.WEBSITE,
-    "email": config.EMAIL,
-    "whatsapp": config.WHATSAPP,
+    "brand_name": getattr(config, 'BRAND_NAME', 'Al Baraka Traders'),
+    "tagline": getattr(config, 'TAGLINE', 'Your Trusted Wholesale Partner'),
+    "website": getattr(config, 'WEBSITE', 'www.albarakatradersabbott.pk'),
+    "email": getattr(config, 'EMAIL', 'info@albarakatraders.pk'),
+    "whatsapp": getattr(config, 'WHATSAPP', '923231551535'),
     "products": products,
     "categories": categories,
     "total_products": len(products),
@@ -201,6 +263,10 @@ if INDEX_JS.exists():
 # Copy static directory trees
 copy_folder(ASSETS_FOLDER, OUTPUT_FOLDER / "assets")
 copy_folder(IMAGE_FOLDER, OUTPUT_FOLDER / "images")
+
+# Copy project root 'qr' folder if present
+if (PROJECT_ROOT / "qr").exists():
+    copy_folder(PROJECT_ROOT / "qr", OUTPUT_FOLDER / "qr")
 
 print_success("Static assets successfully synced.")
 
