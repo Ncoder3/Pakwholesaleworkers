@@ -1,4 +1,12 @@
 // ==========================================
+// DYNAMIC BASE URL CONFIGURATION
+// ==========================================
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? ''
+    : 'https://pakwholesaleworkers.up.railway.app';
+
+
+// ==========================================
 // DOM INITIALIZATION & EVENT LISTENERS
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -139,7 +147,7 @@ async function saveStockChange(event) {
     const newStock = parseInt(inputEl.value) || 0;
 
     try {
-        const response = await fetch('/api/update-stock', {
+        const response = await fetch(`${API_BASE_URL}/api/update-stock`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
@@ -226,7 +234,7 @@ function saveNewProduct(event) {
 
     const formData = new FormData(form);
 
-    fetch('/add_product', {
+    fetch(`${API_BASE_URL}/add_product`, {
         method: 'POST',
         body: formData
     })
@@ -292,7 +300,7 @@ async function saveProductUpdate(event) {
     const formData = new FormData(form);
 
     try {
-        const response = await fetch('/update_product', {
+        const response = await fetch(`${API_BASE_URL}/update_product`, {
             method: 'POST',
             body: formData
         });
@@ -329,7 +337,7 @@ function deleteProduct(code) {
 function executeDeleteProduct() {
     if (!pendingDeleteCode) return;
 
-    fetch('/delete_product', {
+    fetch(`${API_BASE_URL}/delete_product`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ product_code: pendingDeleteCode })
@@ -361,7 +369,7 @@ function publishLiveSite() {
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Publishing...';
     }
 
-    fetch('/publish_site', { method: 'POST' })
+    fetch(`${API_BASE_URL}/publish_site`, { method: 'POST' })
         .then(res => res.json())
         .then(data => {
             if (btn) {
