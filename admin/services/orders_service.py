@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 from datetime import datetime
 from pathlib import Path
 from services.excel_service import load_products, ALL_COLUMNS, EXCEL_FILE
@@ -8,6 +9,8 @@ ADMIN_DIR = SERVICE_DIR.parent
 PROJECT_ROOT = ADMIN_DIR.parent
 
 ORDERS_FILE = PROJECT_ROOT / "data" / "orders.json"
+EXCEL_ORDERS_FILE = PROJECT_ROOT / "data" / "Orders_Database.xlsx"
+
 
 def ensure_orders_file():
     """Ensure data folder and orders.json exist."""
@@ -15,6 +18,7 @@ def ensure_orders_file():
     if not ORDERS_FILE.exists():
         with open(ORDERS_FILE, "w", encoding="utf-8") as f:
             json.dump([], f, indent=4)
+
 
 def load_orders():
     """Load all orders sorted by date descending."""
@@ -27,11 +31,42 @@ def load_orders():
         print(f"Error reading orders file: {e}")
         return []
 
+
 def save_orders(orders):
     """Save order list to JSON."""
     ensure_orders_file()
     with open(ORDERS_FILE, "w", encoding="utf-8") as f:
         json.dump(orders, f, indent=4)
+
+
+def save_order_to_excel(order):
+    """Appends order details to Orders_Database.xlsx as an Excel-based database."""
+    rows = []
+    for item in order.get("items", []):
+        rows.append({
+            "Order ID": order.get("order_id"),
+            "Date": order.get("created_at"),
+            "Customer Name": order.get("customer_name"),
+            "Phone": order.get("phone"),
+            "Address": order.get("address"),
+            "Product Code": item.get("product_code"),
+            "Product Name": item.get("product_name"),
+            "Packs": item.get("packs"),
+            "Pack Price (Rs)": item.get("pack_price"),
+            "Line Total (Rs)": item.get("line_total"),
+            "Grand Total (Rs)": order.get("total_amount"),
+            "Status": order.get("status")
+        })
+
+    new_df = pd.DataFrame(rows)
+
+    if EXCEL_ORDERS_FILE.exists():
+        existing_df = pd.read_excel(EXCEL_ORDERS_FILE)
+        combined_df = pd.concat([existing_df, new_df], ignore_index=True)
+        combined_df.to_excel(EXCEL_ORDERS_FILE, index=False, engine="openpyxl")
+    else:
+        new_df.to_excel(EXCEL_ORDERS_FILE, index=False, engine="openpyxl")
+
 
 def get_next_order_id():
     """Generates next incremental Order ID e.g., ORD-1001."""
@@ -50,9 +85,11 @@ def get_next_order_id():
     next_num = max(ids) + 1 if ids else 1001
     return f"ORD-{next_num}"
 
+
 def create_order(customer_data, items):
     """
-    Creates a new order and calculates total cost dynamically.
+    Creates a new order, calculates total cost dynamically, 
+    saves to orders.json, and appends rows to Orders_Database.xlsx.
     Items format: [{"product_code": "ABT-001", "packs": 2}, ...]
     """
     orders = load_orders()
@@ -93,11 +130,15 @@ def create_order(customer_data, items):
 
     orders.append(new_order)
     save_orders(orders)
+    save_order_to_excel(new_order)  # Syncs order directly into Excel sheet database
+    
     return True, "Order created successfully.", new_order["order_id"]
+
 
 def update_order_status(order_id, new_status):
     """
-    Updates order status. Deducts stock from Excel when status moves to 'Completed'.
+    Updates order status. Deducts stock from main inventory Excel when status moves to 'Completed'.
+    Also updates status in Orders_Database.xlsx if present.
     """
     orders = load_orders()
     order_found = None
@@ -114,7 +155,7 @@ def update_order_status(order_id, new_status):
     if old_status == new_status:
         return True, f"Order status is already '{new_status}'."
 
-    # If transitioning to Completed, deduct stock from Excel
+    # If transitioning to Completed, deduct stock from main product Excel
     if new_status == "Completed" and old_status != "Completed":
         df = load_products()
         
@@ -134,4 +175,15 @@ def update_order_status(order_id, new_status):
 
     order_found["status"] = new_status
     save_orders(orders)
+
+    # Sync status update to Orders_Database.xlsx if file exists
+    if EXCEL_ORDERS_FILE.exists():
+        try:
+            excel_orders = pd.read_excel(EXCEL_ORDERS_FILE)
+            if "Order ID" in excel_orders.columns:
+                excel_orders.loc[excel_orders["Order ID"] == order_id, "Status"] = new_status
+                excel_orders.to_excel(EXCEL_ORDERS_FILE, index=False, engine="openpyxl")
+        except Exception as e:
+            print(f"Failed to sync status update to Excel database: {e}")
+
     return True, f"Order status updated to '{new_status}'."

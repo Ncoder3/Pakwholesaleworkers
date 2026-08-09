@@ -5,6 +5,8 @@ import os
 import zipfile
 import io
 from flask import Flask, render_template, request, jsonify, send_from_directory, send_file
+from flask_cors import CORS
+
 
 from services.excel_service import (
     dashboard_stats,
@@ -38,6 +40,7 @@ app = Flask(
     template_folder="templates",
     static_folder="static"
 )
+CORS(app)  # Enables cross-origin requests from your Cloudflare frontend site
 
 # ==========================================
 # HELPER FUNCTIONS FOR STOCK BADGES

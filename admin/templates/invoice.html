@@ -124,7 +124,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in order.items %}
+                {% for item in order['items'] %}
                 <tr>
                     <td style="font-weight: 600;">{{ item.product_code }}</td>
                     <td>{{ item.product_name }}</td>
