@@ -7,7 +7,7 @@ IGNORE = {
     ".venv",
     "venv",
     "node_modules",
-    "qr"
+    "qr",
     "previous code"
     
 }

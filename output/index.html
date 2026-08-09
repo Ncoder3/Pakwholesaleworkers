@@ -1,27 +1,11 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>
-
-        Al Baraka Traders Catalog
-
-    </title>
-
-    <link
-        rel="stylesheet"
-        href="index.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al Baraka Traders Catalog</title>
+    <link rel="stylesheet" href="index.css">
 </head>
-
 <body>
 
 <div class="container">
@@ -29,848 +13,2097 @@
     <!-- ================================= -->
     <!-- HEADER -->
     <!-- ================================= -->
-
     <header class="header">
-
         <div class="logo-area">
-
-            <img
-                src="../assets/logo.png"
-                class="logo"
-                alt="Logo">
-
+            <img src="../assets/logo.png" class="logo" alt="Logo">
             <div>
-
-                <h1>
-
-                    Al Baraka Traders
-
-                </h1>
-
-                <p>
-
-                    Your Trusted Wholesale Partner
-
-                </p>
-
+                <h1>Al Baraka Traders</h1>
+                <p>Your Trusted Wholesale Partner</p>
             </div>
-
         </div>
 
-        <a
-            href="https://wa.me/923231551535"
-            class="whatsapp-btn">
-
-            WhatsApp
-
-        </a>
-
+        <div class="header-actions">
+            <button id="cartToggleBtn" class="cart-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                <span>Cart</span>
+                <span id="cartCount" class="cart-count-badge">0</span>
+            </button>
+            <a href="https://wa.me/923231551535" class="whatsapp-btn" target="_blank">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                WhatsApp
+            </a>
+        </div>
     </header>
-
-
 
     <!-- ================================= -->
     <!-- HERO -->
     <!-- ================================= -->
-
     <section class="hero">
-
-        <h2>
-
-            Wholesale Product Catalog
-
-        </h2>
-
-        <p>
-
-            Browse our complete range of wholesale products.
-
-        </p>
-
+        <h2>Wholesale Product Catalog</h2>
+        <p>Browse our complete range of high-quality wholesale products.</p>
     </section>
-
-
 
     <!-- ================================= -->
     <!-- STATISTICS -->
     <!-- ================================= -->
-
     <section class="stats">
-
         <div class="stat-card">
-
-            <h3>
-
-                40
-
-            </h3>
-
-            <span>
-
-                Products
-
-            </span>
-
+            <h3>40</h3>
+            <span>Products</span>
         </div>
-
         <div class="stat-card">
-
-            <h3>
-
-                9
-
-            </h3>
-
-            <span>
-
-                Categories
-
-            </span>
-
+            <h3>9</h3>
+            <span>Categories</span>
         </div>
-
         <div class="stat-card">
-
-            <h3>
-
-                09 Aug 2026
-
-            </h3>
-
-            <span>
-
-                Generated
-
-            </span>
-
+            <h3>09 Aug 2026</h3>
+            <span>Generated</span>
         </div>
-
     </section>
-
-
 
     <!-- ================================= -->
     <!-- SEARCH -->
     <!-- ================================= -->
-
     <section class="search-section">
-
-        <input
-
-            id="searchBox"
-
-            type="text"
-
-            placeholder="Search products...">
-
+        <input id="searchBox" type="text" placeholder="🔍 Search products by name or code...">
     </section>
-
-
 
     <!-- ================================= -->
     <!-- CATEGORY FILTER -->
     <!-- ================================= -->
-
     <section class="filters">
-
-        <button
-            class="filter active"
-            data-category="All">
-
-            All
-
-        </button>
-
+        <button class="filter active" data-category="All">All</button>
         
-
-        <button
-
-            class="filter"
-
-            data-category="Baby Products">
-
-            Baby Products
-
-        </button>
-
+        <button class="filter" data-category="Baby Products">Baby Products</button>
         
-
-        <button
-
-            class="filter"
-
-            data-category="Beauty">
-
-            Beauty
-
-        </button>
-
+        <button class="filter" data-category="Beauty">Beauty</button>
         
-
-        <button
-
-            class="filter"
-
-            data-category="Checking">
-
-            Checking
-
-        </button>
-
+        <button class="filter" data-category="Checking">Checking</button>
         
-
-        <button
-
-            class="filter"
-
-            data-category="Household Cleaning">
-
-            Household Cleaning
-
-        </button>
-
+        <button class="filter" data-category="Household Cleaning">Household Cleaning</button>
         
-
-        <button
-
-            class="filter"
-
-            data-category="Kids & Toys">
-
-            Kids & Toys
-
-        </button>
-
+        <button class="filter" data-category="Kids &amp; Toys">Kids &amp; Toys</button>
         
-
-        <button
-
-            class="filter"
-
-            data-category="Miscellaneous">
-
-            Miscellaneous
-
-        </button>
-
+        <button class="filter" data-category="Miscellaneous">Miscellaneous</button>
         
-
-        <button
-
-            class="filter"
-
-            data-category="Personal Care">
-
-            Personal Care
-
-        </button>
-
+        <button class="filter" data-category="Personal Care">Personal Care</button>
         
-
-        <button
-
-            class="filter"
-
-            data-category="Soaps">
-
-            Soaps
-
-        </button>
-
+        <button class="filter" data-category="Soaps">Soaps</button>
         
-
-        <button
-
-            class="filter"
-
-            data-category="Stationery">
-
-            Stationery
-
-        </button>
-
+        <button class="filter" data-category="Stationery">Stationery</button>
         
-
     </section>
-
-
 
     <!-- ================================= -->
     <!-- PRODUCT GRID -->
     <!-- ================================= -->
     <section class="product-grid" id="productGrid">
         
-        <a href="Turkish_Soap.html"
-        class="product-card"
-        data-category="Soaps"
-        data-name="turkish soap">
-            <img src="../images/Turkish_Soap.jpg" alt="Turkish Soap">
-            <span class="category">
-                🧴 Soaps
-            </span>
-            <h3>Turkish Soap</h3>
-            <p class="price">Rs 52.08</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Soaps" data-name="turkish soap">
+            
+            <a href="Turkish_Soap.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Turkish_Soap.jpg" alt="Turkish Soap">
+                </div>
+                <span class="category">🧴 Soaps</span>
+                <h3>Turkish Soap</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>48 pcs / Carton(48 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">2,500.00</span>
+                    <span class="price-unit">/ carton(48 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-001">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-001" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-001">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-001"
+                        data-name="Turkish Soap"
+                        data-price="2,500.00"
+                        data-unit="Carton(48 pcs)"
+                        data-image="../images/Turkish_Soap.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Turkish_Soap.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Pencils_(Small_Eraser).html"
-        class="product-card"
-        data-category="Stationery"
-        data-name="pencils (small eraser)">
-            <img src="../images/Pencils_(Small_Eraser).jpg" alt="Pencils (Small Eraser)">
-            <span class="category">
-                ✏️ Stationery
-            </span>
-            <h3>Pencils (Small Eraser)</h3>
-            <p class="price">Rs 0.76</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Stationery" data-name="pencils (small eraser)">
+            
+            <a href="Pencils_(Small_Eraser).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Pencils_(Small_Eraser).jpg" alt="Pencils (Small Eraser)">
+                </div>
+                <span class="category">✏️ Stationery</span>
+                <h3>Pencils (Small Eraser)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>144 pcs / Packet (144 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">110.00</span>
+                    <span class="price-unit">/ packet (144 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-002">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-002" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-002">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-002"
+                        data-name="Pencils (Small Eraser)"
+                        data-price="110.00"
+                        data-unit="Packet (144 pcs)"
+                        data-image="../images/Pencils_(Small_Eraser).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Pencils_(Small_Eraser).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Takia_wali_Jaali_(Scourer).html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="takia wali jaali (scourer)">
-            <img src="../images/Takia_wali_Jaali_(Scourer).jpg" alt="Takia wali Jaali (Scourer)">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Takia wali Jaali (Scourer)</h3>
-            <p class="price">Rs 27.50</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="takia wali jaali (scourer)">
+            
+            <a href="Takia_wali_Jaali_(Scourer).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Takia_wali_Jaali_(Scourer).jpg" alt="Takia wali Jaali (Scourer)">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Takia wali Jaali (Scourer)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">330.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-003">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-003" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-003">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-003"
+                        data-name="Takia wali Jaali (Scourer)"
+                        data-price="330.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Takia_wali_Jaali_(Scourer).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Takia_wali_Jaali_(Scourer).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Kimi_Shoe_Polish.html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="kimi shoe polish">
-            <img src="../images/Kimi_Shoe_Polish.jpg" alt="Kimi Shoe Polish">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Kimi Shoe Polish</h3>
-            <p class="price">Rs 27.50</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="kimi shoe polish">
+            
+            <a href="Kimi_Shoe_Polish.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Kimi_Shoe_Polish.jpg" alt="Kimi Shoe Polish">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Kimi Shoe Polish</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">330.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-004">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-004" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-004">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-004"
+                        data-name="Kimi Shoe Polish"
+                        data-price="330.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Kimi_Shoe_Polish.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Kimi_Shoe_Polish.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Formula_Toothbrush_(Pakistan_Made).html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="formula toothbrush (pakistan made)">
-            <img src="../images/Formula_Toothbrush_(Pakistan_Made).jpg" alt="Formula Toothbrush (Pakistan Made)">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Formula Toothbrush (Pakistan Made)</h3>
-            <p class="price">Rs 37.50</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="formula toothbrush (pakistan made)">
+            
+            <a href="Formula_Toothbrush_(Pakistan_Made).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Formula_Toothbrush_(Pakistan_Made).jpg" alt="Formula Toothbrush (Pakistan Made)">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Formula Toothbrush (Pakistan Made)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Box (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">450.00</span>
+                    <span class="price-unit">/ box (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-005">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-005" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-005">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-005"
+                        data-name="Formula Toothbrush (Pakistan Made)"
+                        data-price="450.00"
+                        data-unit="Box (12 pcs)"
+                        data-image="../images/Formula_Toothbrush_(Pakistan_Made).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Formula_Toothbrush_(Pakistan_Made).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Formula_Toothbrush_(China_Made).html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="formula toothbrush (china made)">
-            <img src="../images/Formula_Toothbrush_(China_Made).jpg" alt="Formula Toothbrush (China Made)">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Formula Toothbrush (China Made)</h3>
-            <p class="price">Rs 54.17</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="formula toothbrush (china made)">
+            
+            <a href="Formula_Toothbrush_(China_Made).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Formula_Toothbrush_(China_Made).jpg" alt="Formula Toothbrush (China Made)">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Formula Toothbrush (China Made)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Box (12 pcs, assumed)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">650.00</span>
+                    <span class="price-unit">/ box (12 pcs, assumed)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-006">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-006" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-006">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-006"
+                        data-name="Formula Toothbrush (China Made)"
+                        data-price="650.00"
+                        data-unit="Box (12 pcs, assumed)"
+                        data-image="../images/Formula_Toothbrush_(China_Made).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Formula_Toothbrush_(China_Made).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Toothpicks.html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="toothpicks">
-            <img src="../images/Toothpicks.png" alt="Toothpicks">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Toothpicks</h3>
-            <p class="price">Rs 15.83</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="toothpicks">
+            
+            <a href="Toothpicks.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Toothpicks.png" alt="Toothpicks">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Toothpicks</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">190.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-007">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-007" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-007">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-007"
+                        data-name="Toothpicks"
+                        data-price="190.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Toothpicks.png">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Toothpicks.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Pencils_(Big_Eraser).html"
-        class="product-card"
-        data-category="Stationery"
-        data-name="pencils (big eraser)">
-            <img src="../images/Pencils_(Big_Eraser).png" alt="Pencils (Big Eraser)">
-            <span class="category">
-                ✏️ Stationery
-            </span>
-            <h3>Pencils (Big Eraser)</h3>
-            <p class="price">Rs 11.00</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Stationery" data-name="pencils (big eraser)">
+            
+            <a href="Pencils_(Big_Eraser).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Pencils_(Big_Eraser).png" alt="Pencils (Big Eraser)">
+                </div>
+                <span class="category">✏️ Stationery</span>
+                <h3>Pencils (Big Eraser)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>100 pcs / Packet (100 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">1,100.00</span>
+                    <span class="price-unit">/ packet (100 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-008">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-008" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-008">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-008"
+                        data-name="Pencils (Big Eraser)"
+                        data-price="1,100.00"
+                        data-unit="Packet (100 pcs)"
+                        data-image="../images/Pencils_(Big_Eraser).png">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Pencils_(Big_Eraser).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Mikasa_Tape.html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="mikasa tape">
-            <img src="../images/Mikasa_Tape.jpg" alt="Mikasa Tape">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Mikasa Tape</h3>
-            <p class="price">Rs 19.50</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="mikasa tape">
+            
+            <a href="Mikasa_Tape.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Mikasa_Tape.jpg" alt="Mikasa Tape">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Mikasa Tape</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>10 pcs / Pack (10 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">195.00</span>
+                    <span class="price-unit">/ pack (10 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-009">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-009" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-009">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-009"
+                        data-name="Mikasa Tape"
+                        data-price="195.00"
+                        data-unit="Pack (10 pcs)"
+                        data-image="../images/Mikasa_Tape.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Mikasa_Tape.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Oral_Fit_Toothbrush.html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="oral fit toothbrush">
-            <img src="../images/Oral_Fit_Toothbrush.jpg" alt="Oral Fit Toothbrush">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Oral Fit Toothbrush</h3>
-            <p class="price">Rs 23.33</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="oral fit toothbrush">
+            
+            <a href="Oral_Fit_Toothbrush.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Oral_Fit_Toothbrush.jpg" alt="Oral Fit Toothbrush">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Oral Fit Toothbrush</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">280.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-010">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-010" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-010">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-010"
+                        data-name="Oral Fit Toothbrush"
+                        data-price="280.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Oral_Fit_Toothbrush.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Oral_Fit_Toothbrush.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Gudal_Toothbrush_(China_Made).html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="gudal toothbrush (china made)">
-            <img src="../images/Gudal_Toothbrush_(China_Made).jpg" alt="Gudal Toothbrush (China Made)">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Gudal Toothbrush (China Made)</h3>
-            <p class="price">Rs 46.50</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="gudal toothbrush (china made)">
+            
+            <a href="Gudal_Toothbrush_(China_Made).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Gudal_Toothbrush_(China_Made).jpg" alt="Gudal Toothbrush (China Made)">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Gudal Toothbrush (China Made)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>20 pcs / Pack (20 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">930.00</span>
+                    <span class="price-unit">/ pack (20 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-011">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-011" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-011">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-011"
+                        data-name="Gudal Toothbrush (China Made)"
+                        data-price="930.00"
+                        data-unit="Pack (20 pcs)"
+                        data-image="../images/Gudal_Toothbrush_(China_Made).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Gudal_Toothbrush_(China_Made).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Rice_Bleach_Cream.html"
-        class="product-card"
-        data-category="Beauty"
-        data-name="rice bleach cream">
-            <img src="../images/Rice_Bleach_Cream.jpg" alt="Rice Bleach Cream">
-            <span class="category">
-                💄 Beauty
-            </span>
-            <h3>Rice Bleach Cream</h3>
-            <p class="price">Rs 14.32</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Beauty" data-name="rice bleach cream">
+            
+            <a href="Rice_Bleach_Cream.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Rice_Bleach_Cream.jpg" alt="Rice Bleach Cream">
+                </div>
+                <span class="category">💄 Beauty</span>
+                <h3>Rice Bleach Cream</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>384 pcs / Carton (16 boxes x 24 pcs = 384 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">5,500.00</span>
+                    <span class="price-unit">/ carton (16 boxes x 24 pcs = 384 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-012">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-012" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-012">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-012"
+                        data-name="Rice Bleach Cream"
+                        data-price="5,500.00"
+                        data-unit="Carton (16 boxes x 24 pcs = 384 pcs)"
+                        data-image="../images/Rice_Bleach_Cream.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Rice_Bleach_Cream.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Baby_Nipple_(PP).html"
-        class="product-card"
-        data-category="Baby Products"
-        data-name="baby nipple (pp)">
-            <img src="../images/Baby_Nipple_(PP).jpg" alt="Baby Nipple (PP)">
-            <span class="category">
-                🍼 Baby Products
-            </span>
-            <h3>Baby Nipple (PP)</h3>
-            <p class="price">Rs 28.33</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Baby Products" data-name="baby nipple (pp)">
+            
+            <a href="Baby_Nipple_(PP).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Baby_Nipple_(PP).jpg" alt="Baby Nipple (PP)">
+                </div>
+                <span class="category">🍼 Baby Products</span>
+                <h3>Baby Nipple (PP)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>24 pcs / Carton (12 boxes x 2 pcs = 24 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">680.00</span>
+                    <span class="price-unit">/ carton (12 boxes x 2 pcs = 24 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-013">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-013" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-013">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-013"
+                        data-name="Baby Nipple (PP)"
+                        data-price="680.00"
+                        data-unit="Carton (12 boxes x 2 pcs = 24 pcs)"
+                        data-image="../images/Baby_Nipple_(PP).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Baby_Nipple_(PP).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Apple_Hair_Color_(Sachet).html"
-        class="product-card"
-        data-category="Beauty"
-        data-name="apple hair color (sachet)">
-            <img src="../images/Apple_Hair_Color_(Sachet).png" alt="Apple Hair Color (Sachet)">
-            <span class="category">
-                💄 Beauty
-            </span>
-            <h3>Apple Hair Color (Sachet)</h3>
-            <p class="price">Rs 30.00</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Beauty" data-name="apple hair color (sachet)">
+            
+            <a href="Apple_Hair_Color_(Sachet).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Apple_Hair_Color_(Sachet).png" alt="Apple Hair Color (Sachet)">
+                </div>
+                <span class="category">💄 Beauty</span>
+                <h3>Apple Hair Color (Sachet)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>10 pcs / Box (10 sachets)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">300.00</span>
+                    <span class="price-unit">/ box (10 sachets)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-014">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-014" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-014">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-014"
+                        data-name="Apple Hair Color (Sachet)"
+                        data-price="300.00"
+                        data-unit="Box (10 sachets)"
+                        data-image="../images/Apple_Hair_Color_(Sachet).png">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Apple_Hair_Color_(Sachet).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Peach_Bleach_Cream.html"
-        class="product-card"
-        data-category="Beauty"
-        data-name="peach bleach cream">
-            <img src="../images/Peach_Bleach_Cream.jpg" alt="Peach Bleach Cream">
-            <span class="category">
-                💄 Beauty
-            </span>
-            <h3>Peach Bleach Cream</h3>
-            <p class="price">Rs 5.00</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Beauty" data-name="peach bleach cream">
+            
+            <a href="Peach_Bleach_Cream.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Peach_Bleach_Cream.jpg" alt="Peach Bleach Cream">
+                </div>
+                <span class="category">💄 Beauty</span>
+                <h3>Peach Bleach Cream</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>600 pcs / Carton (24 boxes x 25 pcs = 600 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">3,000.00</span>
+                    <span class="price-unit">/ carton (24 boxes x 25 pcs = 600 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-015">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-015" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-015">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-015"
+                        data-name="Peach Bleach Cream"
+                        data-price="3,000.00"
+                        data-unit="Carton (24 boxes x 25 pcs = 600 pcs)"
+                        data-image="../images/Peach_Bleach_Cream.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Peach_Bleach_Cream.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Al-Shabab_Safety_Razor.html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="al-shabab safety razor">
-            <img src="../images/Al-Shabab_Safety_Razor.jpg" alt="Al-Shabab Safety Razor">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Al-Shabab Safety Razor</h3>
-            <p class="price">Rs 4.33</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="al-shabab safety razor">
+            
+            <a href="Al-Shabab_Safety_Razor.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Al-Shabab_Safety_Razor.jpg" alt="Al-Shabab Safety Razor">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Al-Shabab Safety Razor</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>60 pcs / Packet (60 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">260.00</span>
+                    <span class="price-unit">/ packet (60 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-016">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-016" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-016">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-016"
+                        data-name="Al-Shabab Safety Razor"
+                        data-price="260.00"
+                        data-unit="Packet (60 pcs)"
+                        data-image="../images/Al-Shabab_Safety_Razor.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Al-Shabab_Safety_Razor.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Tissue_Paper_(Clean).html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="tissue paper (clean)">
-            <img src="../images/Tissue_Paper_(Clean).jpg" alt="Tissue Paper (Clean)">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Tissue Paper (Clean)</h3>
-            <p class="price">Rs 103.33</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="tissue paper (clean)">
+            
+            <a href="Tissue_Paper_(Clean).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Tissue_Paper_(Clean).jpg" alt="Tissue Paper (Clean)">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Tissue Paper (Clean)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>60 pcs / Carton (60 packets)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">6,200.00</span>
+                    <span class="price-unit">/ carton (60 packets)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-017">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-017" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-017">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-017"
+                        data-name="Tissue Paper (Clean)"
+                        data-price="6,200.00"
+                        data-unit="Carton (60 packets)"
+                        data-image="../images/Tissue_Paper_(Clean).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Tissue_Paper_(Clean).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Lady_Safety_Razor.html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="lady safety razor">
-            <img src="../images/Lady_Safety_Razor.jpg" alt="Lady Safety Razor">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Lady Safety Razor</h3>
-            <p class="price">Rs 8.33</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="lady safety razor">
+            
+            <a href="Lady_Safety_Razor.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Lady_Safety_Razor.jpg" alt="Lady Safety Razor">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Lady Safety Razor</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>6 pcs / Packet (6 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">50.00</span>
+                    <span class="price-unit">/ packet (6 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-018">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-018" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-018">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-018"
+                        data-name="Lady Safety Razor"
+                        data-price="50.00"
+                        data-unit="Packet (6 pcs)"
+                        data-image="../images/Lady_Safety_Razor.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Lady_Safety_Razor.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Sensitive_Toothbrush.html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="sensitive toothbrush">
-            <img src="../images/Sensitive_Toothbrush.jpg" alt="Sensitive Toothbrush">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Sensitive Toothbrush</h3>
-            <p class="price">Rs 25.00</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="sensitive toothbrush">
+            
+            <a href="Sensitive_Toothbrush.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Sensitive_Toothbrush.jpg" alt="Sensitive Toothbrush">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Sensitive Toothbrush</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">300.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-019">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-019" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-019">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-019"
+                        data-name="Sensitive Toothbrush"
+                        data-price="300.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Sensitive_Toothbrush.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Sensitive_Toothbrush.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Toy_Toothbrush_(Game_Type_1).html"
-        class="product-card"
-        data-category="Kids & Toys"
-        data-name="toy toothbrush (game type 1)">
-            <img src="../images/Toy_Toothbrush_(Game_Type_1).jpg" alt="Toy Toothbrush (Game Type 1)">
-            <span class="category">
-                🧸 Kids & Toys
-            </span>
-            <h3>Toy Toothbrush (Game Type 1)</h3>
-            <p class="price">Rs 91.67</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Kids &amp; Toys" data-name="toy toothbrush (game type 1)">
+            
+            <a href="Toy_Toothbrush_(Game_Type_1).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Toy_Toothbrush_(Game_Type_1).jpg" alt="Toy Toothbrush (Game Type 1)">
+                </div>
+                <span class="category">🧸 Kids &amp; Toys</span>
+                <h3>Toy Toothbrush (Game Type 1)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">1,100.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-020">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-020" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-020">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-020"
+                        data-name="Toy Toothbrush (Game Type 1)"
+                        data-price="1,100.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Toy_Toothbrush_(Game_Type_1).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Toy_Toothbrush_(Game_Type_1).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Toy_Toothbrush_(Game_Type_2).html"
-        class="product-card"
-        data-category="Kids & Toys"
-        data-name="toy toothbrush (game type 2)">
-            <img src="../images/Toy_Toothbrush_(Game_Type_2).jpg" alt="Toy Toothbrush (Game Type 2)">
-            <span class="category">
-                🧸 Kids & Toys
-            </span>
-            <h3>Toy Toothbrush (Game Type 2)</h3>
-            <p class="price">Rs 76.67</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Kids &amp; Toys" data-name="toy toothbrush (game type 2)">
+            
+            <a href="Toy_Toothbrush_(Game_Type_2).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Toy_Toothbrush_(Game_Type_2).jpg" alt="Toy Toothbrush (Game Type 2)">
+                </div>
+                <span class="category">🧸 Kids &amp; Toys</span>
+                <h3>Toy Toothbrush (Game Type 2)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">920.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-021">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-021" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-021">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-021"
+                        data-name="Toy Toothbrush (Game Type 2)"
+                        data-price="920.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Toy_Toothbrush_(Game_Type_2).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Toy_Toothbrush_(Game_Type_2).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="V9_Nail_Cutter.html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="v9 nail cutter">
-            <img src="../images/V9_Nail_Cutter.jpg" alt="V9 Nail Cutter">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>V9 Nail Cutter</h3>
-            <p class="price">Rs 83.00</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="v9 nail cutter">
+            
+            <a href="V9_Nail_Cutter.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/V9_Nail_Cutter.jpg" alt="V9 Nail Cutter">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>V9 Nail Cutter</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>1 pcs / Single piece</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">83.00</span>
+                    <span class="price-unit">/ single piece</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-022">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-022" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-022">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-022"
+                        data-name="V9 Nail Cutter"
+                        data-price="83.00"
+                        data-unit="Single piece"
+                        data-image="../images/V9_Nail_Cutter.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="V9_Nail_Cutter.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Gofan_Toothbrush.html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="gofan toothbrush">
-            <img src="../images/Gofan_Toothbrush.jpg" alt="Gofan Toothbrush">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Gofan Toothbrush</h3>
-            <p class="price">Rs 37.50</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="gofan toothbrush">
+            
+            <a href="Gofan_Toothbrush.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Gofan_Toothbrush.jpg" alt="Gofan Toothbrush">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Gofan Toothbrush</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">450.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-023">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-023" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-023">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-023"
+                        data-name="Gofan Toothbrush"
+                        data-price="450.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Gofan_Toothbrush.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Gofan_Toothbrush.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Universal_Safety_Razor.html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="universal safety razor">
-            <img src="../images/Universal_Safety_Razor.jpg" alt="Universal Safety Razor">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Universal Safety Razor</h3>
-            <p class="price">Rs 3.10</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="universal safety razor">
+            
+            <a href="Universal_Safety_Razor.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Universal_Safety_Razor.jpg" alt="Universal Safety Razor">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Universal Safety Razor</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>1000 pcs / Carton (50 boxes x 20 pcs = 1000 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">3,100.00</span>
+                    <span class="price-unit">/ carton (50 boxes x 20 pcs = 1000 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-024">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-024" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-024">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-024"
+                        data-name="Universal Safety Razor"
+                        data-price="3,100.00"
+                        data-unit="Carton (50 boxes x 20 pcs = 1000 pcs)"
+                        data-image="../images/Universal_Safety_Razor.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Universal_Safety_Razor.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Scotch_Brite_(Patti_wali_Jaali).html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="scotch brite (patti wali jaali)">
-            <img src="../images/Scotch_Brite_(Patti_wali_Jaali).jpg" alt="Scotch Brite (Patti wali Jaali)">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Scotch Brite (Patti wali Jaali)</h3>
-            <p class="price">Rs 250.00</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="scotch brite (patti wali jaali)">
+            
+            <a href="Scotch_Brite_(Patti_wali_Jaali).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Scotch_Brite_(Patti_wali_Jaali).jpg" alt="Scotch Brite (Patti wali Jaali)">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Scotch Brite (Patti wali Jaali)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Carton (12 packets)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">3,000.00</span>
+                    <span class="price-unit">/ carton (12 packets)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-025">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-025" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-025">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-025"
+                        data-name="Scotch Brite (Patti wali Jaali)"
+                        data-price="3,000.00"
+                        data-unit="Carton (12 packets)"
+                        data-image="../images/Scotch_Brite_(Patti_wali_Jaali).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Scotch_Brite_(Patti_wali_Jaali).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Dark_Silk_Hair_Color.html"
-        class="product-card"
-        data-category="Beauty"
-        data-name="dark silk hair color">
-            <img src="../images/Dark_Silk_Hair_Color.jpg" alt="Dark Silk Hair Color">
-            <span class="category">
-                💄 Beauty
-            </span>
-            <h3>Dark Silk Hair Color</h3>
-            <p class="price">Rs 8.68</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Beauty" data-name="dark silk hair color">
+            
+            <a href="Dark_Silk_Hair_Color.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Dark_Silk_Hair_Color.jpg" alt="Dark Silk Hair Color">
+                </div>
+                <span class="category">💄 Beauty</span>
+                <h3>Dark Silk Hair Color</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>576 pcs / Carton (12 boxes x 48 pcs = 576 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">5,000.00</span>
+                    <span class="price-unit">/ carton (12 boxes x 48 pcs = 576 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-026">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-026" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-026">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-026"
+                        data-name="Dark Silk Hair Color"
+                        data-price="5,000.00"
+                        data-unit="Carton (12 boxes x 48 pcs = 576 pcs)"
+                        data-image="../images/Dark_Silk_Hair_Color.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Dark_Silk_Hair_Color.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="3D_Silk.html"
-        class="product-card"
-        data-category="Beauty"
-        data-name="3d silk">
-            <img src="../images/3D_Silk.jpg" alt="3D Silk">
-            <span class="category">
-                💄 Beauty
-            </span>
-            <h3>3D Silk</h3>
-            <p class="price">Rs 12.15</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Beauty" data-name="3d silk">
+            
+            <a href="3D_Silk.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/3D_Silk.jpg" alt="3D Silk">
+                </div>
+                <span class="category">💄 Beauty</span>
+                <h3>3D Silk</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>576 pcs / Carton (24 boxes x 24 pcs = 576 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">7,000.00</span>
+                    <span class="price-unit">/ carton (24 boxes x 24 pcs = 576 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-027">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-027" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-027">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-027"
+                        data-name="3D Silk"
+                        data-price="7,000.00"
+                        data-unit="Carton (24 boxes x 24 pcs = 576 pcs)"
+                        data-image="../images/3D_Silk.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="3D_Silk.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Multani_Mitti_(Mud_Mask).html"
-        class="product-card"
-        data-category="Beauty"
-        data-name="multani mitti (mud mask)">
-            <img src="../images/Multani_Mitti_(Mud_Mask).jpg" alt="Multani Mitti (Mud Mask)">
-            <span class="category">
-                💄 Beauty
-            </span>
-            <h3>Multani Mitti (Mud Mask)</h3>
-            <p class="price">Rs 5.21</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Beauty" data-name="multani mitti (mud mask)">
+            
+            <a href="Multani_Mitti_(Mud_Mask).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Multani_Mitti_(Mud_Mask).jpg" alt="Multani Mitti (Mud Mask)">
+                </div>
+                <span class="category">💄 Beauty</span>
+                <h3>Multani Mitti (Mud Mask)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>576 pcs / Carton (24 boxes x 24 pcs = 576 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">3,000.00</span>
+                    <span class="price-unit">/ carton (24 boxes x 24 pcs = 576 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-028">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-028" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-028">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-028"
+                        data-name="Multani Mitti (Mud Mask)"
+                        data-price="3,000.00"
+                        data-unit="Carton (24 boxes x 24 pcs = 576 pcs)"
+                        data-image="../images/Multani_Mitti_(Mud_Mask).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Multani_Mitti_(Mud_Mask).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Turk_Hajan_Razor.html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="turk hajan razor">
-            <img src="../images/Turk_Hajan_Razor.jpg" alt="Turk Hajan Razor">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Turk Hajan Razor</h3>
-            <p class="price">Rs 16.49</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="turk hajan razor">
+            
+            <a href="Turk_Hajan_Razor.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Turk_Hajan_Razor.jpg" alt="Turk Hajan Razor">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Turk Hajan Razor</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>576 pcs / Carton (12 boxes x 48 pcs = 576 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">9,500.00</span>
+                    <span class="price-unit">/ carton (12 boxes x 48 pcs = 576 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-029">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-029" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-029">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-029"
+                        data-name="Turk Hajan Razor"
+                        data-price="9,500.00"
+                        data-unit="Carton (12 boxes x 48 pcs = 576 pcs)"
+                        data-image="../images/Turk_Hajan_Razor.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Turk_Hajan_Razor.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Budget_Razor.html"
-        class="product-card"
-        data-category="Personal Care"
-        data-name="budget razor">
-            <img src="../images/Budget_Razor.jpg" alt="Budget Razor">
-            <span class="category">
-                🪥 Personal Care
-            </span>
-            <h3>Budget Razor</h3>
-            <p class="price">Rs 11.28</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Personal Care" data-name="budget razor">
+            
+            <a href="Budget_Razor.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Budget_Razor.jpg" alt="Budget Razor">
+                </div>
+                <span class="category">🪥 Personal Care</span>
+                <h3>Budget Razor</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>576 pcs / Carton (576 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">6,500.00</span>
+                    <span class="price-unit">/ carton (576 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-030">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-030" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-030">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-030"
+                        data-name="Budget Razor"
+                        data-price="6,500.00"
+                        data-unit="Carton (576 pcs)"
+                        data-image="../images/Budget_Razor.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Budget_Razor.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Shisha_Tape.html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="shisha tape">
-            <img src="../images/Shisha_Tape.jpg" alt="Shisha Tape">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Shisha Tape</h3>
-            <p class="price">Rs 48.00</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="shisha tape">
+            
+            <a href="Shisha_Tape.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Shisha_Tape.jpg" alt="Shisha Tape">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Shisha Tape</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>100 pcs / Carton (100 rolls)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">4,800.00</span>
+                    <span class="price-unit">/ carton (100 rolls)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-031">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-031" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-031">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-031"
+                        data-name="Shisha Tape"
+                        data-price="4,800.00"
+                        data-unit="Carton (100 rolls)"
+                        data-image="../images/Shisha_Tape.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Shisha_Tape.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Khansama_(Gol).html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="khansama (gol)">
-            <img src="../images/Khansama_(Gol).jpg" alt="Khansama (Gol)">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Khansama (Gol)</h3>
-            <p class="price">Rs 8.75</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="khansama (gol)">
+            
+            <a href="Khansama_(Gol).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Khansama_(Gol).jpg" alt="Khansama (Gol)">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Khansama (Gol)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>24 pcs / Packet (24 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">210.00</span>
+                    <span class="price-unit">/ packet (24 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-032">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-032" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-032">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-032"
+                        data-name="Khansama (Gol)"
+                        data-price="210.00"
+                        data-unit="Packet (24 pcs)"
+                        data-image="../images/Khansama_(Gol).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Khansama_(Gol).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="USA_Royal_Cards_(Plastic).html"
-        class="product-card"
-        data-category="Miscellaneous"
-        data-name="usa royal cards (plastic)">
-            <img src="../images/USA_Royal_Cards_(Plastic).jpg" alt="USA Royal Cards (Plastic)">
-            <span class="category">
-                📦 Miscellaneous
-            </span>
-            <h3>USA Royal Cards (Plastic)</h3>
-            <p class="price">Rs 131.94</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Miscellaneous" data-name="usa royal cards (plastic)">
+            
+            <a href="USA_Royal_Cards_(Plastic).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/USA_Royal_Cards_(Plastic).jpg" alt="USA Royal Cards (Plastic)">
+                </div>
+                <span class="category">📦 Miscellaneous</span>
+                <h3>USA Royal Cards (Plastic)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>144 pcs / Pack (144 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">19,000.00</span>
+                    <span class="price-unit">/ pack (144 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-033">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-033" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-033">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-033"
+                        data-name="USA Royal Cards (Plastic)"
+                        data-price="19,000.00"
+                        data-unit="Pack (144 pcs)"
+                        data-image="../images/USA_Royal_Cards_(Plastic).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="USA_Royal_Cards_(Plastic).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Paradise_Jaali_(30g).html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="paradise jaali (30g)">
-            <img src="../images/Paradise_Jaali_(30g).jpg" alt="Paradise Jaali (30g)">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Paradise Jaali (30g)</h3>
-            <p class="price">Rs 29.17</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="paradise jaali (30g)">
+            
+            <a href="Paradise_Jaali_(30g).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Paradise_Jaali_(30g).jpg" alt="Paradise Jaali (30g)">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Paradise Jaali (30g)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">350.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-034">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-034" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-034">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-034"
+                        data-name="Paradise Jaali (30g)"
+                        data-price="350.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Paradise_Jaali_(30g).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Paradise_Jaali_(30g).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Paradise_Jaali_(26g).html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="paradise jaali (26g)">
-            <img src="../images/Paradise_Jaali_(26g).jpg" alt="Paradise Jaali (26g)">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Paradise Jaali (26g)</h3>
-            <p class="price">Rs 26.67</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="paradise jaali (26g)">
+            
+            <a href="Paradise_Jaali_(26g).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Paradise_Jaali_(26g).jpg" alt="Paradise Jaali (26g)">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Paradise Jaali (26g)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">320.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-035">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-035" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-035">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-035"
+                        data-name="Paradise Jaali (26g)"
+                        data-price="320.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Paradise_Jaali_(26g).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Paradise_Jaali_(26g).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Paradise_Jaali_(17g).html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="paradise jaali (17g)">
-            <img src="../images/Paradise_Jaali_(17g).jpg" alt="Paradise Jaali (17g)">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Paradise Jaali (17g)</h3>
-            <p class="price">Rs 14.17</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="paradise jaali (17g)">
+            
+            <a href="Paradise_Jaali_(17g).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Paradise_Jaali_(17g).jpg" alt="Paradise Jaali (17g)">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Paradise Jaali (17g)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">170.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-036">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-036" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-036">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-036"
+                        data-name="Paradise Jaali (17g)"
+                        data-price="170.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Paradise_Jaali_(17g).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Paradise_Jaali_(17g).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Paradise_Jaali_(12g).html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="paradise jaali (12g)">
-            <img src="../images/Paradise_Jaali_(12g).jpg" alt="Paradise Jaali (12g)">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Paradise Jaali (12g)</h3>
-            <p class="price">Rs 10.00</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="paradise jaali (12g)">
+            
+            <a href="Paradise_Jaali_(12g).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Paradise_Jaali_(12g).jpg" alt="Paradise Jaali (12g)">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Paradise Jaali (12g)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen (12 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">120.00</span>
+                    <span class="price-unit">/ dozen (12 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-037">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-037" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-037">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-037"
+                        data-name="Paradise Jaali (12g)"
+                        data-price="120.00"
+                        data-unit="Dozen (12 pcs)"
+                        data-image="../images/Paradise_Jaali_(12g).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Paradise_Jaali_(12g).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Paradise_Jaali_(9g).html"
-        class="product-card"
-        data-category="Household Cleaning"
-        data-name="paradise jaali (9g)">
-            <img src="../images/Paradise_Jaali_(9g).jpg" alt="Paradise Jaali (9g)">
-            <span class="category">
-                🧼 Household Cleaning
-            </span>
-            <h3>Paradise Jaali (9g)</h3>
-            <p class="price">Rs 8.75</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Household Cleaning" data-name="paradise jaali (9g)">
+            
+            <a href="Paradise_Jaali_(9g).html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Paradise_Jaali_(9g).jpg" alt="Paradise Jaali (9g)">
+                </div>
+                <span class="category">🧼 Household Cleaning</span>
+                <h3>Paradise Jaali (9g)</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>12 pcs / Dozen</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">105.00</span>
+                    <span class="price-unit">/ dozen</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-038">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-038" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-038">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-038"
+                        data-name="Paradise Jaali (9g)"
+                        data-price="105.00"
+                        data-unit="Dozen"
+                        data-image="../images/Paradise_Jaali_(9g).jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Paradise_Jaali_(9g).html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Golden_Cards.html"
-        class="product-card"
-        data-category="Miscellaneous"
-        data-name="golden cards">
-            <img src="../images/Golden_Cards.jpg" alt="Golden Cards">
-            <span class="category">
-                📦 Miscellaneous
-            </span>
-            <h3>Golden Cards</h3>
-            <p class="price">Rs 72.50</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Miscellaneous" data-name="golden cards">
+            
+            <a href="Golden_Cards.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Golden_Cards.jpg" alt="Golden Cards">
+                </div>
+                <span class="category">📦 Miscellaneous</span>
+                <h3>Golden Cards</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>120 pcs / Carton (6 boxes x 20 pcs = 120 pcs)</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">8,700.00</span>
+                    <span class="price-unit">/ carton (6 boxes x 20 pcs = 120 pcs)</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-039">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-039" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-039">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-039"
+                        data-name="Golden Cards"
+                        data-price="8,700.00"
+                        data-unit="Carton (6 boxes x 20 pcs = 120 pcs)"
+                        data-image="../images/Golden_Cards.jpg">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Golden_Cards.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
-        <a href="Card1.html"
-        class="product-card"
-        data-category="Checking"
-        data-name="card1">
-            <img src="../images/Card1.png" alt="Card1">
-            <span class="category">
-                📦 Checking
-            </span>
-            <h3>Card1</h3>
-            <p class="price">Rs 5.44</p>
-            <span class="view-btn">View Product →</span>
-        </a>
+        <div class="product-card" data-category="Checking" data-name="card1">
+            
+            <a href="Card1.html" class="card-link">
+                <div class="img-wrapper">
+                    <img src="../images/Card1.png" alt="Card1">
+                </div>
+                <span class="category">📦 Checking</span>
+                <h3>Card1</h3>
+            </a>
+
+            <div class="card-bottom">
+                <!-- PACKAGING SPECIFICATION BADGE -->
+                <div class="pack-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    <span>145 pcs / 13 packets</span>
+                </div>
+
+                <!-- PRICE WITH DYNAMIC UNIT (NO WRAPPING) -->
+                <div class="price-row">
+                    <span class="price-symbol">Rs</span>
+                    <span class="price-amount">789.00</span>
+                    <span class="price-unit">/ 13 packets</span>
+                </div>
+
+                <!-- CART ACTIONS GRID -->
+                <div class="cart-actions">
+                    <div class="qty-control">
+                        <button class="qty-btn minus-btn" data-code="ABT-040">-</button>
+                        <input type="number" class="qty-input" id="qty-ABT-040" value="1" min="1">
+                        <button class="qty-btn plus-btn" data-code="ABT-040">+</button>
+                    </div>
+                    <button class="add-to-cart-btn" 
+                        data-code="ABT-040"
+                        data-name="Card1"
+                        data-price="789.00"
+                        data-unit="13 packets"
+                        data-image="../images/Card1.png">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                        Add
+                    </button>
+                </div>
+
+                <a href="Card1.html" class="view-btn">View Details →</a>
+            </div>
+
+        </div>
         
     </section>
 
+    <!--  FOOTER -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            
+            <!-- Column 1: Company Info & Authenticity -->
+            <div class="footer-col footer-brand">
+                <h3 class="footer-logo">Al Baraka Traders</h3>
+                <p class="footer-tagline">Your Trusted Wholesale Partner</p>
+                
+                <div class="authenticity-badge">
+                    <span class="badge-icon">✓</span>
+                    <div class="badge-text">
+                        <strong>Verified Wholesale Supplier</strong>
+                        <small>Official Direct Distributor</small>
+                    </div>
+                </div>
+            </div>
 
-    <!-- ================================= -->
-    <!-- FOOTER -->
-    <!-- ================================= -->
+            <!-- Column 2: Quick Navigation -->
+            <div class="footer-col">
+                <h4 class="footer-title">Quick Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html#catalog">Product Catalog</a></li>
+                    <li><a href="index.html#categories">Categories</a></li>
+                    <li><a href="javascript:void(0)" onclick="openCart(); return false;">My Cart</a></li>
+                    <li><a href="javascript:void(0)" onclick="openAbout(); return false;">About Us</a></li>
+                </ul>
+            </div>
 
-    <footer class="footer">
-
-        <div class="company">
-
-            Al Baraka Traders
+            <!-- Column 3: Contact & Support -->
+            <div class="footer-col">
+                <h4 class="footer-title">Contact & Support</h4>
+                <ul class="footer-contact-list">
+                    <li>
+                        <a href="https://wa.me/923231551535" target="_blank">
+                            <span class="contact-icon">📱</span>
+                            <span>+923231551535</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.albarakatradersabbott.pk" target="_blank">
+                            <span class="contact-icon">🌐</span>
+                            <span>www.albarakatradersabbott.pk</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="mailto:info@albarakatraders.pk">
+                            <span class="contact-icon">✉️</span>
+                            <span>info@albarakatraders.pk</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://instagram.com/AlBarakaTraders" target="_blank">
+                            <span class="contact-icon">@</span>
+                            <span class="handle-text">@AlBarakaTraders</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
 
         </div>
 
-        <p>
-
-            Your Trusted Wholesale Partner
-
-        </p>
-
-        <p>
-
-            📱 923231551535
-
-        </p>
-
-        <p>
-
-            🌐 www.albarakatradersabbott.pk
-
-        </p>
-
-        <p>
-
-            ✉ info@albarakatraders.pk
-
-        </p>
-
-        <p>
-
-            © 09 Aug 2026
-
-        </p>
-
+        <!-- Bottom Copyright Bar -->
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <p>&copy; 2026 Al Baraka Traders. All Rights Reserved.</p>
+                <p class="catalog-generated">Digital Catalog Engine v2.0</p>
+            </div>
+        </div>
     </footer>
 
 </div>
 
+<!-- Backdrop Overlay -->
+<div id="cartOverlay" class="cart-overlay"></div>
+
+<!-- ================================= -->
+<!-- CART SLIDE-OVER / MODAL -->
+<!-- ================================= -->
+<div id="cartModal" class="cart-modal">
+    <div class="cart-content">
+        <div class="cart-header">
+            <h2>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                Your Wholesale Order
+            </h2>
+            <button id="closeCartBtn" class="close-btn">&times;</button>
+        </div>
+
+        <div id="cartItemsList" class="cart-items-list">
+            <!-- Dynamically populated via JS -->
+        </div>
+
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>Total Items:</span>
+                <span id="summaryTotalItems">0</span>
+            </div>
+            <div class="summary-row total-price-row">
+                <span>Total Amount:</span>
+                <span class="price-value">Rs <span id="summaryTotalPrice">0.00</span></span>
+            </div>
+        </div>
+
+        <form id="checkoutForm" class="checkout-form">
+            <h3>Customer Delivery Details</h3>
+            <div class="form-group">
+                <label for="custName">Full Name *</label>
+                <input type="text" id="custName" required placeholder="e.g. Muhammad Ali">
+            </div>
+            <div class="form-group">
+                <label for="custPhone">Phone Number *</label>
+                <input type="tel" id="custPhone" required placeholder="e.g. 03231551535">
+            </div>
+            <div class="form-group">
+                <label for="custAddress">Delivery Address *</label>
+                <textarea id="custAddress" rows="2" required placeholder="e.g. Main Shop, Supply Bazaar, Abbottabad"></textarea>
+            </div>
+            <button type="submit" id="submitOrderBtn" class="checkout-submit-btn">Place Wholesale Order</button>
+        </form>
+    </div>
+</div>
+
 <script src="index.js"></script>
-
 </body>
-
 </html>

@@ -1,3 +1,4 @@
+from datetime import time
 from pathlib import Path
 import json
 import sys
@@ -76,6 +77,24 @@ def process_stock_status(products):
         "out_of_stock": out_of_stock_count
     }
 
+
+@app.route('/api/orders/create', methods=['POST'])
+def create_order():
+    data = request.get_json()
+    customer = data.get('customer', {})
+    items = data.get('items', [])
+    
+    if not customer.get('name') or not customer.get('phone') or not items:
+        return jsonify({'success': False, 'message': 'Missing required order details'}), 400
+        
+    # TODO: Process order (save to DB, send notification, etc.)
+    order_id = "ORD-" + str(int(time.time()))
+    
+    return jsonify({
+        'success': True,
+        'order_id': order_id,
+        'message': 'Order recorded successfully'
+    })
 
 # ==========================================
 # DASHBOARD & INVENTORY ROUTES
