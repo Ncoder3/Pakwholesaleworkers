@@ -230,12 +230,19 @@ def api_update_order_status():
             return jsonify({"success": False, "message": "Missing order ID or status."}), 400
 
         conn = get_db_connection()
+        items_to_deduct = []
+
+        # 1. Update Order Status in Database or Local File
         if conn:
             try:
                 cur = conn.cursor()
                 cur.execute("UPDATE orders SET status = %s WHERE order_id = %s;", (status, order_id))
+                
+                # Fetch order items to sync stock if marked as Completed
+                if status == "Completed":
+                    cur.execute("SELECT product_code, quantity FROM order_items WHERE order_id = %s;", (order_id,))
+                    items_to_deduct = cur.fetchall()
                 conn.commit()
-                return jsonify({"success": True, "message": f"Order {order_id} status updated to {status}."})
             except Exception as e:
                 conn.rollback()
                 return jsonify({"success": False, "message": f"DB Error: {str(e)}"}), 500
@@ -243,11 +250,40 @@ def api_update_order_status():
                 conn.close()
         else:
             success, message = update_order_status(order_id, status)
-            return jsonify({"success": success, "message": message})
+            if not success:
+                return jsonify({"success": False, "message": message})
+            
+            if status == "Completed":
+                orders_list = load_orders()
+                matched_order = next((o for o in orders_list if o.get("order_id") == order_id), None)
+                if matched_order:
+                    items_to_deduct = matched_order.get("items", [])
+
+        # 2. Deduct Stock from Products in Excel / Storage
+        if status == "Completed" and items_to_deduct:
+            all_products = get_products()
+            
+            for item in items_to_deduct:
+                # Handle both Dict cursor and fallback dict object
+                code = str(item.get("product_code") or item.get("code") or "").strip()
+                deduct_qty = int(item.get("quantity") or item.get("packs") or 0)
+
+                target_prod = next((p for p in all_products if str(p.get("Product Code")).strip() == code), None)
+                if target_prod:
+                    current_stock = int(target_prod.get("Stock Available (Packs)", 0))
+                    new_stock = max(0, current_stock - deduct_qty)
+                    
+                    target_prod["original_code"] = target_prod.get("Product Code")
+                    target_prod["Stock Available (Packs)"] = new_stock
+                    
+                    # Persist updated stock count back to storage/Excel
+                    update_product(target_prod)
+
+        return jsonify({"success": True, "message": f"Order {order_id} updated and stock synced!"})
 
     except Exception as e:
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
-
+    
 @app.route('/orders')
 def orders():
     conn = get_db_connection()
