@@ -1,4 +1,6 @@
 Flask
-pandas
+flask-cors
+psycopg2-binary
+requests
 openpyxl
-jinja2
+pandas
