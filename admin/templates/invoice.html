@@ -125,7 +125,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in order.items %}
+                {% for item in items %}
                 {% set price = item.pack_price if item.pack_price is defined and item.pack_price is not none else (item.unit_price if item.unit_price is defined and item.unit_price is not none else (item.price if item.price is defined and item.price is not none else 0)) %}
                 {% set packs = item.packs if item.packs is defined and item.packs is not none else (item.quantity if item.quantity is defined and item.quantity is not none else 1) %}
                 {% set line_total = item.line_total if item.line_total is defined and item.line_total is not none else (price * packs) %}

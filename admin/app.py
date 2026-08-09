@@ -271,6 +271,8 @@ def orders():
 def order_invoice(order_id):
     conn = get_db_connection()
     order = None
+    items_list = []
+
     if conn:
         try:
             cur = conn.cursor()
@@ -278,17 +280,19 @@ def order_invoice(order_id):
             order = cur.fetchone()
             if order:
                 cur.execute("SELECT * FROM order_items WHERE order_id = %s;", (order_id,))
-                order['items'] = cur.fetchall()
+                items_list = cur.fetchall()
         finally:
             conn.close()
     else:
         orders_list = load_orders()
         order = next((o for o in orders_list if o.get("order_id") == order_id), None)
+        if order:
+            items_list = order.get("items", [])
 
     if not order:
         abort(404, description="Order not found")
         
-    return render_template('invoice.html', order=order)
+    return render_template('invoice.html', order=order, items=items_list)
 
 # ==========================================
 # DASHBOARD & INVENTORY ROUTES
