@@ -1,3 +1,9 @@
+pandas
+openpyxl
+jinja2
+playwright
+pillow
+reportlab
 Flask
 flask-cors
 psycopg2-binary
