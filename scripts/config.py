@@ -19,7 +19,7 @@ WHATSAPP = "923231551535"
 
 EMAIL = "info@albarakatraders.pk"
 
-WEBSITE = "www.albarakatradersabbottabad.pk"
+WEBSITE = "www.albarakatradersabbott.pk"
 
 
 # ==========================================================
