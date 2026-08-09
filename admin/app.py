@@ -41,7 +41,12 @@ app = Flask(
     template_folder="templates",
     static_folder="static"
 )
-CORS(app)  # Enables cross-origin requests from your Cloudflare frontend site
+CORS(app, origins=["https://pakwholesaleworkers.pages.dev", "http://localhost:5000"])
+
+@app.route('/api/order', methods=['POST'])
+def submit_order():
+    # Your order handling logic here
+    return jsonify({"status": "success", "message": "Order received!"})
 
 # ==========================================
 # HELPER FUNCTIONS FOR STOCK BADGES
