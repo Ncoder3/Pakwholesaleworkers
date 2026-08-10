@@ -335,16 +335,36 @@ def get_unread_orders_count():
     if conn:
         try:
             cur = conn.cursor()
-            cur.execute("SELECT COUNT(*) FROM orders WHERE is_read = FALSE;")
+            cur.execute("""
+                SELECT 
+                    COUNT(*) AS total,
+                    COUNT(*) FILTER (WHERE LOWER(source) = 'website' OR source IS NULL) AS website_count,
+                    COUNT(*) FILTER (WHERE LOWER(source) = 'dashboard' OR LOWER(source) = 'manual') AS manual_count
+                FROM orders 
+                WHERE is_read = FALSE;
+            """)
             res = cur.fetchone()
-            count = res['count'] if res else 0
-            return jsonify({'success': True, 'unread_count': count})
+            return jsonify({
+                'success': True, 
+                'unread_count': res['total'] if res else 0,
+                'website_count': res['website_count'] if res else 0,
+                'manual_count': res['manual_count'] if res else 0
+            })
+        except Exception as e:
+            return jsonify({'success': False, 'message': str(e)}), 500
         finally:
             conn.close()
     else:
         orders_list = load_orders()
-        count = sum(1 for o in orders_list if not o.get('is_read', False))
-        return jsonify({'success': True, 'unread_count': count})
+        unread_orders = [o for o in orders_list if not o.get('is_read', False)]
+        website_count = sum(1 for o in unread_orders if o.get('source', 'Website').lower() == 'website')
+        manual_count = sum(1 for o in unread_orders if o.get('source', '').lower() in ['dashboard', 'manual'])
+        return jsonify({
+            'success': True, 
+            'unread_count': len(unread_orders),
+            'website_count': website_count,
+            'manual_count': manual_count
+        })
 
 
 @app.route('/api/orders/mark-read', methods=['POST'])

@@ -37,7 +37,8 @@
         }
 
         html.sidebar-is-collapsed .sidebar .logo-text,
-        html.sidebar-is-collapsed .sidebar .nav-link span {
+        html.sidebar-is-collapsed .sidebar .nav-link span,
+        html.sidebar-is-collapsed .sidebar .nav-link div {
             display: none !important;
         }
 
@@ -161,7 +162,8 @@
         }
 
         .sidebar.collapsed .logo-brand .logo-text,
-        .sidebar.collapsed .nav-link span {
+        .sidebar.collapsed .nav-link span,
+        .sidebar.collapsed .nav-link div {
             display: none !important;
         }
 
@@ -342,12 +344,17 @@
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        const count = data.unread_count;
+                        const count = data.unread_count || 0;
+                        const webCount = data.website_count || 0;
+                        const manualCount = data.manual_count || 0;
+
                         const notifBadge = document.getElementById('notifBadge');
-                        const sidebarBadge = document.getElementById('sidebarOrdersBadge'); // In sidebar.html
+                        const sidebarBadge = document.getElementById('sidebarOrdersBadge');
+                        const sidebarWebBadge = document.getElementById('sidebarWebBadge');
+                        const sidebarManualBadge = document.getElementById('sidebarManualBadge');
                         const notifList = document.getElementById('notifListContainer');
 
-                        // Update Top Bar Badge
+                        // 1. Update Top Bar Badge
                         if (notifBadge) {
                             if (count > 0) {
                                 notifBadge.innerText = count;
@@ -357,9 +364,24 @@
                             }
                         }
 
-                        // Update Sidebar Badge if element exists
+                        // 2. Update Sidebar Badges
+                        if (webCount > 0 && sidebarWebBadge) {
+                            sidebarWebBadge.innerText = `Web: ${webCount}`;
+                            sidebarWebBadge.style.display = 'inline-block';
+                        } else if (sidebarWebBadge) {
+                            sidebarWebBadge.style.display = 'none';
+                        }
+
+                        if (manualCount > 0 && sidebarManualBadge) {
+                            sidebarManualBadge.innerText = `Manual: ${manualCount}`;
+                            sidebarManualBadge.style.display = 'inline-block';
+                        } else if (sidebarManualBadge) {
+                            sidebarManualBadge.style.display = 'none';
+                        }
+
+                        // Total Fallback Badge (shown when sources aren't split)
                         if (sidebarBadge) {
-                            if (count > 0) {
+                            if (count > 0 && webCount === 0 && manualCount === 0) {
                                 sidebarBadge.innerText = count;
                                 sidebarBadge.style.display = 'inline-block';
                             } else {
@@ -367,23 +389,37 @@
                             }
                         }
 
-                        // Update Dropdown Content dynamically
+                        // 3. Dynamic Dropdown Item Generation
                         if (notifList) {
                             if (count > 0) {
-                                notifList.innerHTML = `
-                                    <div class="notif-item" style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: flex-start; background: #f0f9ff;">
-                                        <i class="fa-solid fa-bag-shopping" style="color: #0284c7; margin-top: 3px;"></i>
-                                        <div>
-                                            <div style="font-size: 12px; font-weight: 600; color: #0f172a;">New Orders Received</div>
-                                            <div style="font-size: 11px; color: #64748b; margin-top: 2px;">You have ${count} unread order(s). <a href="/orders" style="color: #2563eb; font-weight: 600;">View Orders</a></div>
-                                        </div>
-                                    </div>`;
+                                let contentHtml = '';
+                                if (webCount > 0) {
+                                    contentHtml += `
+                                        <div class="notif-item" style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: flex-start; background: #f0f9ff;">
+                                            <i class="fa-solid fa-globe" style="color: #0284c7; margin-top: 3px;"></i>
+                                            <div>
+                                                <div style="font-size: 12px; font-weight: 600; color: #0f172a;">Website Orders Received</div>
+                                                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">You have <strong>${webCount}</strong> new online order(s). <a href="/orders" style="color: #2563eb; font-weight: 600;">View Orders</a></div>
+                                            </div>
+                                        </div>`;
+                                }
+                                if (manualCount > 0) {
+                                    contentHtml += `
+                                        <div class="notif-item" style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: flex-start; background: #fffbebfb;">
+                                            <i class="fa-solid fa-pen-to-square" style="color: #d97706; margin-top: 3px;"></i>
+                                            <div>
+                                                <div style="font-size: 12px; font-weight: 600; color: #0f172a;">Manual / Dashboard Orders</div>
+                                                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">You have <strong>${manualCount}</strong> new manual order(s). <a href="/orders" style="color: #2563eb; font-weight: 600;">View Orders</a></div>
+                                            </div>
+                                        </div>`;
+                                }
+                                notifList.innerHTML = contentHtml;
                             } else {
                                 notifList.innerHTML = `<div id="noNotifMessage" style="padding: 16px; text-align: center; color: #64748b; font-size: 12px;">No new order notifications.</div>`;
                             }
                         }
 
-                        // Audio alert on new incoming orders
+                        // 4. Audio Alert on New Orders
                         if (count > lastUnreadCount && lastUnreadCount !== 0) {
                             playAlertSound();
                         }
