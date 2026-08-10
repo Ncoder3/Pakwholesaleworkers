@@ -338,34 +338,51 @@ def get_unread_orders_count():
             cur.execute("""
                 SELECT 
                     COUNT(*) AS total,
-                    COUNT(*) FILTER (WHERE LOWER(source) = 'website' OR source IS NULL) AS website_count,
-                    COUNT(*) FILTER (WHERE LOWER(source) = 'dashboard' OR LOWER(source) = 'manual') AS manual_count
+                    COUNT(*) FILTER (WHERE LOWER(COALESCE(source, 'website')) = 'website') AS website_count,
+                    COUNT(*) FILTER (WHERE LOWER(source) IN ('dashboard', 'manual')) AS manual_count
                 FROM orders 
                 WHERE is_read = FALSE;
             """)
             res = cur.fetchone()
+            
+            # Handle dictionary cursor or tuple access safely
+            if res:
+                total = res['total'] if isinstance(res, dict) else res[0]
+                web_cnt = res['website_count'] if isinstance(res, dict) else res[1]
+                man_cnt = res['manual_count'] if isinstance(res, dict) else res[2]
+            else:
+                total, web_cnt, man_cnt = 0, 0, 0
+
             return jsonify({
                 'success': True, 
-                'unread_count': res['total'] if res else 0,
-                'website_count': res['website_count'] if res else 0,
-                'manual_count': res['manual_count'] if res else 0
+                'unread_count': total or 0,
+                'website_count': web_cnt or 0,
+                'manual_count': man_cnt or 0
             })
         except Exception as e:
             return jsonify({'success': False, 'message': str(e)}), 500
         finally:
             conn.close()
     else:
+        # Fallback for local JSON file storage (load_orders)
         orders_list = load_orders()
         unread_orders = [o for o in orders_list if not o.get('is_read', False)]
-        website_count = sum(1 for o in unread_orders if o.get('source', 'Website').lower() == 'website')
-        manual_count = sum(1 for o in unread_orders if o.get('source', '').lower() in ['dashboard', 'manual'])
+        
+        web_cnt = sum(
+            1 for o in unread_orders 
+            if o.get('source', 'website').lower() == 'website' or not o.get('source')
+        )
+        man_cnt = sum(
+            1 for o in unread_orders 
+            if o.get('source', '').lower() in ['dashboard', 'manual']
+        )
+        
         return jsonify({
             'success': True, 
             'unread_count': len(unread_orders),
-            'website_count': website_count,
-            'manual_count': manual_count
+            'website_count': web_cnt,
+            'manual_count': man_cnt
         })
-
 
 @app.route('/api/orders/mark-read', methods=['POST'])
 def mark_orders_read():
