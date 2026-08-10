@@ -1174,3 +1174,137 @@ body {
         padding: 20px;
     }
 }
+
+
+/* ==========================================================
+   ORDER SUCCESS & WHATSAPP MODAL STYLES
+   ========================================================== */
+.abt-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    padding: 20px;
+}
+
+.abt-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.abt-modal-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 480px;
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.abt-modal-overlay.active .abt-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.abt-modal-icon {
+    width: 64px;
+    height: 64px;
+    background-color: #E6F4EA;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px auto;
+}
+
+.abt-modal-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 8px;
+}
+
+.abt-modal-subtitle {
+    font-size: 14px;
+    color: #64748B;
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.abt-modal-summary {
+    background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.abt-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+.abt-summary-row:last-child {
+    margin-bottom: 0;
+    padding-top: 8px;
+    border-top: 1px dashed #CBD5E1;
+}
+
+.abt-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.abt-btn-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background-color: #25D366;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.abt-btn-whatsapp:hover {
+    background-color: #1DA851;
+    color: #ffffff;
+}
+
+.abt-btn-secondary {
+    background: transparent;
+    border: 1px solid #CBD5E1;
+    color: #64748B;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.abt-btn-secondary:hover {
+    background-color: #F1F5F9;
+    color: #334155;
+}
