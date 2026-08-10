@@ -7,7 +7,121 @@
 const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://127.0.0.1:5000'
     : 'https://pakwholesaleworkers.up.railway.app';
-    
+
+// ------------------------------------------------------
+// UTILITY HELPERS (GLOBAL SCOPE)
+// ------------------------------------------------------
+
+// HTML Escape Helper (Security/XSS Prevention)
+function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+// Price Parser Helper
+function parsePrice(priceStr) {
+    if (!priceStr) return 0;
+    return parseFloat(String(priceStr).replace(/,/g, "")) || 0;
+}
+
+// ------------------------------------------------------
+// CUSTOM SUCCESS MODAL & WHATSAPP INTEGRATION
+// ------------------------------------------------------
+function showOrderSuccessModal(orderId, customerDetails, cartItems) {
+    // 1. Calculate Total Amount
+    let totalAmount = 0;
+    cartItems.forEach(item => {
+        const price = parsePrice(item.price);
+        totalAmount += price * item.quantity;
+    });
+
+    // 2. Format WhatsApp Order Summary Message
+    let itemDetailsText = cartItems.map((item, idx) => 
+        `${idx + 1}. *${item.name}* (Qty: ${item.quantity} packs) - Rs ${item.price}`
+    ).join("\n");
+
+    const whatsappMessage = 
+`*NEW ORDER PAYMENT REQUEST - AL BARAKA TRADERS*
+----------------------------------
+*Order ID:* ${orderId}
+*Customer:* ${customerDetails.name}
+*Phone:* ${customerDetails.phone}
+*Address:* ${customerDetails.address}
+
+*Order Items:*
+${itemDetailsText}
+
+*Total Amount:* Rs ${totalAmount.toLocaleString('en-PK')}
+----------------------------------
+Hello, I would like to proceed with payment for my order *${orderId}*. Please share online payment details.`;
+
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappPhone = "923000000000"; // Replace with your target WhatsApp number (country code without +)
+    const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodedMessage}`;
+
+    // 3. Create or Reuse Modal Element
+    let modalOverlay = document.getElementById("orderSuccessModal");
+    if (!modalOverlay) {
+        modalOverlay = document.createElement("div");
+        modalOverlay.id = "orderSuccessModal";
+        modalOverlay.className = "abt-modal-overlay";
+        document.body.appendChild(modalOverlay);
+    }
+
+    // 4. Inject Modal Markup
+    modalOverlay.innerHTML = `
+        <div class="abt-modal-card">
+            <div class="abt-modal-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#0B7D5A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2 class="abt-modal-title">Order Placed Successfully!</h2>
+            <p class="abt-modal-subtitle">Thank you for your order. Your Order ID is <strong>${escapeHtml(orderId)}</strong>.</p>
+            
+            <div class="abt-modal-summary">
+                <div class="abt-summary-row">
+                    <span>Customer:</span>
+                    <strong>${escapeHtml(customerDetails.name)}</strong>
+                </div>
+                <div class="abt-summary-row">
+                    <span>Total Amount:</span>
+                    <strong>Rs ${totalAmount.toLocaleString('en-PK', { minimumFractionDigits: 2 })}</strong>
+                </div>
+            </div>
+
+            <div class="abt-modal-actions">
+                <a href="${whatsappUrl}" target="_blank" class="abt-btn-whatsapp" onclick="closeOrderSuccessModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                    </svg>
+                    Proceed to Pay via WhatsApp
+                </a>
+                <button type="button" class="abt-btn-secondary" onclick="closeOrderSuccessModal()">Close</button>
+            </div>
+        </div>
+    `;
+
+    requestAnimationFrame(() => {
+        modalOverlay.classList.add("active");
+    });
+}
+
+function closeOrderSuccessModal() {
+    const modalOverlay = document.getElementById("orderSuccessModal");
+    if (modalOverlay) {
+        modalOverlay.classList.remove("active");
+    }
+}
+
+// ------------------------------------------------------
+// MAIN APPLICATION ENGINE
+// ------------------------------------------------------
 document.addEventListener("DOMContentLoaded", function () {
     "use strict";
 
@@ -30,27 +144,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Dynamic State Management
     let cart = JSON.parse(localStorage.getItem("abt_wholesale_cart")) || [];
-
-    // ------------------------------------------------------
-    // UTILITY FUNCTIONS
-    // ------------------------------------------------------
-
-    // HTML Escape Helper (Security/XSS Prevention)
-    function escapeHtml(str) {
-        if (!str) return "";
-        return String(str)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-
-    // Price Parser
-    function parsePrice(priceStr) {
-        if (!priceStr) return 0;
-        return parseFloat(String(priceStr).replace(/,/g, "")) || 0;
-    }
 
     // Non-blocking Toast Notification Component
     function showToast(message, type = "success") {
@@ -365,8 +458,7 @@ function openAboutModal() {
 async function sendOrderToAdminDashboard(customerDetails, cartItems) {
     // Local Testing Fallback
     if (window.location.protocol === "file:") {
-        console.log("Local Order Test Payload:", { customer: customerDetails, items: cartItems });
-        alert(`Order Placed Locally!\n\nCustomer: ${customerDetails.name}\nTotal Unique Items: ${cartItems.length}`);
+        showOrderSuccessModal("ORD-LOCAL-TEST", customerDetails, cartItems);
         return true;
     }
 
@@ -381,7 +473,6 @@ async function sendOrderToAdminDashboard(customerDetails, cartItems) {
     };
 
     try {
-        // Updated to use dynamic API_BASE_URL instead of relative path
         const response = await fetch(`${API_BASE_URL}/api/orders/create`, {
             method: "POST",
             headers: { 
@@ -398,15 +489,15 @@ async function sendOrderToAdminDashboard(customerDetails, cartItems) {
         const data = await response.json();
 
         if (data.success) {
-            alert("Order placed successfully! Order ID: " + (data.order_id || "N/A"));
+            showOrderSuccessModal(data.order_id || "ORD-SUCCESS", customerDetails, cartItems);
             return true;
         } else {
-            alert("Order submission failed: " + (data.message || "Unknown error occurred."));
+            showToast("Order submission failed: " + (data.message || "Unknown error occurred."), "error");
             return false;
         }
     } catch (error) {
         console.error("Backend Communication Error:", error);
-        alert("Unable to communicate with the store server. Please check your network connection.");
+        showToast("Unable to communicate with the store server. Please check your network connection.", "error");
         return false;
     }
 }

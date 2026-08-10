@@ -598,3 +598,134 @@ tbody tr:hover {
 .sidebar.collapsed .nav-link i {
     min-width: auto;
 }
+
+/* ==========================================================
+   AL BARAKA TRADERS - SUCCESS MODAL UI
+========================================================== */
+.abt-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.abt-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.abt-modal-card {
+    background: #ffffff;
+    width: 90%;
+    max-width: 440px;
+    border-radius: 20px;
+    padding: 32px 28px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    transform: scale(0.92) translateY(10px);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.abt-modal-overlay.active .abt-modal-card {
+    transform: scale(1) translateY(0);
+}
+
+.abt-modal-icon {
+    width: 64px;
+    height: 64px;
+    background: #E6F4EF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 18px auto;
+}
+
+.abt-modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 8px;
+}
+
+.abt-modal-subtitle {
+    font-size: 14px;
+    color: #64748B;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.abt-modal-summary {
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.abt-summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #475569;
+}
+
+.abt-summary-row strong {
+    color: #0F172A;
+}
+
+.abt-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.abt-btn-whatsapp {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: #25D366;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.abt-btn-whatsapp:hover {
+    background: #1EBE5B;
+    transform: translateY(-1px);
+}
+
+.abt-btn-secondary {
+    background: transparent;
+    border: 1px solid #CBD5E1;
+    color: #64748B;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.abt-btn-secondary:hover {
+    background: #F1F5F9;
+    color: #334155;
+}
