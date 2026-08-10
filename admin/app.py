@@ -113,6 +113,7 @@ def submit_order():
     data = request.get_json() or {}
     customer = data.get('customer', {})
     items = data.get('items', [])
+    source = data.get('source', 'Website')  # Capture source: 'Website' or 'Dashboard'
 
     if not customer.get('name') or not customer.get('phone') or not items:
         return jsonify({'success': False, 'message': 'Missing required order details'}), 400
@@ -179,10 +180,13 @@ def submit_order():
                     'subtotal': subtotal
                 })
 
-            # 4. Insert into 'orders'
+            # 4. Insert into 'orders' with is_read and source columns
             cur.execute("""
-                INSERT INTO orders (order_id, customer_name, customer_phone, customer_city, customer_address, customer_notes, total_amount)
-                VALUES (%s, %s, %s, %s, %s, %s, %s);
+                INSERT INTO orders (
+                    order_id, customer_name, customer_phone, customer_city, 
+                    customer_address, customer_notes, total_amount, is_read, source
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);
             """, (
                 order_id,
                 cust_name,
@@ -190,7 +194,9 @@ def submit_order():
                 cust_city,
                 cust_address,
                 customer.get('notes', ''),
-                total_amount
+                total_amount,
+                False,   # Always marked as unread upon creation
+                source   # Stores 'Website' or 'Dashboard'
             ))
 
             # 5. Insert into 'order_items'
@@ -215,10 +221,11 @@ def submit_order():
         finally:
             conn.close()
     else:
-        # File fallback
-        success, message, order_id = local_create_order(customer, items)
+        # File fallback (passes source context)
+        success, message, order_id = local_create_order(customer, items, source=source)
         return jsonify({'success': success, 'order_id': order_id, 'message': message})
 
+    
 @app.route('/api/orders/update-status', methods=['POST'])
 def api_update_order_status():
     try:
@@ -317,6 +324,41 @@ def api_update_order_status():
 
 #     except Exception as e:
 #         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
+
+#for order management, we will not automatically deduct stock when an order is marked as completed. This is to prevent accidental stock depletion in case of order cancellations or returns. 
+#Instead, stock management should be handled manually or through a dedicated inventory adjustment process.
+#order updation from dashbaord or from order page.
+
+@app.route('/api/orders/unread-count', methods=['GET'])
+def get_unread_orders_count():
+    conn = get_db_connection()
+    if conn:
+        try:
+            cur = conn.cursor()
+            cur.execute("SELECT COUNT(*) FROM orders WHERE is_read = FALSE;")
+            res = cur.fetchone()
+            count = res['count'] if res else 0
+            return jsonify({'success': True, 'unread_count': count})
+        finally:
+            conn.close()
+    else:
+        orders_list = load_orders()
+        count = sum(1 for o in orders_list if not o.get('is_read', False))
+        return jsonify({'success': True, 'unread_count': count})
+
+
+@app.route('/api/orders/mark-read', methods=['POST'])
+def mark_orders_read():
+    conn = get_db_connection()
+    if conn:
+        try:
+            cur = conn.cursor()
+            cur.execute("UPDATE orders SET is_read = TRUE WHERE is_read = FALSE;")
+            conn.commit()
+            return jsonify({'success': True, 'message': 'Orders marked as read'})
+        finally:
+            conn.close()
+    return jsonify({'success': True})
     
 @app.route('/orders')
 def orders():

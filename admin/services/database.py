@@ -43,7 +43,7 @@ def init_db():
                 );
             """)
 
-            # 3. Add missing columns safely
+            # 3. Add missing columns safely to customers table
             columns_to_add = [
                 ("city", "VARCHAR(100)"),
                 ("address", "TEXT"),
@@ -85,6 +85,30 @@ def init_db():
                         SELECT 1 FROM pg_constraint WHERE conname = 'unique_customer_phone'
                     ) THEN 
                         ALTER TABLE customers ADD CONSTRAINT unique_customer_phone UNIQUE (phone);
+                    END IF;
+                END $$;
+            """)
+
+            # 6. Step 1 Migration: Add is_read and source columns to orders table
+            cur.execute("""
+                DO $$ 
+                BEGIN 
+                    IF EXISTS (
+                        SELECT 1 FROM information_schema.tables WHERE table_name='orders'
+                    ) THEN
+                        IF NOT EXISTS (
+                            SELECT 1 FROM information_schema.columns 
+                            WHERE table_name='orders' AND column_name='is_read'
+                        ) THEN 
+                            ALTER TABLE orders ADD COLUMN is_read BOOLEAN DEFAULT FALSE;
+                        END IF;
+
+                        IF NOT EXISTS (
+                            SELECT 1 FROM information_schema.columns 
+                            WHERE table_name='orders' AND column_name='source'
+                        ) THEN 
+                            ALTER TABLE orders ADD COLUMN source VARCHAR(20) DEFAULT 'Website';
+                        END IF;
                     END IF;
                 END $$;
             """)

@@ -236,7 +236,7 @@
                             position: relative;
                             transition: background 0.2s ease;">
                             <i class="fa-regular fa-bell" style="color: #64748b; font-size: 16px;"></i>
-                            <!-- Red Badge Indicator -->
+                            <!-- Dynamic Red Badge Indicator -->
                             <span id="notifBadge" style="
                                 position: absolute; 
                                 top: 2px; 
@@ -245,13 +245,14 @@
                                 color: white; 
                                 font-size: 10px; 
                                 font-weight: 700; 
-                                width: 16px; 
+                                min-width: 16px; 
                                 height: 16px; 
-                                border-radius: 50%; 
-                                display: flex; 
+                                border-radius: 10px; 
+                                padding: 0 4px;
+                                display: none; 
                                 align-items: center; 
                                 justify-content: center;
-                                border: 2px solid #ffffff;">2</span>
+                                border: 2px solid #ffffff;">0</span>
                         </button>
 
                         <!-- Notifications Dropdown Menu -->
@@ -270,25 +271,11 @@
                             
                             <div style="padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
                                 <span style="font-weight: 600; font-size: 13px; color: #1e293b;">Notifications</span>
-                                <button onclick="clearNotifications()" style="background: none; border: none; color: #2563eb; font-size: 11px; font-weight: 600; cursor: pointer;">Mark all as read</button>
+                                <button onclick="markAllNotificationsRead()" style="background: none; border: none; color: #2563eb; font-size: 11px; font-weight: 600; cursor: pointer;">Mark all as read</button>
                             </div>
 
-                            <div style="max-height: 280px; overflow-y: auto;">
-                                <div class="notif-item" style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: flex-start;">
-                                    <i class="fa-solid fa-circle-check" style="color: #10b981; margin-top: 3px;"></i>
-                                    <div>
-                                        <div style="font-size: 12px; font-weight: 600; color: #0f172a;">Excel Connected</div>
-                                        <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Data loaded successfully from products.xlsx</div>
-                                    </div>
-                                </div>
-
-                                <div class="notif-item" style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: flex-start; background: #fefce8;">
-                                    <i class="fa-solid fa-triangle-exclamation" style="color: #f59e0b; margin-top: 3px;"></i>
-                                    <div>
-                                        <div style="font-size: 12px; font-weight: 600; color: #0f172a;">Catalog Ready</div>
-                                        <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Click 'Publish to Live Site' to push changes.</div>
-                                    </div>
-                                </div>
+                            <div id="notifListContainer" style="max-height: 280px; overflow-y: auto;">
+                                <div id="noNotifMessage" style="padding: 16px; text-align: center; color: #64748b; font-size: 12px;">No new order notifications.</div>
                             </div>
                         </div>
                     </div>
@@ -317,8 +304,9 @@
     <!-- Main JavaScript File -->
     <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
 
-    <!-- 3. SIDEBAR TOGGLE FUNCTIONALITY AT BOTTOM OF BODY -->
+    <!-- 3. SIDEBAR TOGGLE & GLOBAL ORDER NOTIFICATION POLLING FUNCTIONALITY -->
     <script>
+        // --- Sidebar Logic ---
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const sidebarIcon = document.getElementById('sidebarToggleIcon');
@@ -346,6 +334,99 @@
             localStorage.setItem('sidebar_collapsed', isCollapsed ? 'true' : 'false');
         }
 
+        // --- Global Order Notification Engine ---
+        let lastUnreadCount = 0;
+
+        function checkUnreadOrders() {
+            fetch('/api/orders/unread-count')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const count = data.unread_count;
+                        const notifBadge = document.getElementById('notifBadge');
+                        const sidebarBadge = document.getElementById('sidebarOrdersBadge'); // In sidebar.html
+                        const notifList = document.getElementById('notifListContainer');
+
+                        // Update Top Bar Badge
+                        if (notifBadge) {
+                            if (count > 0) {
+                                notifBadge.innerText = count;
+                                notifBadge.style.display = 'flex';
+                            } else {
+                                notifBadge.style.display = 'none';
+                            }
+                        }
+
+                        // Update Sidebar Badge if element exists
+                        if (sidebarBadge) {
+                            if (count > 0) {
+                                sidebarBadge.innerText = count;
+                                sidebarBadge.style.display = 'inline-block';
+                            } else {
+                                sidebarBadge.style.display = 'none';
+                            }
+                        }
+
+                        // Update Dropdown Content dynamically
+                        if (notifList) {
+                            if (count > 0) {
+                                notifList.innerHTML = `
+                                    <div class="notif-item" style="padding: 12px 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: flex-start; background: #f0f9ff;">
+                                        <i class="fa-solid fa-bag-shopping" style="color: #0284c7; margin-top: 3px;"></i>
+                                        <div>
+                                            <div style="font-size: 12px; font-weight: 600; color: #0f172a;">New Orders Received</div>
+                                            <div style="font-size: 11px; color: #64748b; margin-top: 2px;">You have ${count} unread order(s). <a href="/orders" style="color: #2563eb; font-weight: 600;">View Orders</a></div>
+                                        </div>
+                                    </div>`;
+                            } else {
+                                notifList.innerHTML = `<div id="noNotifMessage" style="padding: 16px; text-align: center; color: #64748b; font-size: 12px;">No new order notifications.</div>`;
+                            }
+                        }
+
+                        // Audio alert on new incoming orders
+                        if (count > lastUnreadCount && lastUnreadCount !== 0) {
+                            playAlertSound();
+                        }
+
+                        lastUnreadCount = count;
+                    }
+                })
+                .catch(err => console.error('Error fetching order notifications:', err));
+        }
+
+        function playAlertSound() {
+            const audio = new Audio('/static/sounds/notification.mp3');
+            audio.play().catch(() => {});
+        }
+
+        function toggleNotifications(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('notificationDropdown');
+            if (dropdown) {
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            }
+        }
+
+        function markAllNotificationsRead() {
+            fetch('/api/orders/mark-read', { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        checkUnreadOrders();
+                    }
+                });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('notificationDropdown');
+            const notifBtn = document.getElementById('notificationBtn');
+            if (dropdown && notifBtn && !notifBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Initialize on load & start 10s polling interval
         document.addEventListener('DOMContentLoaded', () => {
             const isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
             const sidebar = document.getElementById('sidebar');
@@ -359,6 +440,9 @@
                 const topbarIcon = document.getElementById('topbarToggleIcon');
                 if (topbarIcon) topbarIcon.className = 'fa-solid fa-indent';
             }
+
+            checkUnreadOrders();
+            setInterval(checkUnreadOrders, 10000);
         });
     </script>
 </body>

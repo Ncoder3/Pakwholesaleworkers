@@ -360,6 +360,78 @@ function executeDeleteProduct() {
 
 
 // ==========================================
+// BULK SELECTION & ZIP EXPORT
+// ==========================================
+function toggleSelectAll(masterCheckbox) {
+    const checkboxes = document.querySelectorAll('.product-checkbox');
+    checkboxes.forEach(cb => cb.checked = masterCheckbox.checked);
+    updateBulkExportButton();
+}
+
+function updateBulkExportButton() {
+    const selected = document.querySelectorAll('.product-checkbox:checked');
+    const bulkBtn = document.getElementById('bulkExportBtn');
+    if (bulkBtn) {
+        if (selected.length > 0) {
+            bulkBtn.style.display = 'inline-flex';
+            bulkBtn.innerHTML = `<i class="fa-solid fa-file-zipper"></i> Export Selected (${selected.length})`;
+        } else {
+            bulkBtn.style.display = 'none';
+        }
+    }
+}
+
+async function exportSelectedPNGs() {
+    const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+    const selectedCodes = Array.from(selectedCheckboxes).map(cb => cb.value);
+
+    if (selectedCodes.length === 0) {
+        showToast("Warning", "Please select at least one product.", "warning");
+        return;
+    }
+
+    const bulkBtn = document.getElementById('bulkExportBtn');
+    if (bulkBtn) {
+        bulkBtn.disabled = true;
+        bulkBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Zipping Cards...`;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/api/export-pngs`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product_codes: selectedCodes })
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.message || "Failed to generate ZIP archive.");
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = downloadUrl;
+        a.download = `product_cards_${new Date().toISOString().slice(0, 10)}.zip`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(downloadUrl);
+
+        showToast("Success", "ZIP archive downloaded successfully!", "success");
+    } catch (err) {
+        console.error(err);
+        showToast("Export Failed", err.message, "error");
+    } finally {
+        if (bulkBtn) {
+            bulkBtn.disabled = false;
+            updateBulkExportButton();
+        }
+    }
+}
+
+
+// ==========================================
 // SITE PUBLISHING & NOTIFICATIONS
 // ==========================================
 function publishLiveSite() {
@@ -428,7 +500,7 @@ function publishLiveSite() {
 }
 
 function toggleNotifications(event) {
-    event.stopPropagation();
+    if (event) event.stopPropagation();
     const dropdown = document.getElementById('notificationDropdown');
     if (!dropdown) return;
 
@@ -498,23 +570,62 @@ function updateCalculatedPrice() {
 }
 
 function showToast(title, message, type = 'success') {
-    const container = document.getElementById('toastContainer');
-    if (!container) return;
+    let container = document.getElementById('toastContainer');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.style.cssText = `
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+        `;
+        document.body.appendChild(container);
+    }
 
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-
+    const isSuccess = type === 'success';
+    const isWarning = type === 'warning';
+    
+    let bgColor = '#10b981';
     let iconClass = 'fa-circle-check';
-    if (type === 'error') iconClass = 'fa-circle-xmark';
-    if (type === 'warning') iconClass = 'fa-triangle-exclamation';
+
+    if (type === 'error') {
+        bgColor = '#ef4444';
+        iconClass = 'fa-circle-xmark';
+    } else if (isWarning) {
+        bgColor = '#f59e0b';
+        iconClass = 'fa-triangle-exclamation';
+    }
+
+    toast.style.cssText = `
+        background: #ffffff;
+        border-left: 4px solid ${bgColor};
+        padding: 14px 18px;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        color: #1e293b;
+        font-family: inherit;
+        font-size: 13px;
+        transition: all 0.3s ease;
+    `;
 
     toast.innerHTML = `
-        <div class="toast-icon"><i class="fa-solid ${iconClass}"></i></div>
-        <div class="toast-content">
-            <div class="toast-title">${title}</div>
-            <div class="toast-message">${message}</div>
+        <i class="fa-solid ${iconClass}" style="color: ${bgColor}; font-size: 18px; margin-top: 2px;"></i>
+        <div style="flex: 1;">
+            <div style="font-weight: 600; color: #0f172a; margin-bottom: 2px;">${title}</div>
+            <div style="color: #64748b; font-size: 12px; line-height: 1.4;">${message}</div>
         </div>
-        <button class="toast-close" onclick="removeToast(this.parentElement)">&times;</button>
+        <button onclick="removeToast(this.parentElement)" style="background: none; border: none; color: #94a3b8; cursor: pointer; padding: 0;">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     `;
 
     container.appendChild(toast);
@@ -526,7 +637,8 @@ function showToast(title, message, type = 'success') {
 
 function removeToast(toast) {
     if (!toast) return;
-    toast.style.animation = 'toastSlideOut 0.25s forwards';
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
     setTimeout(() => {
         if (toast.parentElement) {
             toast.remove();

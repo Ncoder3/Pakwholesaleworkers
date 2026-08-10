@@ -23,9 +23,20 @@
             <i class="fa-solid fa-warehouse"></i>
             <span>Inventory</span>
         </a>
-        <a href="/orders" class="nav-link {% if request.path == '/orders' %}active{% endif %}">
+        <a href="/orders" class="nav-link {% if request.path == '/orders' %}active{% endif %}" style="position: relative;">
             <i class="fa-solid fa-cart-shopping"></i>
             <span>Orders</span>
+            <!-- Dynamic Sidebar Order Notification Badge -->
+            <span id="sidebarOrdersBadge" style="
+                display: none; 
+                margin-left: auto; 
+                background: #ef4444; 
+                color: #ffffff; 
+                font-size: 11px; 
+                font-weight: 700; 
+                padding: 2px 7px; 
+                border-radius: 12px; 
+                line-height: 1;">0</span>
         </a>
         <a href="/customers" class="nav-link {% if request.path == '/customers' %}active{% endif %}">
             <i class="fa-solid fa-users"></i>

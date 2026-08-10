@@ -598,3 +598,20 @@ tbody tr:hover {
 .sidebar.collapsed .nav-link i {
     min-width: auto;
 }
+
+/* Unread Row Soft Highlight */
+.table-warning-highlight {
+  background-color: #F0F9FF !important; /* Soft Light Blue */
+  font-weight: 500;
+}
+
+/* Source Badges */
+.bg-emerald {
+  background-color: #10B981 !important;
+  color: #ffffff;
+}
+
+.bg-indigo {
+  background-color: #4F46E5 !important;
+  color: #ffffff;
+}

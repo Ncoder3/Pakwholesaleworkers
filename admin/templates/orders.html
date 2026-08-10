@@ -4,7 +4,7 @@
 {% block page_title %}Orders Management{% endblock %}
 
 {% block content %}
-<!-- Custom Slider Styling -->
+<!-- Custom Scrollbar & Action Dropdown Styling -->
 <style>
     .table-container::-webkit-scrollbar {
         height: 6px;
@@ -49,12 +49,12 @@
         <h2 style="font-size: 20px; font-weight: 700; margin: 0;">Customer Orders</h2>
         <p style="font-size: 13px; color: #64748b; margin-top: 4px;">Track wholesale requests and process inventory fulfillments.</p>
     </div>
-    <button onclick="openCreateOrderModal()" style="background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+    <button onclick="openCreateOrderModal()" style="background: var(--primary, #047857); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
         <i class="fa-solid fa-plus"></i> New Order
     </button>
 </div>
 
-<!-- Orders Table Card with Professional Slider & Horizontal Overflow -->
+<!-- Orders Table Card with Horizontal Overflow -->
 <div class="table-container" style="background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 20px; overflow-x: auto;">
     <table style="width: 100%; min-width: 900px; border-collapse: collapse; text-align: left; font-size: 14px;">
         <thead>
@@ -62,18 +62,18 @@
                 <th style="padding: 10px; white-space: nowrap;">ORDER ID</th>
                 <th style="padding: 10px; white-space: nowrap;">DATE</th>
                 <th style="padding: 10px;">CUSTOMER</th>
-                <th style="padding: 10px;white-space: nowrap; ">PHONE</th>
+                <th style="padding: 10px; white-space: nowrap;">PHONE</th>
                 <th style="padding: 10px; white-space: nowrap;">TOTAL AMOUNT</th>
                 <th style="padding: 10px; white-space: nowrap;">STATUS</th>
-                <th style="padding: 10px; text-align: center; white-space: nowrap;">ACTION</th>
+                <th style="padding: 10px; text-align: right; white-space: nowrap;">ACTION</th>
             </tr>
         </thead>
         <tbody>
             {% for order in orders %}
             <tr style="border-bottom: 1px solid #f1f5f9;">
-                <td style="padding: 10px; font-weight: 700; color: var(--primary); white-space: nowrap;">{{ order.order_id }}</td>
+                <td style="padding: 10px; font-weight: 700; color: var(--primary, #047857); white-space: nowrap;">{{ order.order_id }}</td>
                 
-                <!-- Date (Top) & Time (Bottom) Split -->
+                <!-- Date (Top) & Time (Bottom) Vertical Stack -->
                 <td style="padding: 12px; color: #64748b; font-size: 13px; white-space: nowrap; line-height: 1.3;">
                     {% set dt_parts = (order.created_at|string).split('.')[0].replace('T', ' ').split(' ') %}
                     <div style="font-size: 13px; color: #586d8c;">{{ dt_parts[0] }}</div>
@@ -82,7 +82,6 @@
                 
                 <td style="padding: 12px; font-weight: 600;">{{ order.customer_name }}</td>
                 
-                <!-- Fixed Width Phone Column -->
                 <td style="padding: 12px; color: #64748b; font-size: 13px;">
                     {{ order.customer_phone or order.phone or '-' }}
                 </td>
@@ -101,7 +100,6 @@
                     {% endif %}
                 </td>
                 
-                <!-- Aligned Action Controls with Clean Dropdown Menu -->
                 <td style="padding: 12px; text-align: right; white-space: nowrap;">
                     <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
                         <a href="/orders/{{ order.order_id }}/invoice" target="_blank" style="background: #f1f5f9; color: #334155; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; gap: 4px;">
@@ -161,7 +159,7 @@
         </div>
         
         <div id="itemsContainer">
-            <div class="item-row" style="display: flex; gap: 8px; margin-bottom: 8px;">
+            <div class="item-row" style="display: flex; gap: 8px; margin-bottom: 8px; align-items: center;">
                 <select class="prod-code" style="flex: 2; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
                     <option value="">-- Select Product --</option>
                     {% for p in products %}
@@ -171,6 +169,9 @@
                     {% endfor %}
                 </select>
                 <input type="number" class="prod-packs" min="1" value="1" placeholder="Packs" style="width: 80px; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                <button type="button" onclick="removeItemRow(this)" style="background: none; border: none; color: #ef4444; cursor: pointer; padding: 4px 8px; font-size: 14px;" title="Remove Row">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
             </div>
         </div>
 
@@ -178,13 +179,32 @@
 
         <div style="display: flex; justify-content: flex-end; gap: 8px;">
             <button onclick="closeCreateOrderModal()" style="padding: 8px 16px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 6px; cursor: pointer;">Cancel</button>
-            <button onclick="submitNewOrder()" style="padding: 8px 16px; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Save Order & Open Invoice</button>
+            <button onclick="submitNewOrder()" style="padding: 8px 16px; background: var(--primary, #047857); color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Save Order & Open Invoice</button>
         </div>
     </div>
 </div>
 
 <script>
 function openCreateOrderModal() {
+    // Reset form inputs
+    document.getElementById('ordCustName').value = '';
+    document.getElementById('ordCustPhone').value = '';
+    document.getElementById('ordCustCity').value = '';
+    document.getElementById('ordCustAddress').value = '';
+    document.getElementById('prodSearchBox').value = '';
+
+    // Reset item rows to a single initial row
+    const container = document.getElementById('itemsContainer');
+    const firstRow = container.querySelector('.item-row');
+    container.innerHTML = '';
+    
+    // Clone clean template row
+    const cleanRow = firstRow.cloneNode(true);
+    cleanRow.querySelector('.prod-code').value = '';
+    cleanRow.querySelector('.prod-packs').value = 1;
+    container.appendChild(cleanRow);
+
+    filterProductDropdowns();
     document.getElementById('createOrderModal').style.display = 'flex';
 }
 
@@ -196,9 +216,19 @@ function addItemRow() {
     const container = document.getElementById('itemsContainer');
     const firstRow = container.querySelector('.item-row');
     const newRow = firstRow.cloneNode(true);
+    newRow.querySelector('.prod-code').value = '';
     newRow.querySelector('.prod-packs').value = 1;
     container.appendChild(newRow);
     filterProductDropdowns();
+}
+
+function removeItemRow(btn) {
+    const container = document.getElementById('itemsContainer');
+    if (container.querySelectorAll('.item-row').length > 1) {
+        btn.closest('.item-row').remove();
+    } else {
+        alert("At least one product row is required.");
+    }
 }
 
 function filterProductDropdowns() {
@@ -215,10 +245,10 @@ function filterProductDropdowns() {
 }
 
 async function submitNewOrder() {
-    const name = document.getElementById('ordCustName').value;
-    const phone = document.getElementById('ordCustPhone').value;
-    const city = document.getElementById('ordCustCity').value;
-    const address = document.getElementById('ordCustAddress').value;
+    const name = document.getElementById('ordCustName').value.trim();
+    const phone = document.getElementById('ordCustPhone').value.trim();
+    const city = document.getElementById('ordCustCity').value.trim();
+    const address = document.getElementById('ordCustAddress').value.trim();
 
     const itemRows = document.querySelectorAll('.item-row');
     const items = [];
@@ -226,18 +256,23 @@ async function submitNewOrder() {
     itemRows.forEach(row => {
         const selectEl = row.querySelector('.prod-code');
         const code = selectEl.value;
-        const packs = row.querySelector('.prod-packs').value;
+        const packs = parseInt(row.querySelector('.prod-packs').value) || 0;
 
-        if (code) {
+        if (code && packs > 0) {
             items.push({ 
                 product_code: code, 
-                packs: parseInt(packs)
+                packs: packs
             });
         }
     });
 
-    if (!name || items.length === 0) {
-        alert("Customer Name and at least one Product are required.");
+    if (!name) {
+        alert("Customer Name is required.");
+        return;
+    }
+
+    if (items.length === 0) {
+        alert("Please select at least one valid product with 1 or more packs.");
         return;
     }
 
