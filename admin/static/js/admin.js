@@ -645,3 +645,23 @@ function removeToast(toast) {
         }
     }, 250);
 }
+
+async function updateSidebarBadges() {
+    try {
+        const response = await fetch('/api/orders/counts');
+        const data = await response.json();
+        
+        const webBadge = document.getElementById('webOrdersBadge');
+        const manualBadge = document.getElementById('manualOrdersBadge');
+
+        // Direct textContent replacement minimizes repaints
+        if (webBadge && webBadge.textContent !== String(data.web)) {
+            webBadge.textContent = data.web;
+        }
+        if (manualBadge && manualBadge.textContent !== String(data.manual)) {
+            manualBadge.textContent = data.manual;
+        }
+    } catch (err) {
+        console.error("Failed to refresh badges:", err);
+    }
+}
