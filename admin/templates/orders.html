@@ -322,7 +322,8 @@ async function submitNewOrder() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 customer: { name, phone, city, address },
-                items: items
+                items: items,
+                source: 'dashboard'
             })
         });
         const data = await response.json();
