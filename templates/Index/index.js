@@ -2,7 +2,12 @@
    AL BARAKA TRADERS - DIGITAL CATALOG
    INDEX PAGE JAVASCRIPT ENGINE
 ==========================================================*/
+// templates/Index/index.js & output/index.js
 
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://127.0.0.1:5000'
+    : 'https://pakwholesaleworkers.up.railway.app';
+    
 document.addEventListener("DOMContentLoaded", function () {
     "use strict";
 
@@ -376,7 +381,8 @@ async function sendOrderToAdminDashboard(customerDetails, cartItems) {
     };
 
     try {
-        const response = await fetch("/api/orders/create", {
+        // Updated to use dynamic API_BASE_URL instead of relative path
+        const response = await fetch(`${API_BASE_URL}/api/orders/create`, {
             method: "POST",
             headers: { 
                 "Content-Type": "application/json",
