@@ -51,7 +51,7 @@ function showOrderSuccessModal(orderId, customerDetails, cartItems) {
 *Order ID:* ${orderId}
 *Customer:* ${customerDetails.name}
 *Phone:* ${customerDetails.phone}
-*Address:* ${customerDetails.address}
+${customerDetails.city ? `*City:* ${customerDetails.city}\n` : ""}${customerDetails.state ? `*State/Province:* ${customerDetails.state}\n` : ""}*Address:* ${customerDetails.address}
 
 *Order Items:*
 ${itemDetailsText}
@@ -61,7 +61,7 @@ ${itemDetailsText}
 Hello, I would like to proceed with payment for my order *${orderId}*. Please share online payment details.`;
 
     const encodedMessage = encodeURIComponent(whatsappMessage);
-    const whatsappPhone = "923000000000"; // Replace with your target WhatsApp number (country code without +)
+    const whatsappPhone = "923231551535";
     const whatsappUrl = `https://wa.me/${whatsappPhone}?text=${encodedMessage}`;
 
     // 3. Create or Reuse Modal Element
@@ -72,6 +72,9 @@ Hello, I would like to proceed with payment for my order *${orderId}*. Please sh
         modalOverlay.className = "abt-modal-overlay";
         document.body.appendChild(modalOverlay);
     }
+
+    // Dynamic location row formatting for the modal
+    const locationString = [customerDetails.city, customerDetails.state].filter(Boolean).join(", ");
 
     // 4. Inject Modal Markup
     modalOverlay.innerHTML = `
@@ -89,6 +92,12 @@ Hello, I would like to proceed with payment for my order *${orderId}*. Please sh
                     <span>Customer:</span>
                     <strong>${escapeHtml(customerDetails.name)}</strong>
                 </div>
+                ${locationString ? `
+                <div class="abt-summary-row">
+                    <span>Location:</span>
+                    <strong>${escapeHtml(locationString)}</strong>
+                </div>
+                ` : ""}
                 <div class="abt-summary-row">
                     <span>Total Amount:</span>
                     <strong>Rs ${totalAmount.toLocaleString('en-PK', { minimumFractionDigits: 2 })}</strong>
@@ -287,7 +296,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     <div class="cart-item-right">
                         <span class="line-total">Rs ${lineTotal.toLocaleString('en-PK', { minimumFractionDigits: 2 })}</span>
-                        <button class="remove-item-btn" data-action="remove" data-index="${index}" title="Remove item">&times;</button>
+                        <button class="remove-item-btn" data-action="remove" data-index="${index}" title="Remove item">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                            </svg>
+                        </button>
                     </div>
                 `;
                 cartItemsListEl.appendChild(itemRow);
@@ -419,6 +435,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const customerDetails = {
                 name: document.getElementById("custName") ? document.getElementById("custName").value.trim() : "",
                 phone: document.getElementById("custPhone") ? document.getElementById("custPhone").value.trim() : "",
+                city: document.getElementById("custCity") ? document.getElementById("custCity").value.trim() : "",
+                state: document.getElementById("custState") ? document.getElementById("custState").value.trim() : "",
                 address: document.getElementById("custAddress") ? document.getElementById("custAddress").value.trim() : ""
             };
 

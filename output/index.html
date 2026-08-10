@@ -39,7 +39,7 @@
     <!-- HERO -->
     <!-- ================================= -->
     <section class="hero">
-        <h2>Wholesale Product Catalog</h2>
+        <h2>Product Catalog</h2>
         <p>Browse our complete range of high-quality wholesale products.</p>
     </section>
 
@@ -2112,7 +2112,7 @@
         <div class="cart-header">
             <h2>
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-                Your Wholesale Order
+                Your Order
             </h2>
             <button id="closeCartBtn" class="close-btn">&times;</button>
         </div>
@@ -2133,23 +2133,31 @@
         </div>
 
         <form id="checkoutForm" class="checkout-form">
-            <h3>Customer Delivery Details</h3>
+            <h3>Customer Order/Delivery Details</h3>
             <div class="form-group">
                 <label for="custName">Full Name *</label>
                 <input type="text" id="custName" required placeholder="e.g. Muhammad Ali">
             </div>
             <div class="form-group">
                 <label for="custPhone">Phone Number *</label>
-                <input type="tel" id="custPhone" required placeholder="e.g. 03231551535">
+                <input type="tel" id="custPhone" required placeholder="e.g. 03001122333">
+            </div>
+            <div class="form-row" style="display: flex; gap: 12px;">
+                <div class="form-group" style="flex: 1;">
+                    <label for="custCity">City *</label>
+                    <input type="text" id="custCity" required placeholder="e.g. Lahore">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label for="custState">State / Province *</label>
+                    <input type="text" id="custState" required placeholder="e.g. Punjab">
+                </div>
             </div>
             <div class="form-group">
                 <label for="custAddress">Delivery Address *</label>
-                <textarea id="custAddress" rows="2" required placeholder="e.g. Main Shop, Supply Bazaar, Abbottabad"></textarea>
+                <textarea id="custAddress" rows="2" required placeholder="e.g. Street 1, House/Shop No. 1, Model Town"></textarea>
             </div>
-            <button type="submit" id="submitOrderBtn" class="checkout-submit-btn">Place Wholesale Order</button>
+            <button type="submit" id="submitOrderBtn" class="checkout-submit-btn">Place Order</button>
         </form>
-    </div>
-</div>
 
 <script src="index.js"></script>
 </body>
