@@ -195,18 +195,38 @@ body {
     background: var(--primary-hover);
 }
 
+/* Update .table-container to enable horizontal scrolling and custom styling */
 .table-container {
     background: var(--card-bg);
     border-radius: 16px;
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-sm);
-    overflow: hidden;
+    overflow-x: auto; /* Changed from 'overflow: hidden' to allow horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile devices */
 }
 
+/* Ensure table maintains minimum width for all columns to fit */
 table {
     width: 100%;
+    min-width: 850px; /* Forces horizontal slider when container width < 850px */
     border-collapse: collapse;
     text-align: left;
+}
+
+/* Optional horizontal scrollbar styling (matching your orders.html scrollbar) */
+.table-container::-webkit-scrollbar {
+    height: 6px;
+}
+.table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+.table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+.table-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
 }
 
 thead {
