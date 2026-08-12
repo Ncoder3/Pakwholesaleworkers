@@ -754,26 +754,36 @@ function promptAdminPin(actionDescription, onVerified) {
 
 // 3. Delete Single Order
 function deleteOrder(orderId) {
-    promptAdminPin(`Are you sure you want to delete order "${orderId}"?`, async (verifiedPin) => {
+    promptAdminPin(`Are you sure you want to delete order "${orderId}"?`, async (pin) => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/orders/delete/${orderId}`, {
-                method: "DELETE",
+            const response = await fetch(`/api/orders/delete/${orderId}`, {
+                method: 'DELETE',
                 headers: {
-                    "Content-Type": "application/json",
-                    "X-Admin-PIN": verifiedPin
-                }
+                    'Content-Type': 'application/json',
+                    'X-Admin-PIN': pin  // Passes PIN to backend auth check
+                },
+                body: JSON.stringify({ pin: pin })
             });
+
             const data = await response.json();
 
-            if (data.success) {
-                showToast("Order deleted successfully", "success");
-                setTimeout(() => location.reload(), 500);
+            if (response.ok && data.success) {
+                // 1. Instantly remove row from DOM
+                const row = document.getElementById(`order-row-${orderId}`);
+                if (row) {
+                    row.style.transition = 'all 0.3s ease';
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(20px)';
+                    setTimeout(() => row.remove(), 300);
+                }
+                
+                showNotification(`Order ${orderId} deleted successfully`, "success");
             } else {
-                showToast(data.message || "Failed to delete order", "error");
+                showNotification(data.message || "Order not found", "error");
             }
-        } catch (err) {
-            console.error("Delete Order Error:", err);
-            showToast("Server communication error", "error");
+        } catch (error) {
+            console.error("Delete Error:", error);
+            showNotification("Failed to delete order", "error");
         }
     });
 }
