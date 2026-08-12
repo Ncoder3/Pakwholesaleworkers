@@ -87,15 +87,24 @@ def process_stock_status(products):
         "out_of_stock": out_of_stock_count
     }
 
+import re
+
 def safe_float(val, default=0.0):
+    if val in [None, ""]:
+        return default
     try:
-        return float(val) if val not in [None, ""] else default
+        # Strip currency symbols (Rs), spaces, and commas
+        clean_val = re.sub(r"[^\d.]", "", str(val))
+        return float(clean_val) if clean_val else default
     except (ValueError, TypeError):
         return default
 
-def safe_int(val, default=0):
+def safe_int(val, default=1):
+    if val in [None, ""]:
+        return default
     try:
-        return int(float(val)) if val not in [None, ""] else default
+        clean_val = re.sub(r"[^\d]", "", str(val))
+        return int(clean_val) if clean_val else default
     except (ValueError, TypeError):
         return default
 
@@ -157,17 +166,29 @@ def submit_order():
             total_amount = 0.0
 
             for item in items:
-                code = str(item.get('product_code', '')).strip()
-                packs = safe_int(item.get('packs', 1))
+                # Key fallbacks for product code
+                code = str(item.get('product_code') or item.get('code') or item.get('id') or '').strip()
                 
-                # Fetch product details from DB/Excel lookup if missing in request payload
+                # Key fallbacks for quantity / packs
+                packs = safe_int(item.get('packs') or item.get('quantity') or item.get('qty'), default=1)
+                
                 matched_prod = product_map.get(code, {})
-                prod_name = item.get('product_name') or matched_prod.get('Product Name', 'Unknown Product')
                 
-                unit_price = item.get('price')
-                if unit_price is None or unit_price == "":
-                    unit_price = matched_prod.get('Wholesale Price per Pack (Rs)', 0.0)
-                unit_price = safe_float(unit_price)
+                # Key fallbacks for product name
+                prod_name = (
+                    item.get('product_name') 
+                    or item.get('name') 
+                    or item.get('title') 
+                    or matched_prod.get('Product Name') 
+                    or 'Unknown Product'
+                )
+                
+                # Key fallbacks for price
+                raw_price = item.get('price') if item.get('price') is not None else item.get('unit_price')
+                if raw_price is not None and str(raw_price).strip() != "":
+                    unit_price = safe_float(raw_price)
+                else:
+                    unit_price = safe_float(matched_prod.get('Wholesale Price per Pack (Rs)', 0.0))
 
                 subtotal = unit_price * packs
                 total_amount += subtotal
@@ -178,7 +199,7 @@ def submit_order():
                     'packs': packs,
                     'price': unit_price,
                     'subtotal': subtotal
-                })
+            })
 
             # 4. Insert into 'orders' with is_read and source columns
             cur.execute("""
