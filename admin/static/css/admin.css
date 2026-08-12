@@ -635,3 +635,214 @@ tbody tr:hover {
   background-color: #4F46E5 !important;
   color: #ffffff;
 }
+
+/* Table Action Column Alignment */
+.action-cell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* SVG Delete Trash Icon Button */
+.btn-delete-icon {
+    background: #FEF2F2;
+    color: #EF4444;
+    border: 1px solid #FCA5A5;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-delete-icon:hover {
+    background: #EF4444;
+    color: #FFFFFF;
+    border-color: #DC2626;
+}
+
+/* Table Bottom Bar for Clear All Button */
+.table-bottom-bar {
+    padding: 16px 20px;
+    border-top: 1px solid #E2E8F0;
+    display: flex;
+    justify-content: flex-end;
+    background-color: #F8FAFC;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Clear All Button Styling */
+.btn-clear-all {
+    background: #FFFFFF;
+    color: #DC2626;
+    border: 1px solid #FCA5A5;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-clear-all:hover {
+    background: #DC2626;
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+/* Fixed Modal Overlay (Centered Screen Cover) */
+.pin-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pin-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Box Card */
+.pin-modal-card {
+    background: #FFFFFF;
+    width: 90%;
+    max-width: 420px;
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    transform: translateY(12px) scale(0.96);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pin-modal-overlay.active .pin-modal-card {
+    transform: translateY(0) scale(1);
+}
+
+/* Header Icon */
+.pin-modal-icon {
+    width: 56px;
+    height: 56px;
+    background: #FEF2F2;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+/* Modal Titles & Subtitles */
+.pin-modal-title {
+    margin: 0 0 6px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0F172A;
+}
+
+.pin-modal-subtitle {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    color: #64748B;
+    line-height: 1.5;
+}
+
+/* PIN Input Field Styling */
+.pin-input-group {
+    margin-bottom: 24px;
+}
+
+#adminPinInput {
+    width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    font-size: 22px;
+    letter-spacing: 6px;
+    text-align: center;
+    color: #0F172A;
+    background: #F8FAFC;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 10px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#adminPinInput:focus {
+    border-color: #EF4444;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+.pin-error-text {
+    color: #EF4444;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 8px 0 0 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+/* Modal Action Buttons */
+.pin-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.btn-pin-cancel {
+    background: #F1F5F9;
+    color: #475569;
+    border: 1px solid #E2E8F0;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-pin-cancel:hover {
+    background: #E2E8F0;
+    color: #1E293B;
+}
+
+.btn-pin-confirm {
+    background: #EF4444;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    transition: background 0.2s, transform 0.1s;
+}
+
+.btn-pin-confirm:hover {
+    background: #DC2626;
+}
+
+.btn-pin-confirm:active {
+    transform: scale(0.98);
+}

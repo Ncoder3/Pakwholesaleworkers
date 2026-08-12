@@ -32,7 +32,7 @@ from services.excel_service import (
     get_next_product_code,
     get_existing_categories
 )
-from services.orders_service import load_orders, create_order as local_create_order, update_order_status
+from services.orders_service import load_orders, create_order as local_create_order, save_orders, update_order_status
 from services.customers_service import load_customers, create_customer
 from services.analytics_service import get_analytics_metrics
 from services.settings_service import read_config, update_config
@@ -349,6 +349,41 @@ def api_update_order_status():
 #for order management, we will not automatically deduct stock when an order is marked as completed. This is to prevent accidental stock depletion in case of order cancellations or returns. 
 #Instead, stock management should be handled manually or through a dedicated inventory adjustment process.
 #order updation from dashbaord or from order page.
+
+ADMIN_DELETE_PIN = "2345"
+
+@app.route('/api/orders/delete/<order_id>', methods=['DELETE', 'POST'])
+def delete_single_order(order_id):
+    # Check Admin PIN passed in headers
+    client_pin = request.headers.get('X-Admin-PIN') or request.args.get('pin')
+    if client_pin != ADMIN_DELETE_PIN:
+        return jsonify({'success': False, 'message': 'Unauthorized: Incorrect Admin PIN'}), 403
+
+    try:
+        orders = load_orders()
+        updated_orders = [o for o in orders if str(o.get('order_id')) != str(order_id)]
+        
+        if len(orders) == len(updated_orders):
+            return jsonify({'success': False, 'message': 'Order not found'}), 404
+            
+        save_orders(updated_orders)
+        return jsonify({'success': True, 'message': f'Order {order_id} deleted successfully'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+
+@app.route('/api/orders/clear-all', methods=['POST'])
+def clear_all_orders():
+    # Check Admin PIN passed in headers
+    client_pin = request.headers.get('X-Admin-PIN') or request.args.get('pin')
+    if client_pin != ADMIN_DELETE_PIN:
+        return jsonify({'success': False, 'message': 'Unauthorized: Incorrect Admin PIN'}), 403
+
+    try:
+        save_orders([])
+        return jsonify({'success': True, 'message': 'All orders cleared successfully'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/api/orders/unread-count', methods=['GET'])
 def get_unread_orders_count():

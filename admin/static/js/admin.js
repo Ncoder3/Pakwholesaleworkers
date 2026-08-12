@@ -665,3 +665,139 @@ async function updateSidebarBadges() {
         console.error("Failed to refresh badges:", err);
     }
 }
+
+// Global PIN configuration
+const ADMIN_DELETE_PIN = "2345";
+
+// 1. Create Modal Markup Dynamically if not present
+function getOrCreatePinModal() {
+    let modal = document.getElementById("adminPinModal");
+    if (!modal) {
+        modal = document.createElement("div");
+        modal.id = "adminPinModal";
+        modal.className = "pin-modal-overlay";
+        modal.innerHTML = `
+            <div class="pin-modal-card">
+                <div class="pin-modal-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                </div>
+                
+                <h3 class="pin-modal-title">Admin Authentication</h3>
+                <p id="pinModalSubtext" class="pin-modal-subtitle">
+                    Enter admin PIN to confirm deletion.
+                </p>
+                
+                <div class="pin-input-group">
+                    <input type="password" id="adminPinInput" maxlength="8" placeholder="••••" autocomplete="off">
+                    <p id="pinErrorMsg" class="pin-error-text">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        Incorrect PIN. Please try again.
+                    </p>
+                </div>
+
+                <div class="pin-modal-actions">
+                    <button type="button" class="btn-pin-cancel" id="cancelPinBtn">Cancel</button>
+                    <button type="button" class="btn-pin-confirm" id="confirmPinBtn">Confirm Delete</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    return modal;
+}
+
+// 2. Main Prompt Verification Function
+function promptAdminPin(actionDescription, onVerified) {
+    const modal = getOrCreatePinModal();
+    const pinInput = document.getElementById("adminPinInput");
+    const errorMsg = document.getElementById("pinErrorMsg");
+    const subtext = document.getElementById("pinModalSubtext");
+    const confirmBtn = document.getElementById("confirmPinBtn");
+    const cancelBtn = document.getElementById("cancelPinBtn");
+
+    subtext.innerText = actionDescription;
+    pinInput.value = "";
+    errorMsg.style.display = "none";
+    modal.classList.add("active");
+    pinInput.focus();
+
+    const closeModal = () => {
+        modal.classList.remove("active");
+        confirmBtn.onclick = null;
+        cancelBtn.onclick = null;
+    };
+
+    cancelBtn.onclick = closeModal;
+
+    confirmBtn.onclick = () => {
+        const enteredPin = pinInput.value.trim();
+        if (enteredPin === ADMIN_DELETE_PIN) {
+            closeModal();
+            onVerified(enteredPin);
+        } else {
+            errorMsg.style.display = "block";
+            pinInput.value = "";
+            pinInput.focus();
+        }
+    };
+
+    // Allow submission via ENTER key
+    pinInput.onkeyup = (e) => {
+        if (e.key === "Enter") confirmBtn.click();
+    };
+}
+
+// 3. Delete Single Order
+function deleteOrder(orderId) {
+    promptAdminPin(`Are you sure you want to delete order "${orderId}"?`, async (verifiedPin) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/orders/delete/${orderId}`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Admin-PIN": verifiedPin
+                }
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showToast("Order deleted successfully", "success");
+                setTimeout(() => location.reload(), 500);
+            } else {
+                showToast(data.message || "Failed to delete order", "error");
+            }
+        } catch (err) {
+            console.error("Delete Order Error:", err);
+            showToast("Server communication error", "error");
+        }
+    });
+}
+
+// 4. Clear All Orders
+function clearAllOrders() {
+    promptAdminPin("WARNING: This will permanently delete ALL order records. Enter PIN to proceed:", async (verifiedPin) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/orders/clear-all`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Admin-PIN": verifiedPin
+                }
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                showToast("All orders cleared successfully", "success");
+                setTimeout(() => location.reload(), 500);
+            } else {
+                showToast(data.message || "Failed to clear orders", "error");
+            }
+        } catch (err) {
+            console.error("Clear All Orders Error:", err);
+            showToast("Server communication error", "error");
+        }
+    });
+}

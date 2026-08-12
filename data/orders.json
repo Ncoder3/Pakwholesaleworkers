@@ -1,24 +1,5 @@
 [
     {
-        "order_id": "ORD-1002",
-        "customer_name": "sdfafasd",
-        "phone": "784383",
-        "address": "iewurir",
-        "status": "Completed",
-        "created_at": "2026-08-10 03:57:36",
-        "total_amount": 16700.0,
-        "items": [
-            {
-                "product_code": "ABT-041",
-                "product_name": "card2",
-                "pack_price": 1670.0,
-                "packs": 10,
-                "line_total": 16700.0
-            }
-        ],
-        "notes": ""
-    },
-    {
         "order_id": "ORD-1001",
         "customer_name": "Usama",
         "phone": "03231551589",
