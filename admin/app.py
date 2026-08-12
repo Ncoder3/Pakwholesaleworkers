@@ -354,23 +354,28 @@ ADMIN_DELETE_PIN = "2345"
 
 @app.route('/api/orders/delete/<order_id>', methods=['DELETE', 'POST'])
 def delete_single_order(order_id):
-    # Check Admin PIN passed in headers
-    client_pin = request.headers.get('X-Admin-PIN') or request.args.get('pin')
-    if client_pin != ADMIN_DELETE_PIN:
+    req_data = request.get_json(silent=True) or {}
+    client_pin = request.headers.get('X-Admin-PIN') or req_data.get('pin') or request.args.get('pin')
+
+    # Validate Admin PIN
+    if str(client_pin) != str(ADMIN_DELETE_PIN):
         return jsonify({'success': False, 'message': 'Unauthorized: Incorrect Admin PIN'}), 403
 
     try:
         orders = load_orders()
-        updated_orders = [o for o in orders if str(o.get('order_id')) != str(order_id)]
+        target_id = str(order_id).strip()
+        
+        # Filter out the deleted order by string comparison
+        updated_orders = [o for o in orders if str(o.get('order_id')).strip() != target_id]
         
         if len(orders) == len(updated_orders):
-            return jsonify({'success': False, 'message': 'Order not found'}), 404
+            return jsonify({'success': False, 'message': f'Order {order_id} not found'}), 404
             
         save_orders(updated_orders)
-        return jsonify({'success': True, 'message': f'Order {order_id} deleted successfully'})
+        return jsonify({'success': True, 'message': f'Order {order_id} deleted successfully'}), 200
+
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
-
 
 @app.route('/api/orders/clear-all', methods=['POST'])
 def clear_all_orders():
