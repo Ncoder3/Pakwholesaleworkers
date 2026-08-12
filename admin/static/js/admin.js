@@ -722,12 +722,14 @@ function promptAdminPin(actionDescription, onVerified) {
     pinInput.value = "";
     errorMsg.style.display = "none";
     modal.classList.add("active");
-    pinInput.focus();
+    setTimeout(() => pinInput.focus(), 100);
 
     const closeModal = () => {
         modal.classList.remove("active");
+        // Clear event listeners to prevent duplicate actions
         confirmBtn.onclick = null;
         cancelBtn.onclick = null;
+        pinInput.onkeyup = null;
     };
 
     cancelBtn.onclick = closeModal;
@@ -738,7 +740,7 @@ function promptAdminPin(actionDescription, onVerified) {
             closeModal();
             onVerified(enteredPin);
         } else {
-            errorMsg.style.display = "block";
+            errorMsg.style.display = "flex";
             pinInput.value = "";
             pinInput.focus();
         }
