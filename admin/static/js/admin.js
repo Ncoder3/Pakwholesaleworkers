@@ -753,6 +753,7 @@ function promptAdminPin(actionDescription, onVerified) {
 }
 
 // 3. Delete Single Order
+// 3. Delete Single Order
 function deleteOrder(orderId) {
     promptAdminPin(`Are you sure you want to delete order "${orderId}"?`, async (pin) => {
         try {
@@ -777,13 +778,13 @@ function deleteOrder(orderId) {
                     setTimeout(() => row.remove(), 300);
                 }
                 
-                showNotification(`Order ${orderId} deleted successfully`, "success");
+                showToast("Success", `Order ${orderId} deleted successfully`, "success");
             } else {
-                showNotification(data.message || "Order not found", "error");
+                showToast("Error", data.message || "Order not found", "error");
             }
         } catch (error) {
             console.error("Delete Error:", error);
-            showNotification("Failed to delete order", "error");
+            showToast("System Error", "Failed to delete order", "error");
         }
     });
 }

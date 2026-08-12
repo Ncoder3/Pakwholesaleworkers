@@ -70,7 +70,7 @@
         </thead>
         <tbody>
             {% for order in orders %}
-            <tr style="border-bottom: 1px solid #f1f5f9;">
+            <tr id="order-row-{{ order.order_id }}" style="border-bottom: 1px solid #f1f5f9;">
                 <!-- ORDER ID WITH DISTINCT UI COLOR & SOURCE BADGE -->
                 <td style="padding: 10px; white-space: nowrap;">
                     {% set order_src = (order.source|default('')|lower) %}
