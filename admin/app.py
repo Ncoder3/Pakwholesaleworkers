@@ -216,19 +216,36 @@ def submit_order():
                 source   # Stores 'Website' or 'Dashboard'
             ))
 
-            # 4. Insert into 'order_items'
+# 4. Insert into 'order_items' with safe column fallback (unit_price vs. price)
             for p_item in processed_items:
-                cur.execute("""
-                    INSERT INTO order_items (order_id, product_code, product_name, quantity, unit_price, subtotal)
-                    VALUES (%s, %s, %s, %s, %s, %s);
-                """, (
-                    order_id,
-                    p_item['code'],
-                    p_item['name'],
-                    p_item['packs'],
-                    p_item['price'],
-                    p_item['subtotal']
-                ))
+                cur.execute("SAVEPOINT item_insert;")
+                try:
+                    cur.execute("""
+                        INSERT INTO order_items (order_id, product_code, product_name, quantity, unit_price, subtotal)
+                        VALUES (%s, %s, %s, %s, %s, %s);
+                    """, (
+                        order_id,
+                        p_item['code'],
+                        p_item['name'],
+                        p_item['packs'],
+                        p_item['price'],
+                        p_item['subtotal']
+                    ))
+                    cur.execute("RELEASE SAVEPOINT item_insert;")
+                except Exception:
+                    # Fallback if table column is named 'price' instead of 'unit_price'
+                    cur.execute("ROLLBACK TO SAVEPOINT item_insert;")
+                    cur.execute("""
+                        INSERT INTO order_items (order_id, product_code, product_name, quantity, price, subtotal)
+                        VALUES (%s, %s, %s, %s, %s, %s);
+                    """, (
+                        order_id,
+                        p_item['code'],
+                        p_item['name'],
+                        p_item['packs'],
+                        p_item['price'],
+                        p_item['subtotal']
+                    ))
 
             conn.commit()
             return jsonify({'success': True, 'order_id': order_id, 'message': 'Order submitted successfully!'}), 200

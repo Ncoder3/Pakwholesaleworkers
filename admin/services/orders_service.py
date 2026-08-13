@@ -73,22 +73,38 @@ def get_next_order_id():
     Generates next incremental Order ID (e.g., ORD-1036) by taking the maximum ID
     sequence across active orders, deleted orders, and local storage.
     """
-    max_num = 1000  # Baseline sequence start (produces ORD-1001 if no orders exist)
+    max_num = 1000
     conn = get_db_connection()
 
     if conn:
         try:
             cur = conn.cursor()
-            # Find the highest numeric suffix across active AND deleted tables
-            query = """
-                SELECT MAX(num) FROM (
-                    SELECT CAST(SUBSTRING(order_id FROM '[0-9]+$') AS INTEGER) AS num 
-                    FROM orders WHERE order_id ~ '^ORD-[0-9]+$'
-                    UNION ALL
-                    SELECT CAST(SUBSTRING(order_id FROM '[0-9]+$') AS INTEGER) AS num 
-                    FROM deleted_orders WHERE order_id ~ '^ORD-[0-9]+$'
-                ) AS all_orders;
-            """
+            
+            # Check if deleted_orders table exists in PostgreSQL
+            cur.execute("""
+                SELECT EXISTS (
+                    SELECT FROM information_schema.tables 
+                    WHERE table_name = 'deleted_orders'
+                );
+            """)
+            has_deleted_table = cur.fetchone()[0]
+
+            if has_deleted_table:
+                query = """
+                    SELECT MAX(num) FROM (
+                        SELECT CAST(SUBSTRING(order_id FROM '[0-9]+$') AS INTEGER) AS num 
+                        FROM orders WHERE order_id ~ '^ORD-[0-9]+$'
+                        UNION ALL
+                        SELECT CAST(SUBSTRING(order_id FROM '[0-9]+$') AS INTEGER) AS num 
+                        FROM deleted_orders WHERE order_id ~ '^ORD-[0-9]+$'
+                    ) AS all_orders;
+                """
+            else:
+                query = """
+                    SELECT MAX(CAST(SUBSTRING(order_id FROM '[0-9]+$') AS INTEGER)) 
+                    FROM orders WHERE order_id ~ '^ORD-[0-9]+$';
+                """
+
             cur.execute(query)
             result = cur.fetchone()
             if result and result[0] is not None:
@@ -101,7 +117,6 @@ def get_next_order_id():
     # Fallback/Supplemental check against local JSON files
     orders = load_orders()
     
-    # Check deleted_orders.json if it exists locally
     deleted_orders = []
     try:
         from pathlib import Path
@@ -113,7 +128,6 @@ def get_next_order_id():
     except Exception:
         deleted_orders = []
 
-    # Extract maximum numeric ID from active and deleted JSON lists
     for o in (orders + deleted_orders):
         order_id_str = str(o.get("order_id", ""))
         match = re.search(r'\d+$', order_id_str)
