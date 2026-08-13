@@ -352,43 +352,99 @@ def api_update_order_status():
 
 ADMIN_DELETE_PIN = "2345"
 
+# delete_single_order in app.py:
 @app.route('/api/orders/delete/<order_id>', methods=['DELETE', 'POST'])
 def delete_single_order(order_id):
     req_data = request.get_json(silent=True) or {}
     client_pin = request.headers.get('X-Admin-PIN') or req_data.get('pin') or request.args.get('pin')
 
-    # Validate Admin PIN
     if str(client_pin) != str(ADMIN_DELETE_PIN):
         return jsonify({'success': False, 'message': 'Unauthorized: Incorrect Admin PIN'}), 403
 
-    try:
-        orders = load_orders()
-        target_id = str(order_id).strip()
-        
-        # Filter out the deleted order by string comparison
-        updated_orders = [o for o in orders if str(o.get('order_id')).strip() != target_id]
-        
-        if len(orders) == len(updated_orders):
-            return jsonify({'success': False, 'message': f'Order {order_id} not found'}), 404
+    target_id = str(order_id).strip()
+    conn = get_db_connection()
+
+    if conn:
+        try:
+            cur = conn.cursor()
+            # Fetch target order data before deletion
+            cur.execute("SELECT * FROM orders WHERE order_id = %s;", (target_id,))
+            target_order = cur.fetchone()
+
+            if not target_order:
+                return jsonify({'success': False, 'message': f'Order {order_id} not found'}), 404
+
+            # Fetch associated items
+            cur.execute("SELECT * FROM order_items WHERE order_id = %s;", (target_id,))
+            items = cur.fetchall()
+
+            # Prepare full archive payload
+            archive_data = dict(target_order)
+            archive_data['items'] = [dict(i) for i in items]
             
-        save_orders(updated_orders)
-        return jsonify({'success': True, 'message': f'Order {order_id} deleted successfully'}), 200
+            # Helper function to serialize datetime objects for JSONB
+            def default_serializer(o):
+                if hasattr(o, 'isoformat'):
+                    return o.isoformat()
+                return str(o)
 
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
+            # Archive order into deleted_orders table
+            cur.execute("""
+                INSERT INTO deleted_orders (order_id, customer_name, customer_phone, customer_city, customer_address, total_amount, source, order_data)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+            """, (
+                archive_data.get('order_id'),
+                archive_data.get('customer_name'),
+                archive_data.get('customer_phone'),
+                archive_data.get('customer_city'),
+                archive_data.get('customer_address'),
+                archive_data.get('total_amount', 0.0),
+                archive_data.get('source', 'Website'),
+                json.dumps(archive_data, default=default_serializer)
+            ))
 
-@app.route('/api/orders/clear-all', methods=['POST'])
-def clear_all_orders():
-    # Check Admin PIN passed in headers
-    client_pin = request.headers.get('X-Admin-PIN') or request.args.get('pin')
-    if client_pin != ADMIN_DELETE_PIN:
-        return jsonify({'success': False, 'message': 'Unauthorized: Incorrect Admin PIN'}), 403
+            # Delete order from database (ON DELETE CASCADE removes order_items)
+            cur.execute("DELETE FROM orders WHERE order_id = %s;", (target_id,))
+            conn.commit()
 
-    try:
-        save_orders([])
-        return jsonify({'success': True, 'message': 'All orders cleared successfully'})
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
+            return jsonify({'success': True, 'message': f'Order {order_id} deleted and archived successfully'}), 200
+        except Exception as e:
+            conn.rollback()
+            return jsonify({'success': False, 'message': f'Database deletion error: {str(e)}'}), 500
+        finally:
+            conn.close()
+    else:
+        # JSON File Fallback
+        try:
+            orders = load_orders()
+            target_order = next((o for o in orders if str(o.get('order_id')).strip() == target_id), None)
+
+            if not target_order:
+                return jsonify({'success': False, 'message': f'Order {order_id} not found'}), 404
+
+            # Archive to local deleted_orders.json
+            deleted_file = PROJECT_ROOT / "data" / "deleted_orders.json"
+            deleted_orders_list = []
+            if deleted_file.exists():
+                try:
+                    with open(deleted_file, 'r', encoding='utf-8') as f:
+                        deleted_orders_list = json.load(f)
+                except Exception:
+                    deleted_orders_list = []
+
+            target_order['deleted_at'] = time.strftime("%Y-%m-%d %H:%M:%S")
+            deleted_orders_list.append(target_order)
+
+            with open(deleted_file, 'w', encoding='utf-8') as f:
+                json.dump(deleted_orders_list, f, indent=4)
+
+            # Save remaining active orders
+            updated_orders = [o for o in orders if str(o.get('order_id')).strip() != target_id]
+            save_orders(updated_orders)
+
+            return jsonify({'success': True, 'message': f'Order {order_id} deleted successfully'}), 200
+        except Exception as e:
+            return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/api/orders/unread-count', methods=['GET'])
 def get_unread_orders_count():
@@ -444,6 +500,85 @@ def get_unread_orders_count():
             'website_count': web_cnt,
             'manual_count': man_cnt
         })
+    
+    # clear_all_orders in app.py:
+@app.route('/api/orders/clear-all', methods=['POST'])
+def clear_all_orders():
+    req_data = request.get_json(silent=True) or {}
+    client_pin = request.headers.get('X-Admin-PIN') or req_data.get('pin') or request.args.get('pin')
+
+    if str(client_pin) != str(ADMIN_DELETE_PIN):
+        return jsonify({'success': False, 'message': 'Unauthorized: Incorrect Admin PIN'}), 403
+
+    conn = get_db_connection()
+
+    if conn:
+        try:
+            cur = conn.cursor()
+            # Fetch all orders to archive
+            cur.execute("SELECT * FROM orders;")
+            all_orders = cur.fetchall()
+
+            for order in all_orders:
+                cur.execute("SELECT * FROM order_items WHERE order_id = %s;", (order['order_id'],))
+                items = cur.fetchall()
+                archive_data = dict(order)
+                archive_data['items'] = [dict(i) for i in items]
+
+                def default_serializer(o):
+                    if hasattr(o, 'isoformat'):
+                        return o.isoformat()
+                    return str(o)
+
+                cur.execute("""
+                    INSERT INTO deleted_orders (order_id, customer_name, customer_phone, customer_city, customer_address, total_amount, source, order_data)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+                """, (
+                    archive_data.get('order_id'),
+                    archive_data.get('customer_name'),
+                    archive_data.get('customer_phone'),
+                    archive_data.get('customer_city'),
+                    archive_data.get('customer_address'),
+                    archive_data.get('total_amount', 0.0),
+                    archive_data.get('source', 'Website'),
+                    json.dumps(archive_data, default=default_serializer)
+                ))
+
+            cur.execute("DELETE FROM order_items;")
+            cur.execute("DELETE FROM orders;")
+            conn.commit()
+
+            return jsonify({'success': True, 'message': 'All orders cleared and archived successfully'}), 200
+        except Exception as e:
+            conn.rollback()
+            return jsonify({'success': False, 'message': f'Database clear error: {str(e)}'}), 500
+        finally:
+            conn.close()
+    else:
+        try:
+            orders = load_orders()
+            if orders:
+                deleted_file = PROJECT_ROOT / "data" / "deleted_orders.json"
+                deleted_orders_list = []
+                if deleted_file.exists():
+                    try:
+                        with open(deleted_file, 'r', encoding='utf-8') as f:
+                            deleted_orders_list = json.load(f)
+                    except Exception:
+                        deleted_orders_list = []
+
+                now_str = time.strftime("%Y-%m-%d %H:%M:%S")
+                for o in orders:
+                    o['deleted_at'] = now_str
+                    deleted_orders_list.append(o)
+
+                with open(deleted_file, 'w', encoding='utf-8') as f:
+                    json.dump(deleted_orders_list, f, indent=4)
+
+            save_orders([])
+            return jsonify({'success': True, 'message': 'All orders cleared successfully'})
+        except Exception as e:
+            return jsonify({'success': False, 'message': str(e)}), 500
 
 @app.route('/api/orders/mark-read', methods=['POST'])
 def mark_orders_read():

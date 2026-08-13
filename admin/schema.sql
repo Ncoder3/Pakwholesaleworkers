@@ -33,3 +33,16 @@ CREATE TABLE IF NOT EXISTS customers (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     notes TEXT
 );
+
+CREATE TABLE IF NOT EXISTS deleted_orders (
+    id SERIAL PRIMARY KEY,
+    order_id VARCHAR(30) NOT NULL,
+    customer_name VARCHAR(120),
+    customer_phone VARCHAR(20),
+    customer_city VARCHAR(80),
+    customer_address TEXT,
+    total_amount NUMERIC(12, 2),
+    source VARCHAR(20),
+    order_data JSONB,
+    deleted_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);

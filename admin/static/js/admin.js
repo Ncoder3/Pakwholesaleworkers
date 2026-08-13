@@ -753,15 +753,14 @@ function promptAdminPin(actionDescription, onVerified) {
 }
 
 // 3. Delete Single Order
-// 3. Delete Single Order
 function deleteOrder(orderId) {
     promptAdminPin(`Are you sure you want to delete order "${orderId}"?`, async (pin) => {
         try {
-            const response = await fetch(`/api/orders/delete/${orderId}`, {
+            const response = await fetch(`${API_BASE_URL}/api/orders/delete/${orderId}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-Admin-PIN': pin  // Passes PIN to backend auth check
+                    'X-Admin-PIN': pin
                 },
                 body: JSON.stringify({ pin: pin })
             });
@@ -769,7 +768,6 @@ function deleteOrder(orderId) {
             const data = await response.json();
 
             if (response.ok && data.success) {
-                // 1. Instantly remove row from DOM
                 const row = document.getElementById(`order-row-${orderId}`);
                 if (row) {
                     row.style.transition = 'all 0.3s ease';
