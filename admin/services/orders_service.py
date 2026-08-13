@@ -69,20 +69,58 @@ def save_order_to_excel(order):
 
 
 def get_next_order_id():
-    """Generates next incremental Order ID e.g., ORD-1001."""
-    orders = load_orders()
-    if not orders:
-        return "ORD-1001"
-    
-    ids = []
-    for o in orders:
+    """
+    Generates next incremental Order ID (e.g., ORD-1036) by taking the maximum ID
+    sequence across active orders, deleted orders, and local storage.
+    """
+    max_num = 1000  # Baseline sequence start (produces ORD-1001 if no orders exist)
+    conn = get_db_connection()
+
+    if conn:
         try:
-            num = int(str(o.get("order_id", "")).replace("ORD-", ""))
-            ids.append(num)
-        except ValueError:
-            continue
-            
-    next_num = max(ids) + 1 if ids else 1001
+            cur = conn.cursor()
+            # Find the highest numeric suffix across active AND deleted tables
+            query = """
+                SELECT MAX(num) FROM (
+                    SELECT CAST(SUBSTRING(order_id FROM '[0-9]+$') AS INTEGER) AS num 
+                    FROM orders WHERE order_id ~ '^ORD-[0-9]+$'
+                    UNION ALL
+                    SELECT CAST(SUBSTRING(order_id FROM '[0-9]+$') AS INTEGER) AS num 
+                    FROM deleted_orders WHERE order_id ~ '^ORD-[0-9]+$'
+                ) AS all_orders;
+            """
+            cur.execute(query)
+            result = cur.fetchone()
+            if result and result[0] is not None:
+                max_num = max(max_num, result[0])
+        except Exception as e:
+            print(f"Error checking DB max order ID: {e}")
+        finally:
+            conn.close()
+
+    # Fallback/Supplemental check against local JSON files
+    orders = load_orders()
+    
+    # Check deleted_orders.json if it exists locally
+    deleted_orders = []
+    try:
+        from pathlib import Path
+        import json
+        deleted_file = Path("data/deleted_orders.json")
+        if deleted_file.exists():
+            with open(deleted_file, "r", encoding="utf-8") as f:
+                deleted_orders = json.load(f)
+    except Exception:
+        deleted_orders = []
+
+    # Extract maximum numeric ID from active and deleted JSON lists
+    for o in (orders + deleted_orders):
+        order_id_str = str(o.get("order_id", ""))
+        match = re.search(r'\d+$', order_id_str)
+        if match:
+            max_num = max(max_num, int(match.group()))
+
+    next_num = max_num + 1
     return f"ORD-{next_num}"
 
 

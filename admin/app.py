@@ -111,7 +111,6 @@ def safe_int(val, default=1):
 # ==========================================
 # ORDER ENDPOINTS (HYBRID DB / LOCAL)
 # ==========================================
-
 @app.route('/api/orders/create', methods=['POST', 'OPTIONS'])
 @app.route('/api/order', methods=['POST', 'OPTIONS'])
 def submit_order():
@@ -134,6 +133,9 @@ def submit_order():
         for p in all_products if p.get('Product Code')
     }
 
+    # Generate sequence-safe Order ID that checks active and deleted orders
+    order_id = get_next_order_id()
+
     conn = get_db_connection()
     if conn:
         try:
@@ -155,13 +157,7 @@ def submit_order():
                         address = COALESCE(EXCLUDED.address, customers.address);
                 """, (cust_name, cust_phone, cust_city, cust_address))
 
-            # 2. Generate Order ID
-            cur.execute("SELECT COUNT(*) FROM orders;")
-            count_res = cur.fetchone()
-            count = count_res['count'] if count_res else 0
-            order_id = f"ORD-{1001 + count}"
-
-            # 3. Calculate line totals with fallback lookup
+            # 2. Calculate line totals with fallback lookup
             processed_items = []
             total_amount = 0.0
 
@@ -199,9 +195,9 @@ def submit_order():
                     'packs': packs,
                     'price': unit_price,
                     'subtotal': subtotal
-            })
+                })
 
-            # 4. Insert into 'orders' with is_read and source columns
+            # 3. Insert into 'orders' with is_read and source columns
             cur.execute("""
                 INSERT INTO orders (
                     order_id, customer_name, customer_phone, customer_city, 
@@ -220,7 +216,7 @@ def submit_order():
                 source   # Stores 'Website' or 'Dashboard'
             ))
 
-            # 5. Insert into 'order_items'
+            # 4. Insert into 'order_items'
             for p_item in processed_items:
                 cur.execute("""
                     INSERT INTO order_items (order_id, product_code, product_name, quantity, unit_price, subtotal)
@@ -245,7 +241,6 @@ def submit_order():
         # File fallback (passes source context)
         success, message, order_id = local_create_order(customer, items, source=source)
         return jsonify({'success': success, 'order_id': order_id, 'message': message})
-
     
 @app.route('/api/orders/update-status', methods=['POST'])
 def api_update_order_status():
