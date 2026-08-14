@@ -12,3 +12,4 @@ openpyxl
 pandas
 qrcode
 gunicorn
+qrcode[pil]
