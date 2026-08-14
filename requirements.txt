@@ -11,3 +11,4 @@ requests
 openpyxl
 pandas
 gunicorn
+qrcode[pil]
