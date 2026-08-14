@@ -32,7 +32,14 @@ from services.excel_service import (
     get_next_product_code,
     get_existing_categories
 )
-from services.orders_service import load_orders, create_order as local_create_order, save_orders, update_order_status
+from services.orders_service import (
+    load_orders,
+    create_order as local_create_order,
+    save_orders,
+    update_order_status,
+    get_next_order_id
+)
+
 from services.customers_service import load_customers, create_customer
 from services.analytics_service import get_analytics_metrics
 from services.settings_service import read_config, update_config
