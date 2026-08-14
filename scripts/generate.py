@@ -32,6 +32,9 @@ from helpers import (
     create_product
 )
 
+import psycopg2
+from psycopg2.extras import RealDictCursor
+
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 # ==========================================================
@@ -59,6 +62,50 @@ OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 QR_FOLDER.mkdir(parents=True, exist_ok=True)
 print_success("Output and QR folders initialized.")
 
+
+# PostgreSQL connection
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+
+def load_products_from_postgres():
+    """Load catalog products directly from Railway PostgreSQL."""
+
+    if not DATABASE_URL:
+        raise RuntimeError(
+            "DATABASE_URL is not configured."
+        )
+
+    conn = psycopg2.connect(
+        DATABASE_URL,
+        cursor_factory=RealDictCursor
+    )
+
+    try:
+        with conn.cursor() as cur:
+
+            cur.execute("""
+                SELECT
+                    product_code AS "Product Code",
+                    category AS "Category",
+                    product_name AS "Product Name",
+                    pack_unit_type AS "Pack / Unit Type",
+                    pieces_per_pack AS "Pieces per Pack",
+                    wholesale_price_per_pack AS "Wholesale Price per Pack (Rs)",
+                    price_per_piece AS "Price per Piece (Rs)",
+                    suggested_retail_price_per_piece AS "Suggested Retail Price per Piece (Rs)",
+                    stock_available_packs AS "Stock Available (Packs)",
+                    notes AS "Notes",
+                    image_file AS "Image File"
+                FROM products
+                ORDER BY id;
+            """)
+
+            rows = cur.fetchall()
+
+        return pd.DataFrame(rows)
+
+    finally:
+        conn.close()
 
 # ==========================================================
 # QR GENERATOR HELPER FUNCTIONS
@@ -112,28 +159,51 @@ def generate_qr(product):
 # ==========================================================
 print_section("Loading Product Dataset")
 
-if not EXCEL_FILE.exists():
-    print_error(f"Target Excel file missing: {EXCEL_FILE}")
+# Excel data Loading
+# if not EXCEL_FILE.exists():
+#     print_error(f"Target Excel file missing: {EXCEL_FILE}")
+#     exit(1)
+
+# df = pd.read_excel(EXCEL_FILE, header=0)
+# print(f"Total Products Read: {len(df)}")
+
+# Postrgre Data Loading
+print_section("Loading Product Dataset")
+
+try:
+    df = load_products_from_postgres()
+except Exception as e:
+    print_error(
+        f"Failed to load products from PostgreSQL: {e}"
+    )
     exit(1)
 
-df = pd.read_excel(EXCEL_FILE, header=0)
-print(f"Total Products Read: {len(df)}")
+if df.empty:
+    print_error(
+        "PostgreSQL products table is empty."
+    )
+    exit(1)
+
+print(
+    f"Total Products Read From PostgreSQL: {len(df)}"
+)
 
 # Calculate highest existing numeric product code
-highest_code = 0
-prefix = f"{config.PRODUCT_PREFIX}-"
+# highest_code = 0
+# prefix = f"{config.PRODUCT_PREFIX}-"
 
-for code in df.get("Product Code", []):
-    if pd.notna(code):
-        code_str = str(code).strip()
-        if code_str.startswith(prefix):
-            try:
-                num = int(code_str.replace(prefix, ""))
-                highest_code = max(highest_code, num)
-            except ValueError:
-                pass
+# for code in df.get("Product Code", []):
+#     if pd.notna(code):
+#         code_str = str(code).strip()
+#         if code_str.startswith(prefix):
+#             try:
+#                 num = int(code_str.replace(prefix, ""))
+#                 highest_code = max(highest_code, num)
+#             except ValueError:
+#                 pass
 
-next_code = highest_code + 1
+# next_code = highest_code + 1
+# Migrated to product_services.py
 
 # Assign missing codes back to DataFrame
 for index, code in df["Product Code"].items():
@@ -271,9 +341,9 @@ if (PROJECT_ROOT / "qr").exists():
 print_success("Static assets successfully synced.")
 
 # Save modified dataset containing auto-generated codes
-print_section("Updating Excel Data File")
-df.to_excel(EXCEL_FILE, index=False)
-print_success("Excel source updated successfully with new product codes.")
+# print_section("Updating Excel Data File")
+# df.to_excel(EXCEL_FILE, index=False)
+# print_success("Excel source updated successfully with new product codes.")
 
 print("\n" + "=" * 60)
 print(f" CATALOG GENERATION COMPLETE: {len(products)} CARDS GENERATED")
