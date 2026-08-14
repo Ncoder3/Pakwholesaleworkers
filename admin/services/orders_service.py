@@ -1,8 +1,10 @@
 import json
 import pandas as pd
+import re
 from datetime import datetime
 from pathlib import Path
 from services.excel_service import load_products, ALL_COLUMNS, EXCEL_FILE
+from services.database import get_db_connection
 
 SERVICE_DIR = Path(__file__).resolve().parent
 ADMIN_DIR = SERVICE_DIR.parent
@@ -138,7 +140,7 @@ def get_next_order_id():
     return f"ORD-{next_num}"
 
 
-def create_order(customer_data, items):
+def create_order(customer_data, items, source="Website"):
     """
     Creates a new order, calculates total cost dynamically, 
     saves to orders.json, and appends rows to Orders_Database.xlsx.
