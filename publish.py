@@ -37,6 +37,10 @@ def run_publish_workflow():
 
         output = res_gen.stdout + (res_gen.stderr or "")
 
+        print("========== GENERATOR OUTPUT ==========")
+        print(output)
+        print("========== END GENERATOR OUTPUT ==========")
+
         # Check if generate.py threw a validation error
         if res_gen.returncode != 0 or "VALIDATION PASSED" not in output:
             error_msg = "Validation failed during generation."

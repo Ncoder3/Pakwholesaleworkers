@@ -484,7 +484,7 @@ function publishLiveSite() {
                             <i class="fa-solid fa-circle-xmark" style="color: #dc2626; margin-top: 3px;"></i>
                             <div>
                                 <div style="font-size: 12px; font-weight: 600; color: #991b1b;">Publish Failed</div>
-                                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Product missing selling price in Excel.</div>
+                                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">Publish workflow failed. Check Railway logs.</div>
                             </div>
                         </div>` + notifDropdown.innerHTML;
                 }
