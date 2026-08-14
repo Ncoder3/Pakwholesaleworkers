@@ -9,6 +9,7 @@ import requests
 
 from flask import Flask, render_template, request, jsonify, send_from_directory, send_file, abort
 from flask_cors import CORS
+from services.product_service import migrate_products_from_excel
 
 # Path and Environment Setup
 ADMIN_DIR = Path(__file__).resolve().parent
@@ -371,6 +372,14 @@ def api_update_order_status():
 #order updation from dashbaord or from order page.
 
 ADMIN_DELETE_PIN = "2345"
+
+@app.route("/admin/migrate-products", methods=["POST"])
+def migrate_products_route():
+    success, message = migrate_products_from_excel()
+    return jsonify({
+        "success": success,
+        "message": message
+    })
 
 # delete_single_order in app.py:
 @app.route('/api/orders/delete/<order_id>', methods=['DELETE', 'POST'])

@@ -1,4 +1,29 @@
 -- Schema for PostgreSQL on Railway / Supabase
+
+CREATE TABLE IF NOT EXISTS products (
+    id SERIAL PRIMARY KEY,
+
+    product_code VARCHAR(50) UNIQUE NOT NULL,
+    category VARCHAR(120) NOT NULL DEFAULT 'Miscellaneous',
+    product_name VARCHAR(150) NOT NULL,
+
+    pack_unit_type VARCHAR(100),
+    pieces_per_pack INTEGER NOT NULL DEFAULT 0,
+
+    wholesale_price_per_pack NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    price_per_piece NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+    suggested_retail_price_per_piece NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
+
+    stock_available_packs INTEGER NOT NULL DEFAULT 0,
+
+    notes TEXT,
+    image_file VARCHAR(255),
+
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+
 CREATE TABLE IF NOT EXISTS orders (
     id SERIAL PRIMARY KEY,
     order_id VARCHAR(30) UNIQUE NOT NULL,

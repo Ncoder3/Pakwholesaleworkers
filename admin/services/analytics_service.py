@@ -1,6 +1,6 @@
 import pandas as pd
 from datetime import datetime
-from services.excel_service import load_products
+from services.product_service import load_products
 from services.orders_service import load_orders
 
 def get_analytics_metrics():
