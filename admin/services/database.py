@@ -113,6 +113,41 @@ def init_db():
                 END $$;
             """)
 
+                        # 7. Products / Inventory table
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS products (
+                    id SERIAL PRIMARY KEY,
+                    product_code VARCHAR(50) UNIQUE NOT NULL,
+                    category VARCHAR(255),
+                    product_name VARCHAR(255) NOT NULL,
+                    pack_unit_type VARCHAR(255),
+                    pieces_per_pack NUMERIC(12, 2) DEFAULT 0,
+                    wholesale_price_per_pack NUMERIC(12, 2) DEFAULT 0,
+                    price_per_piece NUMERIC(12, 2) DEFAULT 0,
+                    suggested_retail_price_per_piece NUMERIC(12, 2) DEFAULT 0,
+                    stock_available_packs INTEGER DEFAULT 0,
+                    notes TEXT,
+                    image_file VARCHAR(500),
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+            """)
+
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_products_category
+                ON products(category);
+            """)
+
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_products_name
+                ON products(product_name);
+            """)
+
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_products_stock
+                ON products(stock_available_packs);
+            """)
+
         conn.commit()
         print("[DB SUCCESS] Database schema initialized and migrated successfully.")
     except Exception as e:

@@ -3,32 +3,44 @@ name: Remote Catalog Builder & Deploy
 on:
   repository_dispatch:
     types: [remote_publish_trigger]
+
   workflow_dispatch:
 
 jobs:
+
   build-and-deploy:
+
     runs-on: ubuntu-latest
+
     steps:
+
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.13'
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r admin/requirements.txt || pip install -r requirements.txt
+          pip install -r admin/requirements.txt
 
       - name: Run Catalog Generator
-        run: python scripts/generate.py
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python scripts/generate.py
 
       - name: Commit & Push Changes
         run: |
           git config --global user.name "AlBaraka Automated Deployer"
           git config --global user.email "deploy@albarakatraders.com"
+
           git add output/
-          git commit -m "Auto-rebuilt catalog via remote publish trigger [skip ci]" || exit 0
+
+          git diff --cached --quiet && echo "No catalog changes." && exit 0
+
+          git commit -m "Auto-rebuilt catalog via remote publish trigger [skip ci]"
           git push
