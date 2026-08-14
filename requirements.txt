@@ -10,5 +10,5 @@ psycopg2-binary
 requests
 openpyxl
 pandas
-gunicorn
 qrcode[pil]
+gunicorn
