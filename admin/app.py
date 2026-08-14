@@ -37,7 +37,8 @@ from services.orders_service import (
     create_order as local_create_order,
     save_orders,
     update_order_status,
-    get_next_order_id
+    get_next_order_id,
+    get_deleted_orders
 )
 
 from services.customers_service import load_customers, create_customer
@@ -464,6 +465,44 @@ def delete_single_order(order_id):
             return jsonify({'success': True, 'message': f'Order {order_id} deleted successfully'}), 200
         except Exception as e:
             return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/api/orders/deleted', methods=['GET'])
+def api_get_deleted_orders():
+    """
+    Returns deleted order history from PostgreSQL.
+    Used by the Order History popup on the Orders page.
+    """
+
+    try:
+        deleted_orders = get_deleted_orders()
+
+        if deleted_orders is None:
+            # PostgreSQL is unavailable.
+            # Fall back to local deleted_orders.json.
+            deleted_file = PROJECT_ROOT / "data" / "deleted_orders.json"
+
+            if deleted_file.exists():
+                try:
+                    with open(deleted_file, "r", encoding="utf-8") as f:
+                        deleted_orders = json.load(f)
+                except Exception:
+                    deleted_orders = []
+            else:
+                deleted_orders = []
+
+        return jsonify({
+            "success": True,
+            "orders": deleted_orders,
+            "count": len(deleted_orders)
+        }), 200
+
+    except Exception as e:
+        print(f"Error loading deleted order history: {e}")
+
+        return jsonify({
+            "success": False,
+            "message": "Could not load deleted order history."
+        }), 500
 
 @app.route('/api/orders/unread-count', methods=['GET'])
 def get_unread_orders_count():

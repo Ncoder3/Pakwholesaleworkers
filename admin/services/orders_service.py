@@ -174,6 +174,96 @@ def get_next_order_id():
     next_num = max_num + 1
     return f"ORD-{next_num}"
 
+def get_deleted_orders():
+    """
+    Returns deleted orders from PostgreSQL deleted_orders table,
+    newest deleted order first.
+
+    The deleted_orders table already stores:
+    - order_id
+    - customer information
+    - total amount
+    - source
+    - deleted_at
+    - complete order_data including items
+    """
+
+    conn = get_db_connection()
+
+    if not conn:
+        return None
+
+    try:
+        cur = conn.cursor()
+
+        cur.execute("""
+            SELECT
+                order_id,
+                customer_name,
+                customer_phone,
+                customer_city,
+                customer_address,
+                total_amount,
+                source,
+                deleted_at,
+                order_data
+            FROM deleted_orders
+            ORDER BY deleted_at DESC;
+        """)
+
+        rows = cur.fetchall()
+
+        deleted_orders = []
+
+        for row in rows:
+            # Convert RealDictCursor row into a normal dictionary
+            order = dict(row)
+
+            # PostgreSQL JSONB is normally already returned as a Python dict.
+            # This extra check safely handles it if it comes back as text.
+            order_data = order.get("order_data")
+
+            if isinstance(order_data, str):
+                try:
+                    order_data = json.loads(order_data)
+                except (json.JSONDecodeError, TypeError):
+                    order_data = {}
+
+            if not isinstance(order_data, dict):
+                order_data = {}
+
+            # Keep the complete archived order information.
+            # Values stored directly in deleted_orders remain available
+            # even if something is missing from order_data.
+            order["order_data"] = order_data
+
+            # Make the original order fields easily available to frontend.
+            order["created_at"] = order_data.get(
+                "created_at",
+                order.get("created_at")
+            )
+
+            order["status"] = order_data.get(
+                "status",
+                "Deleted"
+            )
+
+            order["items"] = order_data.get(
+                "items",
+                []
+            )
+
+            deleted_orders.append(order)
+
+        return deleted_orders
+
+    except Exception as e:
+        print(f"Error loading deleted orders: {e}")
+        raise
+
+    finally:
+        conn.close()
+
 def create_order(customer_data, items, source="Website"):
     """
     Creates a new order, calculates total cost dynamically, 
