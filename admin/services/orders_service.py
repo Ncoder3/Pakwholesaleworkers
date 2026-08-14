@@ -72,8 +72,12 @@ def save_order_to_excel(order):
 
 def get_next_order_id():
     """
-    Generates next incremental Order ID (e.g., ORD-1036) by taking the maximum ID
-    sequence across active orders, deleted orders, and local storage.
+    Generates the next incremental Order ID (e.g., ORD-1036)
+    by taking the maximum ID sequence across:
+    - active PostgreSQL orders
+    - deleted PostgreSQL orders
+    - local active orders
+    - local deleted orders
     """
     max_num = 1000
     conn = get_db_connection()
@@ -81,44 +85,70 @@ def get_next_order_id():
     if conn:
         try:
             cur = conn.cursor()
-            
-            # Check if deleted_orders table exists in PostgreSQL
+            # Check if deleted_orders table exists in PostgreSQL.
+            # RealDictCursor returns a dictionary-like row,
+            # so we must access the result by column name.
             cur.execute("""
                 SELECT EXISTS (
-                    SELECT FROM information_schema.tables 
+                    SELECT FROM information_schema.tables
                     WHERE table_name = 'deleted_orders'
-                );
+                ) AS table_exists;
             """)
-            has_deleted_table = cur.fetchone()[0]
-
+            table_result = cur.fetchone()
+            has_deleted_table = (
+                table_result["table_exists"]
+                if table_result
+                else False
+            )
             if has_deleted_table:
                 query = """
-                    SELECT MAX(num) FROM (
-                        SELECT CAST(SUBSTRING(order_id FROM '[0-9]+$') AS INTEGER) AS num 
-                        FROM orders WHERE order_id ~ '^ORD-[0-9]+$'
+                    SELECT MAX(num) AS max_num
+                    FROM (
+                        SELECT CAST(
+                            SUBSTRING(order_id FROM '[0-9]+$')
+                            AS INTEGER
+                        ) AS num
+                        FROM orders
+                        WHERE order_id ~ '^ORD-[0-9]+$'
+
                         UNION ALL
-                        SELECT CAST(SUBSTRING(order_id FROM '[0-9]+$') AS INTEGER) AS num 
-                        FROM deleted_orders WHERE order_id ~ '^ORD-[0-9]+$'
+
+                        SELECT CAST(
+                            SUBSTRING(order_id FROM '[0-9]+$')
+                            AS INTEGER
+                        ) AS num
+                        FROM deleted_orders
+                        WHERE order_id ~ '^ORD-[0-9]+$'
                     ) AS all_orders;
                 """
             else:
                 query = """
-                    SELECT MAX(CAST(SUBSTRING(order_id FROM '[0-9]+$') AS INTEGER)) 
-                    FROM orders WHERE order_id ~ '^ORD-[0-9]+$';
+                    SELECT MAX(
+                        CAST(
+                            SUBSTRING(order_id FROM '[0-9]+$')
+                            AS INTEGER
+                        )
+                    ) AS max_num
+                    FROM orders
+                    WHERE order_id ~ '^ORD-[0-9]+$';
                 """
 
             cur.execute(query)
             result = cur.fetchone()
-            if result and result[0] is not None:
-                max_num = max(max_num, result[0])
+
+            if result and result["max_num"] is not None:
+                max_num = max(max_num, result["max_num"])
+
         except Exception as e:
             print(f"Error checking DB max order ID: {e}")
         finally:
             conn.close()
 
-    # Fallback/Supplemental check against local JSON files
+    # ---------------------------------------------------------
+    # Fallback / supplemental check against local JSON files
+    # ---------------------------------------------------------
+
     orders = load_orders()
-    
     deleted_orders = []
     try:
         from pathlib import Path
@@ -130,15 +160,19 @@ def get_next_order_id():
     except Exception:
         deleted_orders = []
 
+    # Check both active and deleted local orders.
     for o in (orders + deleted_orders):
         order_id_str = str(o.get("order_id", ""))
         match = re.search(r'\d+$', order_id_str)
         if match:
-            max_num = max(max_num, int(match.group()))
+            max_num = max(
+                max_num,
+                int(match.group())
+            )
 
+    # Generate next ID.
     next_num = max_num + 1
     return f"ORD-{next_num}"
-
 
 def create_order(customer_data, items, source="Website"):
     """
