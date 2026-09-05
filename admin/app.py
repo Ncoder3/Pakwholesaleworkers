@@ -803,35 +803,92 @@ def update_product_route():
         app.logger.error(f"Error updating product: {str(e)}")
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
+# Changes on 5 September 2026
+# @app.route("/delete_product", methods=["POST"])
+# def delete_product_route():
+#     data = request.get_json() or {}
+#     code = data.get("product_code")
+#     if not code:
+#         return jsonify({"success": False, "message": "Product code missing"})
+#     success, message = delete_product(code)
+#     return jsonify({"success": success, "message": message})
+
+# @app.route("/api/update-stock", methods=["POST"])
+# def update_stock_route():
+#     data = request.get_json() or {}
+#     code = data.get("product_code")
+#     new_stock = data.get("new_stock")
+
+#     if not code or new_stock is None:
+#         return jsonify({"success": False, "message": "Missing product code or stock count."}), 400
+
+#     products = get_products()
+#     target_product = next((p for p in products if str(p.get("Product Code")).strip() == str(code).strip()), None)
+
+#     if not target_product:
+#         return jsonify({"success": False, "message": "Product not found."}), 404
+
+#     target_product["original_code"] = target_product.get("Product Code")
+#     target_product["Stock Available (Packs)"] = int(new_stock)
+
+#     success, message = update_product(target_product)
+#     return jsonify({"success": success, "message": message, "new_stock": int(new_stock)})
+
 @app.route("/delete_product", methods=["POST"])
 def delete_product_route():
-    data = request.get_json() or {}
-    code = data.get("product_code")
-    if not code:
-        return jsonify({"success": False, "message": "Product code missing"})
-    success, message = delete_product(code)
-    return jsonify({"success": success, "message": message})
+    try:
+        data = request.get_json() or {}
+        code = str(data.get("product_code", "")).strip()
+        
+        if not code:
+            return jsonify({"success": False, "message": "Product code is required."}), 400
+
+        success, message = delete_product(code)
+        status_code = 200 if success else 400
+        return jsonify({"success": success, "message": message}), status_code
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
+
 
 @app.route("/api/update-stock", methods=["POST"])
 def update_stock_route():
-    data = request.get_json() or {}
-    code = data.get("product_code")
-    new_stock = data.get("new_stock")
+    try:
+        data = request.get_json() or {}
+        code = str(data.get("product_code", "")).strip()
+        raw_stock = data.get("new_stock")
 
-    if not code or new_stock is None:
-        return jsonify({"success": False, "message": "Missing product code or stock count."}), 400
+        if not code or raw_stock is None:
+            return jsonify({"success": False, "message": "Product code and new stock count are required."}), 400
 
-    products = get_products()
-    target_product = next((p for p in products if str(p.get("Product Code")).strip() == str(code).strip()), None)
+        # Safe integer validation
+        try:
+            new_stock = int(raw_stock)
+            if new_stock < 0:
+                return jsonify({"success": False, "message": "Stock count cannot be negative."}), 400
+        except (ValueError, TypeError):
+            return jsonify({"success": False, "message": "Stock count must be a valid integer."}), 400
 
-    if not target_product:
-        return jsonify({"success": False, "message": "Product not found."}), 404
+        products = get_products()
+        target_product = next((p for p in products if str(p.get("Product Code")).strip() == code), None)
 
-    target_product["original_code"] = target_product.get("Product Code")
-    target_product["Stock Available (Packs)"] = int(new_stock)
+        if not target_product:
+            return jsonify({"success": False, "message": f"Product with code '{code}' not found."}), 404
 
-    success, message = update_product(target_product)
-    return jsonify({"success": success, "message": message, "new_stock": int(new_stock)})
+        target_product["original_code"] = target_product.get("Product Code")
+        target_product["Stock Available (Packs)"] = new_stock
+
+        success, message = update_product(target_product)
+        status_code = 200 if success else 400
+        
+        return jsonify({
+            "success": success, 
+            "message": message, 
+            "new_stock": new_stock
+        }), status_code
+
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
 # ==========================================
 # ASSET & EXPORT ROUTES
@@ -839,46 +896,53 @@ def update_stock_route():
 
 @app.route("/api/export-pngs", methods=["POST"])
 def export_selected_pngs():
-    data = request.get_json() or {}
-    selected_codes = data.get("product_codes", [])
+    try:
+        data = request.get_json() or {}
+        selected_codes = data.get("product_codes", [])
 
-    if not selected_codes:
-        return jsonify({"success": False, "message": "No products selected"}), 400
+        if not selected_codes:
+            return jsonify({"success": False, "message": "No products selected"}), 400
 
-    zip_buffer = io.BytesIO()
-    found_files = 0
+        zip_buffer = io.BytesIO()
+        found_files = 0
 
-    with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
-        for code in selected_codes:
-            png_path = PNG_OUTPUT_FOLDER / f"{code}.png"
-            raw_img = None
-            for ext in [".png", ".jpg", ".jpeg", ".webp"]:
-                candidate = IMAGES_FOLDER / f"{code}{ext}"
-                if candidate.exists():
-                    raw_img = candidate
-                    break
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
+            for code in selected_codes:
+                png_path = PNG_OUTPUT_FOLDER / f"{code}.png"
+                raw_img = None
+                for ext in [".png", ".jpg", ".jpeg", ".webp"]:
+                    candidate = IMAGES_FOLDER / f"{code}{ext}"
+                    if candidate.exists():
+                        raw_img = candidate
+                        break
 
-            if png_path.exists():
-                zip_file.write(png_path, arcname=f"{code}_card.png")
-                found_files += 1
-            elif raw_img and raw_img.exists():
-                zip_file.write(raw_img, arcname=f"{code}{raw_img.suffix}")
-                found_files += 1
+                if png_path.exists():
+                    zip_file.write(png_path, arcname=f"{code}_card.png")
+                    found_files += 1
+                elif raw_img and raw_img.exists():
+                    zip_file.write(raw_img, arcname=f"{code}{raw_img.suffix}")
+                    found_files += 1
 
-    if found_files == 0:
-        return jsonify({"success": False, "message": "No images or PNG cards found for selected products."}), 404
+        if found_files == 0:
+            return jsonify({"success": False, "message": "No images or PNG cards found for selected products."}), 404
 
-    zip_buffer.seek(0)
-    return send_file(
-        zip_buffer,
-        mimetype="application/zip",
-        as_attachment=True,
-        download_name="selected_products_images.zip"
-    )
+        zip_buffer.seek(0)
+        return send_file(
+            zip_buffer,
+            mimetype="application/zip",
+            as_attachment=True,
+            download_name="selected_products_images.zip"
+        )
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Export failed: {str(e)}"}), 500
 
-@app.route("/images/<filename>")
+@app.route("/images/<path:filename>")
 def product_image(filename):
     return send_from_directory(IMAGES_FOLDER, filename)
+
+@app.route("/output/html/<path:filename>")
+def serve_output_html(filename):
+    return send_from_directory(HTML_OUTPUT_FOLDER, filename)
 
 # ==========================================
 # CUSTOMERS, ANALYTICS & SETTINGS
@@ -896,7 +960,8 @@ def api_create_customer():
             return jsonify({"success": False, "message": "Name and Phone number are required."}), 400
 
         success, message = create_customer(data)
-        return jsonify({"success": success, "message": message})
+        status_code = 200 if success else 400
+        return jsonify({"success": success, "message": message}), status_code
     except Exception as e:
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
@@ -913,7 +978,8 @@ def api_update_settings():
     try:
         data = request.get_json() or {}
         success, message = update_config(data)
-        return jsonify({"success": success, "message": message})
+        status_code = 200 if success else 400
+        return jsonify({"success": success, "message": message}), status_code
     except Exception as e:
         return jsonify({"success": False, "message": f"Server Error: {str(e)}"}), 500
 
@@ -923,8 +989,12 @@ def api_update_settings():
 
 @app.route("/publish_site", methods=["POST"])
 def publish_site_route():
-    success, message = run_publish_workflow()
-    return jsonify({"success": success, "message": message})
+    try:
+        success, message = run_publish_workflow()
+        status_code = 200 if success else 500
+        return jsonify({"success": success, "message": message}), status_code
+    except Exception as e:
+        return jsonify({"success": False, "message": f"Publish error: {str(e)}"}), 500
 
 @app.route('/api/publish-remote', methods=['POST'])
 def trigger_remote_publish():
@@ -934,8 +1004,12 @@ def trigger_remote_publish():
     repo_name = os.environ.get("GITHUB_REPO_NAME", "Pakwholesaleworkers")
 
     if not github_token:
-        success, message = run_publish_workflow()
-        return jsonify({"success": success, "message": message})
+        try:
+            success, message = run_publish_workflow()
+            status_code = 200 if success else 500
+            return jsonify({"success": success, "message": message}), status_code
+        except Exception as e:
+            return jsonify({"success": False, "message": f"Local publish failed: {str(e)}"}), 500
 
     headers = {
         "Authorization": f"Bearer {github_token}",
