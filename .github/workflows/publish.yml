@@ -6,19 +6,21 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
 
   build-and-deploy:
 
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
-
     steps:
 
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -43,11 +45,9 @@ jobs:
 
           git add output/
 
-          git diff --cached --quiet && echo "No catalog changes." || git commit -m "Auto-rebuilt catalog via remote publish trigger [skip ci]"
-          git push
-
-      - name: Deploy to Cloudflare Workers
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          if git diff --staged --quiet; then
+            echo "No catalog changes to commit."
+          else
+            git commit -m "Auto-rebuilt catalog via remote publish trigger [skip ci]"
+            git push origin main
+          fi
