@@ -43,7 +43,11 @@ jobs:
 
           git add output/
 
-          git diff --cached --quiet && echo "No catalog changes." && exit 0
-
-          git commit -m "Auto-rebuilt catalog via remote publish trigger [skip ci]"
+          git diff --cached --quiet && echo "No catalog changes." || git commit -m "Auto-rebuilt catalog via remote publish trigger [skip ci]"
           git push
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
