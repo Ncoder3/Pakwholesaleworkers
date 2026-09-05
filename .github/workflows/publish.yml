@@ -51,3 +51,6 @@ jobs:
             git commit -m "Auto-rebuilt catalog via remote publish trigger [skip ci]"
             git push origin main
           fi
+      - name: Trigger Cloudflare Pages Build
+        run: |
+          curl -X POST -d "" "https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/104386dc-9021-47d6-ab4c-814b500405b0"
