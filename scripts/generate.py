@@ -57,10 +57,18 @@ PRODUCT_CSS = TEMPLATE_FOLDER / "product" / "gproduct_card.css"
 INDEX_CSS = TEMPLATE_FOLDER / "index" / "index.css"
 INDEX_JS = TEMPLATE_FOLDER / "index" / "index.js"
 
-# Create Output and QR Directories
+# # Create Output and QR Directories
+# OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
+# QR_FOLDER.mkdir(parents=True, exist_ok=True)
+# print_success("Output and QR folders initialized.")
+
+# Clean Output Directory to Remove Deleted Products
+if OUTPUT_FOLDER.exists():
+    shutil.rmtree(OUTPUT_FOLDER)
+
 OUTPUT_FOLDER.mkdir(parents=True, exist_ok=True)
 QR_FOLDER.mkdir(parents=True, exist_ok=True)
-print_success("Output and QR folders initialized.")
+print_success("Output directory cleaned and initialized.")
 
 
 # PostgreSQL connection
@@ -205,13 +213,36 @@ print(
 # next_code = highest_code + 1
 # Migrated to product_services.py
 
-# Assign missing codes back to DataFrame
-for index, code in df["Product Code"].items():
-    if pd.isna(code) or str(code).strip() == "":
-        new_code = f"{config.PRODUCT_PREFIX}-{next_code:03d}"
-        df.at[index, "Product Code"] = new_code
-        print_success(f"Generated Code: {new_code} -> {df.at[index, 'Product Name']}")
-        next_code += 1
+# # Assign missing codes back to DataFrame
+# for index, code in df["Product Code"].items():
+#     if pd.isna(code) or str(code).strip() == "":
+#         new_code = f"{config.PRODUCT_PREFIX}-{next_code:03d}"
+#         df.at[index, "Product Code"] = new_code
+#         print_success(f"Generated Code: {new_code} -> {df.at[index, 'Product Name']}")
+#         next_code += 1
+
+# Safely assign missing codes if any exist
+if "Product Code" in df.columns:
+    highest_code = 0
+    prefix = f"{config.PRODUCT_PREFIX}-"
+    
+    for code in df["Product Code"].dropna():
+        code_str = str(code).strip()
+        if code_str.startswith(prefix):
+            try:
+                num = int(code_str.replace(prefix, ""))
+                highest_code = max(highest_code, num)
+            except ValueError:
+                pass
+                
+    next_code = highest_code + 1
+
+    for index, code in df["Product Code"].items():
+        if pd.isna(code) or str(code).strip() == "":
+            new_code = f"{config.PRODUCT_PREFIX}-{next_code:03d}"
+            df.at[index, "Product Code"] = new_code
+            print_success(f"Generated Code: {new_code} -> {df.at[index, 'Product Name']}")
+            next_code += 1
 
 
 # ==========================================================
