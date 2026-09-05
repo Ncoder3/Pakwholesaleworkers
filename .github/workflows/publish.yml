@@ -3,34 +3,36 @@ name: Remote Catalog Builder & Deploy
 on:
   repository_dispatch:
     types: [remote_publish_trigger]
-
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-
   build-and-deploy:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.13'
+          cache: 'pip'
+          cache-dependency-path: 'admin/requirements.txt'
 
-      - name: Install Dependencies
+      - name: Install System Dependencies & Browsers
         run: |
+          sudo apt-get update && sudo apt-get install -y poppler-utils ffmpeg libsm6 libxext6
           python -m pip install --upgrade pip
           pip install -r admin/requirements.txt
+          # Uncomment if Playwright is used for HTML-to-PNG generation:
+          # python -m playwright install chromium --with-deps
 
       - name: Run Catalog Generator
         env:
@@ -38,7 +40,7 @@ jobs:
         run: |
           python scripts/generate.py
 
-      - name: Commit & Push Changes
+      - name: Commit & Push Generated Catalog Assets
         run: |
           git config --global user.name "AlBaraka Automated Deployer"
           git config --global user.email "deploy@albarakatraders.com"
@@ -46,11 +48,15 @@ jobs:
           git add output/
 
           if git diff --staged --quiet; then
-            echo "No catalog changes to commit."
+            echo "No changes detected in /output directory. Skipping commit."
           else
-            git commit -m "Auto-rebuilt catalog via remote publish trigger [skip ci]"
-            git push origin main
+            git commit -m "build(catalog): automated rebuild via publish trigger [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
           fi
-      - name: Trigger Cloudflare Pages Build
+
+      - name: Trigger Cloudflare Pages Deployment
+        env:
+          CF_HOOK_URL: ${{ secrets.CLOUDFLARE_DEPLOY_HOOK || 'https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/104386dc-9021-47d6-ab4c-814b500405b0' }}
         run: |
-          curl -X POST -d "" "https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/104386dc-9021-47d6-ab4c-814b500405b0"
+          echo "Triggering Cloudflare build webhook..."
+          curl -s -f -X POST -d "" "$CF_HOOK_URL"
